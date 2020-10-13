@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "support.h"
+#include "decorated-frame.h"
 #include <wex/report/listview.h>
 
 class app;
