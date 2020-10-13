@@ -2,7 +2,7 @@ project(syncped)
 
 cmake_minimum_required(VERSION 3.7)
 
-find_package(wex REQUIRED)
+find_package(WEX REQUIRED)
 
 include_directories(${wex_INCLUDE_DIR})
 link_directories(${wex_LIB_DIR})
