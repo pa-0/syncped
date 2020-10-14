@@ -5,29 +5,11 @@
 // Copyright: (c) 2020 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <wx/wxprec.h>
-#ifndef WX_PRECOMP
-#include <wx/wx.h>
-#endif
-#include <wex/beautify.h>
-#include <wex/config.h>
-#include <wex/debug.h>
-#include <wex/file-dialog.h>
-#include <wex/lexers.h>
-#include <wex/log.h>
-#include <wex/macros.h>
-#include <wex/menu.h>
-#include <wex/menubar.h>
-#include <wex/report/listview-file.h>
-#include <wex/shell.h>
-#include <wex/statusbar.h>
-#include <wex/stc.h>
-#include <wex/tostring.h>
-#include <wex/util.h>
-#include <wex/vcs.h>
-#include <wex/version.h>
+#include <wex/wex.h>
 #include <wx/aboutdlg.h>
 #include <wx/stockitem.h> // for wxGetStockLabel
+#include <wx/generic/textdlgg.h>
+#include <wx/valtext.h>
 #ifndef __WXMSW__
 #include "app.xpm"
 #endif
@@ -659,7 +641,7 @@ decorated_frame::decorated_frame(app* app)
         {{wxID_ABOUT, "", wex::data::menu().action([=](wxCommandEvent& event) {
             wxAboutDialogInfo info;
             info.SetIcon(GetIcon());
-            info.SetVersion(wex::get_version_info().get());
+            info.SetVersion(m_app->version());
             wxString description(_("This program offers a portable text or "
                                    "binary editor\n"
                                    "with automatic syncing."));
@@ -680,7 +662,7 @@ decorated_frame::decorated_frame(app* app)
          {wxID_HELP, "", wex::data::menu().action([=](wxCommandEvent& event) {
             wxLaunchDefaultBrowser(
               "http://antonvw.github.io/syncped/v" +
-              wex::get_version_info().get() + "/syncped.htm");
+              m_app->version() + "/syncped.htm");
           })}}),
       wxGetStockLabel(wxID_HELP)}}));
 }

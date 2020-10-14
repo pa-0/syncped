@@ -6,35 +6,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <thread>
-#include <wx/wxprec.h>
-#ifndef WX_PRECOMP
-#include <wx/wx.h>
-#endif
 #include "app.h"
 #include "defs.h"
 #include "frame.h"
-#include <wex/bind.h>
-#include <wex/config.h>
-#include <wex/ctags.h>
-#include <wex/debug.h>
-#include <wex/file-dialog.h>
-#include <wex/item-dialog.h>
-#include <wex/lexers.h>
-#include <wex/log.h>
-#include <wex/macro-mode.h>
-#include <wex/macros.h>
-#include <wex/menu.h>
-#include <wex/menus.h>
-#include <wex/report/listview-file.h>
-#include <wex/shell.h>
-#include <wex/statusbar.h>
-#include <wex/stc-bind.h>
-#include <wex/stc.h>
-#include <wex/tokenizer.h>
-#include <wex/toolbar.h>
-#include <wex/util.h>
-#include <wex/vcs.h>
+#include <wex/wex.h>
 #include <wx/imaglist.h>
+#include <wx/stockitem.h>
 
 BEGIN_EVENT_TABLE(frame, decorated_frame)
 EVT_MENU(wxID_DELETE, frame::on_command)

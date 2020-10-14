@@ -32,6 +32,7 @@ void app::MacOpenFiles(const wxArrayString& fileNames)
 bool app::OnInit()
 {
   SetAppName("syncped");
+  m_version = "21.04.0"; // for now same a wex
 
   bool               list_lexers = false;
   wex::data::cmdline data(argc, argv);
@@ -72,7 +73,7 @@ bool app::OnInit()
            [&](bool on) {
              if (on)
              {
-               std::cout << "syncped-" << wex::get_version_info().get()
+               std::cout << "syncped-" << m_version
                          << " using\n"
                          << wex::get_version_info().external_libraries().str();
                exit = true;

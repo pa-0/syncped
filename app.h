@@ -28,6 +28,8 @@ public:
   auto& get_tag() const { return m_tag; };
 
   void reset();
+  
+  const auto& version() const {return m_version;};
 
 private:
 #ifdef __WXOSX__
@@ -36,7 +38,7 @@ private:
 
   bool OnInit() override;
 
-  std::string m_output, m_scriptout, m_tag;
+  std::string m_output, m_scriptout, m_tag, m_version;
 
   std::vector<wex::path> m_files;
 
