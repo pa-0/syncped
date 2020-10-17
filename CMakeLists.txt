@@ -1,6 +1,6 @@
-project(syncped)
-
 cmake_minimum_required(VERSION 3.7)
+
+project(syncped)
 
 find_package(WEX REQUIRED)
 
