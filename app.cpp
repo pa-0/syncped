@@ -5,19 +5,9 @@
 // Copyright: (c) 2020 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <wx/wxprec.h>
-#ifndef WX_PRECOMP
-#include <wx/wx.h>
-#endif
 #include "app.h"
 #include "frame.h"
-#include <wex/cmdline.h>
-#include <wex/ctags.h>
-#include <wex/lexers.h>
-#include <wex/stc-data.h>
-#include <wex/tostring.h>
-#include <wex/util.h>
-#include <wex/version.h>
+#include <wex/wex.h>
 
 wxIMPLEMENT_APP(app);
 

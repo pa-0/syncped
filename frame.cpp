@@ -8,6 +8,7 @@
 #include <thread>
 #include "app.h"
 #include "defs.h"
+#include "editors.h"
 #include "frame.h"
 #include <wex/wex.h>
 #include <wx/imaglist.h>

@@ -5,7 +5,7 @@
 // Copyright: (c) 2020 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
-#pragma
+#pragma once
 
 #include <wex/notebook.h>
 #include <wex/process.h>
@@ -14,18 +14,7 @@
 #include <wex/report/listview.h>
 
 class app;
-
-class editors : public wex::notebook
-{
-public:
-  editors(const wex::data::window& data);
-
-  bool is_split() const { return m_split; };
-  void reset() { m_split = false; };
-
-private:
-  bool m_split{false};
-};
+class editors;
 
 class decorated_frame : public wex::report::frame
 {
