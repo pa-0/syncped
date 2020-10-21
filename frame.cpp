@@ -853,7 +853,7 @@ wex::stc* frame::open_file(
 wex::stc*
 frame::open_file(const wex::path& filename, const wex::data::stc& data)
 {
-  wex::notebook* notebook =
+  auto* notebook =
     (data.flags().test(wex::data::stc::WIN_IS_PROJECT) ? m_projects :
                                                          m_editors);
 
