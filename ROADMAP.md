@@ -1,4 +1,2 @@
 - understand gitlab ci
-- add as submodule to wex, to allow ci
 - fix processing locale
-- update html doc for changed config
