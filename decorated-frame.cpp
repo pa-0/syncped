@@ -663,7 +663,7 @@ decorated_frame::decorated_frame(app* app)
          {wxID_HELP, "", wex::data::menu().action([=](wxCommandEvent& event) {
             wxLaunchDefaultBrowser(
               "http://antonvw.github.io/syncped/v" +
-              m_app->version() + "/syncped.htm");
+              wex::before(m_app->version(), '.', false) + "/syncped.htm");
           })}}),
       wxGetStockLabel(wxID_HELP)}}));
 }
