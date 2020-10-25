@@ -5,9 +5,10 @@
 // Copyright: (c) 2020 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <wex/wex.h>
+
 #include "app.h"
 #include "frame.h"
-#include <wex/wex.h>
 
 wxIMPLEMENT_APP(app);
 

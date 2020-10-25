@@ -80,6 +80,8 @@ private:
   int m_split_id{1};
 
   std::string m_saved_page;
+  
+  wex::item_dialog* m_find_files {nullptr};
 
   DECLARE_EVENT_TABLE()
 };

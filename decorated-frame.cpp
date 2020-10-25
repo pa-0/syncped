@@ -7,12 +7,14 @@
 
 #include <wex/wex.h>
 #include <wx/aboutdlg.h>
-#include <wx/stockitem.h> // for wxGetStockLabel
 #include <wx/generic/textdlgg.h>
+#include <wx/stockitem.h> // for wxGetStockLabel
 #include <wx/valtext.h>
+
 #ifndef __WXMSW__
 #include "app.xpm"
 #endif
+
 #include "app.h"
 #include "decorated-frame.h"
 #include "defs.h"
@@ -151,7 +153,8 @@ decorated_frame::decorated_frame(app* app)
   {
     // No accelerators for vi mode, Ctrl F is page down.
     menuFind->append(
-      {{wxID_FIND, wxGetStockLabel(wxID_FIND, wxSTOCK_NOFLAGS)}});
+      {{wxID_FIND, wxGetStockLabel(wxID_FIND, wxSTOCK_NOFLAGS)},
+       {ID_FIND_FILE, "File"}});
 
     if (m_app->data().flags().test(wex::data::stc::WIN_READ_ONLY))
     {
@@ -702,6 +705,7 @@ bool decorated_frame::allow_close(wxWindowID id, wxWindow* page)
         b.file(stc->get_filename());
       }
       break;
+
     case ID_NOTEBOOK_PROJECTS:
       if (
         wex::file_dialog((wex::report::file*)page).show_modal_if_changed() ==

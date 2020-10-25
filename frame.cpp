@@ -6,13 +6,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <thread>
+#include <wex/wex.h>
+#include <wx/imaglist.h>
+#include <wx/stockitem.h>
+
 #include "app.h"
 #include "defs.h"
 #include "editors.h"
 #include "frame.h"
-#include <wex/wex.h>
-#include <wx/imaglist.h>
-#include <wx/stockitem.h>
 
 BEGIN_EVENT_TABLE(frame, decorated_frame)
 EVT_MENU(wxID_DELETE, frame::on_command)
@@ -52,6 +53,10 @@ END_EVENT_TABLE()
 
 frame::frame(app* app)
   : decorated_frame(app)
+  , m_find_files(new wex::item_dialog(
+      {{"find.File", wex::item::COMBOBOX},
+       {"find.Matches", wex::data::listview().type(wex::data::listview::FILE)}},
+      wex::data::window().title("Find").size({400, 400})))
 {
   if (!m_app->get_tag().empty())
   {
@@ -258,6 +263,10 @@ frame::frame(app* app)
       },
       wex::ID_ALL_CLOSE},
      {[=](wxCommandEvent& event) {
+        m_find_files->ShowModal();
+      },
+      ID_FIND_FILE},
+     {[=](wxCommandEvent& event) {
         wex::vcs(
           std::vector<wex::path>(),
           event.GetId() - wex::ID_VCS_LOWEST - 1)
@@ -405,7 +414,9 @@ wex::process* frame::get_process(const std::string& command)
 {
   if (!m_app->get_is_debug())
     return nullptr;
+
   m_process->execute(command, wex::process::EXEC_NO_WAIT);
+
   return m_process;
 }
 
@@ -486,6 +497,7 @@ void frame::on_command(wxCommandEvent& event)
         }
       }
       break;
+
     case wxID_SAVEAS:
       if (editor != nullptr)
       {
@@ -514,7 +526,7 @@ void frame::on_command(wxCommandEvent& event)
           }
         }
 
-        const wxBitmap bitmap =
+        const auto& bitmap =
           (editor->get_filename().stat().is_ok() ?
              wxTheFileIconsTable->GetSmallImageList()->GetBitmap(
                wex::get_iconid(editor->get_filename())) :
@@ -539,6 +551,7 @@ void frame::on_command(wxCommandEvent& event)
           &editor->get_vi(),
           true);
       break;
+
     case ID_EDIT_MACRO_START_RECORD:
     case ID_EDIT_MACRO_STOP_RECORD:
       if (editor != nullptr)
@@ -698,26 +711,31 @@ void frame::on_update_ui(wxUpdateUIEvent& event)
           case wex::ID_EDIT_FIND_PREVIOUS:
             event.Enable(editor->GetLength() > 0);
             break;
+
           case ID_EDIT_MACRO:
             event.Enable(
               editor->get_vi().is_active() &&
               !editor->get_vi().get_macros().mode().is_recording() &&
               wex::ex::get_macros().get_filename().file_exists());
             break;
+
           case ID_EDIT_MACRO_MENU:
             event.Enable(editor->get_vi().is_active());
             break;
+
           case ID_EDIT_MACRO_PLAYBACK:
             event.Enable(
               editor->get_vi().is_active() &&
               editor->get_vi().get_macros().size() > 0 &&
               !editor->get_vi().get_macros().mode().is_recording());
             break;
+
           case ID_EDIT_MACRO_START_RECORD:
             event.Enable(
               editor->get_vi().is_active() &&
               !editor->get_vi().get_macros().mode().is_recording());
             break;
+
           case ID_EDIT_MACRO_STOP_RECORD:
             event.Enable(editor->get_vi().get_macros().mode().is_recording());
             break;
@@ -726,9 +744,11 @@ void frame::on_update_ui(wxUpdateUIEvent& event)
             event.Enable(
               !editor->get_filename().empty() && editor->GetModify());
             break;
+
           case wxID_REDO:
             event.Enable(editor->CanRedo());
             break;
+
           case wxID_UNDO:
             event.Enable(editor->CanUndo());
             break;
