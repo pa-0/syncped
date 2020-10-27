@@ -154,7 +154,7 @@ decorated_frame::decorated_frame(app* app)
     // No accelerators for vi mode, Ctrl F is page down.
     menuFind->append(
       {{wxID_FIND, wxGetStockLabel(wxID_FIND, wxSTOCK_NOFLAGS)},
-       {ID_FIND_FILE, "File"}});
+       {ID_FIND_FILE, "Find Files\tCtrl+L"}});
 
     if (m_app->data().flags().test(wex::data::stc::WIN_READ_ONLY))
     {

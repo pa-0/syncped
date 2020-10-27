@@ -54,10 +54,52 @@ END_EVENT_TABLE()
 frame::frame(app* app)
   : decorated_frame(app)
   , m_find_files(new wex::item_dialog(
-      {{"find.File", wex::item::COMBOBOX},
+      {{"find.File",
+        wex::item::COMBOBOX,
+        std::any(),
+        wex::data::item().window(
+          wex::data::window().style(wxTE_PROCESS_ENTER))},
        {"find.Matches", wex::data::listview().type(wex::data::listview::FILE)}},
-      wex::data::window().title("Find").size({400, 400})))
+      wex::data::window().title("Find Files").size({400, 400}).button(0)))
 {
+  if (auto* l = (wex::listview*)m_find_files->find("find.Matches").window();
+      l != nullptr)
+  {
+    if (auto* w = (wxComboBox*)m_find_files->find("find.File").window();
+        w != nullptr)
+    {
+      w->Bind(wxEVT_TEXT_ENTER, [=](wxCommandEvent& event) {
+        wex::config("find.File").set_firstof(w->GetValue());
+          
+        static wex::path wd;
+
+        if (auto* editor = get_stc(); editor != nullptr)
+        {
+          const wex::vcs v({editor->get_filename()});
+          wd = v.toplevel();
+          std::cout << wd.string() << ", " << v.name() << "\n";
+        }
+
+        if (const auto& v(wex::get_all_files(
+              wd.string(),
+              wex::data::dir()
+                .file_spec("*" + w->GetValue() + "*")
+                .type(wex::data::dir::type_t().set(wex::data::dir::FILES))));
+            !v.empty())
+        {
+          l->clear();
+            
+          for (const auto& e : v)
+          {
+            wex::path p(e);
+            p.make_absolute();
+            wex::listitem(l, p).insert();
+          }
+        }
+      });
+    }
+  }
+
   if (!m_app->get_tag().empty())
   {
     wex::ctags::find(m_app->get_tag());
@@ -263,7 +305,7 @@ frame::frame(app* app)
       },
       wex::ID_ALL_CLOSE},
      {[=](wxCommandEvent& event) {
-        m_find_files->ShowModal();
+        m_find_files->Show();
       },
       ID_FIND_FILE},
      {[=](wxCommandEvent& event) {
