@@ -26,6 +26,8 @@ find_files::find_files()
     {
       c->Bind(wxEVT_TEXT_ENTER, [=](wxCommandEvent& event) {
         wex::config("find.File").set_firstof(c->GetValue());
+        reload();
+        c->SetInsertionPointEnd();
 
         if (const auto& v(wex::get_all_files(
               m_root,
