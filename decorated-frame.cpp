@@ -153,10 +153,9 @@ decorated_frame::decorated_frame(app* app)
   {
     // No accelerators for vi mode, Ctrl F is page down.
     menuFind->append(
-      {{wxID_FIND, wxGetStockLabel(wxID_FIND, wxSTOCK_NOFLAGS)},
-       {ID_FIND_FILE, "Find Files\tCtrl+L"}});
+      {{wxID_FIND, wxGetStockLabel(wxID_FIND, wxSTOCK_NOFLAGS)}});
 
-    if (m_app->data().flags().test(wex::data::stc::WIN_READ_ONLY))
+    if (!m_app->data().flags().test(wex::data::stc::WIN_READ_ONLY))
     {
       menuFind->append(
         {{wxID_REPLACE, wxGetStockLabel(wxID_REPLACE, wxSTOCK_NOFLAGS)}});
@@ -173,7 +172,9 @@ decorated_frame::decorated_frame(app* app)
   }
 
   menuFind->append(
-    {{wex::ID_TOOL_REPORT_FIND, wex::ellipsed(_("Find &in Files"))}});
+    {{},
+     {ID_FIND_FILE, "Find Files\tCtrl+L"},
+     {wex::ID_TOOL_REPORT_FIND, wex::ellipsed(_("Find &in Files"))}});
 
   if (!m_app->data().flags().test(wex::data::stc::WIN_READ_ONLY))
   {
