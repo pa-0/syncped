@@ -229,6 +229,16 @@ tc-vi-info
 	Output Contains	%
 	Output Contains	level
 
+tc-vi-macro
+	Input	@Template-test@
+	Syncped
+	Contents Does Not Contain	@Created@
+	Contents Does Not Contain	@Date@
+	Contents Does Not Contain	'Date'
+	Contents Does Not Contain	@Datetime@
+	Contents Does Not Contain	@Process@
+	Contents Does Not Contain	@Year@
+
 tc-vi-marker
 	Input Many	:a|line has text	50
 	Input 	:10
