@@ -1,2 +1,3 @@
 - understand gitlab ci
 - fix processing locale
+- update syncped help for tpl updates

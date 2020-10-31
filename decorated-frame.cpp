@@ -209,7 +209,7 @@ decorated_frame::decorated_frame(app* app)
     {
       delete menuDebug;
       menuDebug = nullptr;
-      wex::log() << "no debug menu present";
+      wex::log("no debug menu");
     }
     else
     {
