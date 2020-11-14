@@ -224,7 +224,7 @@ decorated_frame::decorated_frame(app* app)
   if (wex::vcs::size() > 0)
   {
     menuOptions->append(
-      {{wxWindow::NewControlId(),
+      {{NewControlId(),
         wex::ellipsed(_("Set &VCS")),
         wex::data::menu().action([=](wxCommandEvent&) {
           if (wex::vcs().config_dialog() == wxID_OK)
@@ -309,7 +309,7 @@ decorated_frame::decorated_frame(app* app)
 
          {},
 
-         {wxWindow::NewControlId(),
+         {NewControlId(),
           file_history(),
           wex::data::menu().ui([=](wxUpdateUIEvent& event) {
             event.Enable(!file_history().get_history_file().empty());
@@ -385,7 +385,7 @@ decorated_frame::decorated_frame(app* app)
      {new wex::menu(
         {{this},
          {},
-         {wxWindow::NewControlId(),
+         {NewControlId(),
           _("&Files"),
           wex::menu_item::CHECK,
           wex::data::menu()
@@ -400,7 +400,7 @@ decorated_frame::decorated_frame(app* app)
               event.Check(pane_is_shown("FILES"));
             })},
 
-         {wxWindow::NewControlId(),
+         {NewControlId(),
           _("&Projects"),
           wex::menu_item::CHECK,
           wex::data::menu()
@@ -440,7 +440,7 @@ decorated_frame::decorated_frame(app* app)
               event.Check(m_history != nullptr && pane_is_shown("HISTORY"));
             })},
 
-         {wxWindow::NewControlId(),
+         {NewControlId(),
           _("&Output"),
           wex::menu_item::CHECK,
           wex::data::menu()
@@ -453,7 +453,7 @@ decorated_frame::decorated_frame(app* app)
 
          {},
 
-         {wxWindow::NewControlId(),
+         {NewControlId(),
           _("&Ascii Table"),
           wex::data::menu().action([=](wxCommandEvent& event) {
             build_ascii_table(this);
@@ -461,7 +461,7 @@ decorated_frame::decorated_frame(app* app)
       _("&View")},
 
      {new wex::menu(
-        {{wxWindow::NewControlId(),
+        {{NewControlId(),
           wex::ellipsed(_("&Select")),
           wex::data::menu().action([=](wxCommandEvent& event) {
             if (wex::process::config_dialog() == wxID_OK)
@@ -487,7 +487,7 @@ decorated_frame::decorated_frame(app* app)
       _("&Process")},
 
      {new wex::menu(
-        {{wxWindow::NewControlId(),
+        {{NewControlId(),
           wxGetStockLabel(wxID_NEW),
           wex::data::menu().art(wxART_NEW).action([=](wxCommandEvent& event) {
             const std::string text =
@@ -512,7 +512,7 @@ decorated_frame::decorated_frame(app* app)
             pane_show("PROJECTS");
           })},
 
-         {wxWindow::NewControlId(),
+         {NewControlId(),
           wxGetStockLabel(wxID_OPEN),
           wex::data::menu()
             .art(wxART_FILE_OPEN)
@@ -547,7 +547,7 @@ decorated_frame::decorated_frame(app* app)
                   wex::data::stc::WIN_IS_PROJECT)));
             })},
 
-         {wxWindow::NewControlId(),
+         {NewControlId(),
           _("&Open as Text"),
           wex::data::menu()
             .action([=](wxCommandEvent& event) {
@@ -569,13 +569,13 @@ decorated_frame::decorated_frame(app* app)
 
          {},
 
-         {wxWindow::NewControlId(),
+         {NewControlId(),
           get_project_history(),
           wex::data::menu().ui([=](wxUpdateUIEvent& event) {
             event.Enable(!get_project_history().get_history_file().empty());
           })},
 
-         {wxWindow::NewControlId(),
+         {NewControlId(),
           wxGetStockLabel(wxID_CLOSE),
           wex::data::menu()
             .art(wxART_CLOSE)
@@ -594,7 +594,7 @@ decorated_frame::decorated_frame(app* app)
           wxGetStockLabel(wxID_SAVE),
           wex::data::menu().art(wxART_FILE_SAVE)},
 
-         {wxWindow::NewControlId(),
+         {NewControlId(),
           wxGetStockLabel(wxID_SAVEAS),
           wex::data::menu()
             .art(wxART_FILE_SAVE_AS)
@@ -625,7 +625,7 @@ decorated_frame::decorated_frame(app* app)
 
          {},
 
-         {wxWindow::NewControlId(),
+         {NewControlId(),
           _("&Auto Sort"),
           wex::menu_item::CHECK,
           wex::data::menu()
