@@ -36,7 +36,7 @@ bool app::OnInit()
              m_data.control(wex::data::control().command("G"));
            }},
 
-          {{"debug,d", "use debug mode"},
+          {{"debug,d", "use debug mode, opens specified file as debug target"},
            [&](bool on) {
              m_is_debug = on;
            }},
@@ -192,7 +192,7 @@ bool app::OnInit()
 
          {{"files",
            "input file[:line number][:column number]\n"
-           "or project file is -p was specified\n"
+           "or project files is -p was specified\n"
            "or executable file if -d was specified"},
           [&](const std::vector<std::string>& v) {
             for (const auto& f : v)
