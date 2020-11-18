@@ -1,6 +1,6 @@
 - test calc reg example
 - fix Find Files on msw, check accel for it (GTK as well)
-  show a possible error
+  - show a possible error
 - understand gitlab ci
 - fix processing locale
 - use markdown as source for gh pages

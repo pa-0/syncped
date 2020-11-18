@@ -64,8 +64,7 @@ bool app::OnInit()
            [&](bool on) {
              if (on)
              {
-               std::cout << "syncped-" << m_version
-                         << " using\n"
+               std::cout << "syncped-" << m_version << " using\n"
                          << wex::get_version_info().external_libraries().str();
                exit = true;
              }

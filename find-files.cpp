@@ -17,37 +17,43 @@ find_files::find_files()
         std::any(),
         wex::data::item().window(
           wex::data::window().style(wxTE_PROCESS_ENTER))},
+       {"find.Max", wex::item::TEXTCTRL_INT, std::string("50")},
        {"find.Matches", wex::data::listview().type(wex::data::listview::FILE)}},
       wex::data::window().title("Find Files").size({400, 400}).button(0))
 {
-  if (auto* l = (wex::listview*)find("find.Matches").window(); l != nullptr)
-  {
-    if (auto* c = (wxComboBox*)find("find.File").window(); c != nullptr)
+  auto* l = (wex::listview*)find("find.Matches").window(); 
+  auto* t = (wxTextCtrl*)find("find.Max").window(); 
+  auto* c = (wxComboBox*)find("find.File").window(); 
+  
+  assert(c != nullptr);
+  assert(l != nullptr);
+  assert(t != nullptr);
+  
+  c->Bind(wxEVT_TEXT_ENTER, [=](wxCommandEvent& event) {
+    wex::config("find.File").set_firstof(c->GetValue());
+    wex::config("find.Max").set(std::stoi(t->GetValue().ToStdString()));
+      
+    reload();
+    c->SetInsertionPointEnd();
+
+    if (const auto& v(wex::get_all_files(
+          m_root,
+          wex::data::dir()
+            .file_spec("*" + c->GetValue() + "*")
+            .max_matches(wex::config("find.Max").get(50))
+            .type(wex::data::dir::type_t()
+                    .set(wex::data::dir::FILES)
+                    .set(wex::data::dir::RECURSIVE))));
+        !v.empty())
     {
-      c->Bind(wxEVT_TEXT_ENTER, [=](wxCommandEvent& event) {
-        wex::config("find.File").set_firstof(c->GetValue());
-        reload();
-        c->SetInsertionPointEnd();
+      l->clear();
 
-        if (const auto& v(wex::get_all_files(
-              m_root,
-              wex::data::dir()
-                .file_spec("*" + c->GetValue() + "*")
-                .type(wex::data::dir::type_t()
-                        .set(wex::data::dir::FILES)
-                        .set(wex::data::dir::RECURSIVE))));
-            !v.empty())
-        {
-          l->clear();
-
-          for (const auto& e : v)
-          {
-            wex::listitem(l, e).insert();
-          }
-        }
-      });
+      for (const auto& e : v)
+      {
+        wex::listitem(l, e).insert();
+      }
     }
-  }
+  });
 }
 
 void find_files::set_root(frame* f)
