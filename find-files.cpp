@@ -21,19 +21,15 @@ find_files::find_files()
        {"find.Matches", wex::data::listview().type(wex::data::listview::FILE)}},
       wex::data::window().title("Find Files").size({400, 400}).button(0))
 {
-  auto* l = (wex::listview*)find("find.Matches").window(); 
-  auto* t = (wxTextCtrl*)find("find.Max").window(); 
-  auto* c = (wxComboBox*)find("find.File").window(); 
-  
-  assert(c != nullptr);
-  assert(l != nullptr);
-  assert(t != nullptr);
-  
+  auto* l = (wex::listview*)find("find.Matches").window();
+  auto* c = (wxComboBox*)find("find.File").window();
+
+  assert(c != nullptr && l != nullptr);
+
+  c->SetFocus();
   c->Bind(wxEVT_TEXT_ENTER, [=](wxCommandEvent& event) {
-    wex::config("find.File").set_firstof(c->GetValue());
-    wex::config("find.Max").set(std::stoi(t->GetValue().ToStdString()));
-      
-    reload();
+    reload(true);
+
     c->SetInsertionPointEnd();
 
     if (const auto& v(wex::get_all_files(
@@ -52,6 +48,8 @@ find_files::find_files()
       {
         wex::listitem(l, e).insert();
       }
+
+      reload(true);
     }
   });
 }
