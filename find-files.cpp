@@ -31,6 +31,7 @@ find_files::find_files()
     reload(true);
 
     c->SetInsertionPointEnd();
+    l->clear();
 
     if (const auto& v(wex::get_all_files(
           m_root,
@@ -42,8 +43,6 @@ find_files::find_files()
                     .set(wex::data::dir::RECURSIVE))));
         !v.empty())
     {
-      l->clear();
-
       for (const auto& e : v)
       {
         wex::listitem(l, e).insert();
