@@ -322,7 +322,7 @@ frame::frame(app* app)
           {
             wxCommandEvent event(wxEVT_MENU, wex::id::stc::vi_command);
             event.SetString(
-              text == "\n" && !stc->get_vi().mode().insert() ? "j" : text);
+              text == "\n" && !stc->get_vi().mode().is_insert() ? "j" : text);
             wxPostEvent(stc, event);
           }
 
