@@ -59,6 +59,6 @@ void find_files::set_root(frame* f)
   {
     m_root = wex::vcs({editor->get_filename()}).toplevel();
 
-    wex::log::verbose("find files root") << m_root.string();
+    wex::log::trace("find files root") << m_root.string();
   }
 }
