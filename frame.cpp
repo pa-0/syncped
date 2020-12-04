@@ -694,7 +694,7 @@ void frame::on_update_ui(wxUpdateUIEvent& event)
 
     case wex::report::ID_PROJECT_SAVE:
       event.Enable(
-        get_project() != nullptr && get_project()->get_contents_changed());
+        get_project() != nullptr && get_project()->is_contents_changed());
       break;
 
     default:
