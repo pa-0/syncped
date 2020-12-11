@@ -46,6 +46,15 @@ bool app::OnInit()
              m_is_echo = on;
            }},
 
+          {{"ex", "ex mode"},
+           [&](bool on) {
+             if (!on)
+               return;
+             m_data.flags(
+               wex::data::stc::window_t().set(wex::data::stc::WIN_EX),
+               wex::data::control::OR);
+           }},
+
           {{"stdin,E", "use stdin"},
            [&](bool on) {
              m_is_stdin = on;
