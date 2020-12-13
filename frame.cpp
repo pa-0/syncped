@@ -333,16 +333,6 @@ frame::frame(app* app)
 
     v.detach();
   }
-
-  if (m_app->data().flags().test(wex::data::stc::WIN_EX))
-  {
-    wex::ex* ex = (get_stc() != nullptr ? &get_stc()->get_ex(): nullptr);
-    show_ex_bar(ex);
-  }
-  else
-  {
-    hide_ex_bar();
-  }
 }
 
 wex::report::listview*

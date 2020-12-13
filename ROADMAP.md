@@ -1,3 +1,4 @@
+- add --ex test
 - at this moment FindWEX.cmake present in VC and Program Files\cmake paths.
 - fix Find Files on msw, check accel for it (GTK as well)
   - show a possible error
