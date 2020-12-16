@@ -17,6 +17,10 @@ Library	Process
 # variable on the commandline using '-v quit:0' to remain active
 ${quit}	1
 
+# Normally syncped runs in quiet mode, only errors are logged,
+# override this variable to run in verbose mode
+${severity-level}	4
+	
 ${file-config}	test.json
 ${file-contents}	contents.txt
 ${file-input}	input.txt
@@ -47,11 +51,22 @@ Input
 
 Input Many
 	[Arguments]	${line}	${count}
+	[Documentation]	As Input, but extra argument for repeat count, 
+	...	and does not end write output and with quit
 	FOR    ${index}	IN RANGE	${count}
 		Append To File	${file-input}	${line}
 		Append To File	${file-input}	\n
 	END
 	
+Input No Write
+	[Arguments]	@{text}
+	FOR	${cmd}	IN	@{text}
+		Append To File	${file-input}	${cmd}
+		Append To File	${file-input}	\n
+	END
+	
+	Run Keyword If	${quit} == 1	Append To File	${file-input}	:q!
+
 Find Syncped
 	${result}=	Run Process	
 	...	find	./
@@ -66,8 +81,20 @@ Syncped
 	...	-j 	${file-config}
 	...	-s 	${file-input}
 	...	-X 	${file-output}
+	...	-V	${severity-level}
 	...	${file-startup}
 
+Syncped Ex Mode
+	[Documentation]	Runs syncped with suitable arguments in ex mode
+	Run Process
+	...	${syncped}
+	...	--ex
+	...	-j 	${file-config}
+	...	-s 	${file-input}
+	...	-X 	${file-output}
+	...	-V	${severity-level}
+	...	${file-startup}
+	
 Contents Contains
 	[Arguments]	${text}
 	${result} =	Get File	${file-contents}
@@ -104,7 +131,9 @@ tc-help
 	Should Contain	${result.stdout}		-s
 	Should Contain	${result.stdout}		-t
 	# our own
+	Should Contain	${result.stdout}		--ex
 	Should Contain	${result.stdout}		-j
+	Should Contain	${result.stdout}		-V
 	Should Contain	${result.stdout}		-X
 	Should Contain	${result.stdout}		version
 
@@ -181,6 +210,12 @@ tc-ex-substitute-global
 
 # vi tests
 
+tc-vi-calculate
+	Input	:a|x
+	...	=9+9+9+9
+	Syncped
+	Output Contains	36
+	
 tc-vi-delete
 	Input Many	:a|line	100
 	Input	:1
@@ -197,12 +232,6 @@ tc-vi-delete-D
 	Syncped
 	Contents Does Not Contain	some text
 
-tc-vi-calculate
-	Input	:a|x
-	...	=9+9+9+9
-	Syncped
-	Output Contains	36
-	
 tc-vi-find-not
 	Input	:a|x
 	...	:a|y
@@ -259,6 +288,10 @@ tc-vi-mode-block
 	...	d
 	Syncped
 	Output Does Not Contain	10
+	
+tc-vi-mode-ex
+	Input No Write	:vi
+	Syncped Ex Mode
 
 tc-vi-mode-insert
 	Input 	:a|one line
