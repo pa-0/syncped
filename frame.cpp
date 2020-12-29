@@ -145,7 +145,8 @@ frame::frame(app* app)
 
   statustext(wex::lexers::get()->theme(), "PaneTheme");
 
-  if (m_editors->GetPageCount() > 0 && 
+  if (
+    m_editors->GetPageCount() > 0 &&
     !m_app->data().flags().test(wex::data::stc::WIN_EX))
   {
     m_editors->GetPage(m_editors->GetPageCount() - 1)->SetFocus();

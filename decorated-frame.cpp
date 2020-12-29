@@ -323,7 +323,10 @@ decorated_frame::decorated_frame(app* app)
               {
                 if (!allow_close(m_editors->GetId(), stc))
                   return;
+                sync(false);
+                stc->sync(false);
                 m_editors->delete_page(m_editors->key_by_page(stc));
+                sync(true);
               };
             })
             .ui([=](wxUpdateUIEvent& event) {
