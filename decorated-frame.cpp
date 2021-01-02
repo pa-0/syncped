@@ -2,7 +2,7 @@
 // Name:      decorated-frame.cpp
 // Purpose:   Implementation of decorated_frame class
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020 Anton van Wezenbeek
+// Copyright: (c) 2021 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <wex/wex.h>
@@ -194,7 +194,7 @@ decorated_frame::decorated_frame(app* app)
       {{},
        {ID_EDIT_MACRO,
         wxGetStockLabel(wxID_EDIT),
-        wex::data::menu().action([=](wxCommandEvent&) {
+        wex::data::menu().action([=, this](wxCommandEvent&) {
           open_file(wex::ex::get_macros().get_filename());
         })}});
   }
@@ -226,7 +226,7 @@ decorated_frame::decorated_frame(app* app)
     menuOptions->append(
       {{NewControlId(),
         wex::ellipsed(_("Set &VCS")),
-        wex::data::menu().action([=](wxCommandEvent&) {
+        wex::data::menu().action([=, this](wxCommandEvent&) {
           if (wex::vcs().config_dialog() == wxID_OK)
           {
             wex::vcs vcs;
@@ -263,7 +263,7 @@ decorated_frame::decorated_frame(app* app)
     {{new wex::menu(
         {{wxID_NEW,
           wex::ellipsed(wxGetStockLabel(wxID_NEW, wxSTOCK_NOFLAGS), "\tCtrl+N"),
-          wex::data::menu().action([=](wxCommandEvent& event) {
+          wex::data::menu().action([=, this](wxCommandEvent& event) {
             // In hex mode we cannot edit the file.
             if (wex::config("is_hexmode").get(false))
               return;
@@ -311,14 +311,14 @@ decorated_frame::decorated_frame(app* app)
 
          {NewControlId(),
           file_history(),
-          wex::data::menu().ui([=](wxUpdateUIEvent& event) {
+          wex::data::menu().ui([=, this](wxUpdateUIEvent& event) {
             event.Enable(!file_history().get_history_file().empty());
           })},
 
          {wxID_CLOSE,
           wxGetStockLabel(wxID_CLOSE, wxSTOCK_NOFLAGS) + "\tCtrl+W",
           wex::data::menu()
-            .action([=](wxCommandEvent& event) {
+            .action([=, this](wxCommandEvent& event) {
               if (auto* stc = get_stc(); stc != nullptr)
               {
                 if (!allow_close(m_editors->GetId(), stc))
@@ -329,7 +329,7 @@ decorated_frame::decorated_frame(app* app)
                 sync(true);
               };
             })
-            .ui([=](wxUpdateUIEvent& event) {
+            .ui([=, this](wxUpdateUIEvent& event) {
               event.Enable(
                 m_editors->IsShown() && m_editors->GetPageCount() > 0);
             })},
@@ -338,7 +338,9 @@ decorated_frame::decorated_frame(app* app)
 
          {wxID_SAVE},
 
-         {wxID_SAVEAS, "", wex::data::menu().ui([=](wxUpdateUIEvent& event) {
+         {wxID_SAVEAS,
+          "",
+          wex::data::menu().ui([=, this](wxUpdateUIEvent& event) {
             event.Enable(m_editors->IsShown() && m_editors->GetPageCount() > 0);
           })},
 
@@ -375,7 +377,7 @@ decorated_frame::decorated_frame(app* app)
          {},
          {wex::ID_EDIT_CONTROL_CHAR,
           wex::ellipsed(_("&Control Char"), "Ctrl+K"),
-          wex::data::menu().action([=](wxCommandEvent& event) {
+          wex::data::menu().action([=, this](wxCommandEvent& event) {
             if (get_stc() != nullptr)
             {
               wxPostEvent(get_stc(), event);
@@ -392,14 +394,14 @@ decorated_frame::decorated_frame(app* app)
           _("&Files"),
           wex::menu_item::CHECK,
           wex::data::menu()
-            .action([=](wxCommandEvent& event) {
+            .action([=, this](wxCommandEvent& event) {
               pane_toggle("FILES");
               if (!pane_is_shown("FILES") && pane_is_shown("PROJECTS"))
               {
                 pane_maximize("PROJECTS");
               };
             })
-            .ui([=](wxUpdateUIEvent& event) {
+            .ui([=, this](wxUpdateUIEvent& event) {
               event.Check(pane_is_shown("FILES"));
             })},
 
@@ -407,10 +409,10 @@ decorated_frame::decorated_frame(app* app)
           _("&Projects"),
           wex::menu_item::CHECK,
           wex::data::menu()
-            .action([=](wxCommandEvent& event) {
+            .action([=, this](wxCommandEvent& event) {
               pane_toggle("PROJECTS");
             })
-            .ui([=](wxUpdateUIEvent& event) {
+            .ui([=, this](wxUpdateUIEvent& event) {
               event.Check(pane_is_shown("PROJECTS"));
             })},
 
@@ -418,10 +420,10 @@ decorated_frame::decorated_frame(app* app)
           _("&Explorer"),
           wex::menu_item::CHECK,
           wex::data::menu()
-            .action([=](wxCommandEvent& event) {
+            .action([=, this](wxCommandEvent& event) {
               pane_toggle("DIRCTRL");
             })
-            .ui([=](wxUpdateUIEvent& event) {
+            .ui([=, this](wxUpdateUIEvent& event) {
               event.Check(pane_is_shown("DIRCTRL"));
             })},
 
@@ -429,7 +431,7 @@ decorated_frame::decorated_frame(app* app)
           _("&History"),
           wex::menu_item::CHECK,
           wex::data::menu()
-            .action([=](wxCommandEvent& event) {
+            .action([=, this](wxCommandEvent& event) {
               if (m_history == nullptr)
               {
                 add_pane_history();
@@ -439,7 +441,7 @@ decorated_frame::decorated_frame(app* app)
                 pane_toggle("HISTORY");
               };
             })
-            .ui([=](wxUpdateUIEvent& event) {
+            .ui([=, this](wxUpdateUIEvent& event) {
               event.Check(m_history != nullptr && pane_is_shown("HISTORY"));
             })},
 
@@ -447,10 +449,10 @@ decorated_frame::decorated_frame(app* app)
           _("&Output"),
           wex::menu_item::CHECK,
           wex::data::menu()
-            .action([=](wxCommandEvent& event) {
+            .action([=, this](wxCommandEvent& event) {
               pane_toggle("OUTPUT");
             })
-            .ui([=](wxUpdateUIEvent& event) {
+            .ui([=, this](wxUpdateUIEvent& event) {
               event.Check(pane_is_shown("OUTPUT"));
             })},
 
@@ -458,7 +460,7 @@ decorated_frame::decorated_frame(app* app)
 
          {NewControlId(),
           _("&Ascii Table"),
-          wex::data::menu().action([=](wxCommandEvent& event) {
+          wex::data::menu().action([=, this](wxCommandEvent& event) {
             build_ascii_table(this);
           })}}),
       _("&View")},
@@ -466,7 +468,7 @@ decorated_frame::decorated_frame(app* app)
      {new wex::menu(
         {{NewControlId(),
           wex::ellipsed(_("&Select")),
-          wex::data::menu().action([=](wxCommandEvent& event) {
+          wex::data::menu().action([=, this](wxCommandEvent& event) {
             if (wex::process::config_dialog() == wxID_OK)
             {
               pane_show("PROCESS");
@@ -478,12 +480,14 @@ decorated_frame::decorated_frame(app* app)
 
          {wxID_EXECUTE,
           "",
-          wex::data::menu().action([=](wxCommandEvent& event) {
+          wex::data::menu().action([=, this](wxCommandEvent& event) {
             pane_show("PROCESS");
             m_process->execute();
           })},
 
-         {wxID_STOP, "", wex::data::menu().action([=](wxCommandEvent& event) {
+         {wxID_STOP,
+          "",
+          wex::data::menu().action([=, this](wxCommandEvent& event) {
             m_process->stop();
             pane_show("PROCESS", false);
           })}}),
@@ -492,34 +496,35 @@ decorated_frame::decorated_frame(app* app)
      {new wex::menu(
         {{NewControlId(),
           wxGetStockLabel(wxID_NEW),
-          wex::data::menu().art(wxART_NEW).action([=](wxCommandEvent& event) {
-            const std::string text =
-              wxString::Format("%s%d", _("project"), m_project_id++)
-                .ToStdString();
-            const wex::path fn(
-              (!get_project_history().get_history_file().empty() ?
-                 get_project_history().get_history_file().get_path() :
-                 wex::config::dir()),
-              text + ".prj");
-            wxWindow* page = new wex::report::file(
-              fn.string(),
-              wex::data::window().parent(m_projects));
-            ((wex::report::file*)page)->file_new(fn.string());
-            // This file does yet exist, so do not give it a bitmap.
-            m_projects->add_page(wex::data::notebook()
-                                   .page(page)
-                                   .key(fn.string())
-                                   .caption(text)
-                                   .select());
-            set_recent_project(fn.string());
-            pane_show("PROJECTS");
-          })},
+          wex::data::menu().art(wxART_NEW).action(
+            [=, this](wxCommandEvent& event) {
+              const std::string text =
+                wxString::Format("%s%d", _("project"), m_project_id++)
+                  .ToStdString();
+              const wex::path fn(
+                (!get_project_history().get_history_file().empty() ?
+                   get_project_history().get_history_file().get_path() :
+                   wex::config::dir()),
+                text + ".prj");
+              wxWindow* page = new wex::report::file(
+                fn.string(),
+                wex::data::window().parent(m_projects));
+              ((wex::report::file*)page)->file_new(fn.string());
+              // This file does yet exist, so do not give it a bitmap.
+              m_projects->add_page(wex::data::notebook()
+                                     .page(page)
+                                     .key(fn.string())
+                                     .caption(text)
+                                     .select());
+              set_recent_project(fn.string());
+              pane_show("PROJECTS");
+            })},
 
          {NewControlId(),
           wxGetStockLabel(wxID_OPEN),
           wex::data::menu()
             .art(wxART_FILE_OPEN)
-            .action([=](wxCommandEvent& event) {
+            .action([=, this](wxCommandEvent& event) {
               wxFileDialog dlg(
                 this,
                 _("Select Projects"),
@@ -553,7 +558,7 @@ decorated_frame::decorated_frame(app* app)
          {NewControlId(),
           _("&Open as Text"),
           wex::data::menu()
-            .action([=](wxCommandEvent& event) {
+            .action([=, this](wxCommandEvent& event) {
               if (auto* project = get_project(); project != nullptr)
               {
                 if (
@@ -564,7 +569,7 @@ decorated_frame::decorated_frame(app* app)
                 }
               };
             })
-            .ui([=](wxUpdateUIEvent& event) {
+            .ui([=, this](wxUpdateUIEvent& event) {
               event.Enable(
                 get_project() != nullptr &&
                 !get_project()->get_filename().empty());
@@ -574,7 +579,7 @@ decorated_frame::decorated_frame(app* app)
 
          {NewControlId(),
           get_project_history(),
-          wex::data::menu().ui([=](wxUpdateUIEvent& event) {
+          wex::data::menu().ui([=, this](wxUpdateUIEvent& event) {
             event.Enable(!get_project_history().get_history_file().empty());
           })},
 
@@ -582,13 +587,13 @@ decorated_frame::decorated_frame(app* app)
           wxGetStockLabel(wxID_CLOSE),
           wex::data::menu()
             .art(wxART_CLOSE)
-            .action([=](wxCommandEvent& event) {
+            .action([=, this](wxCommandEvent& event) {
               if (auto* project = get_project(); project != nullptr)
               {
                 m_projects->delete_page(project->get_filename().string());
               };
             })
-            .ui([=](wxUpdateUIEvent& event) {
+            .ui([=, this](wxUpdateUIEvent& event) {
               event.Enable(
                 get_project() != nullptr && get_project()->IsShown());
             })},
@@ -601,7 +606,7 @@ decorated_frame::decorated_frame(app* app)
           wxGetStockLabel(wxID_SAVEAS),
           wex::data::menu()
             .art(wxART_FILE_SAVE_AS)
-            .action([=](wxCommandEvent& event) {
+            .action([=, this](wxCommandEvent& event) {
               if (auto* project = get_project(); project != nullptr)
               {
                 wex::file_dialog dlg(
@@ -621,7 +626,7 @@ decorated_frame::decorated_frame(app* app)
                 }
               };
             })
-            .ui([=](wxUpdateUIEvent& event) {
+            .ui([=, this](wxUpdateUIEvent& event) {
               event.Enable(
                 get_project() != nullptr && get_project()->IsShown());
             })},
@@ -632,11 +637,11 @@ decorated_frame::decorated_frame(app* app)
           _("&Auto Sort"),
           wex::menu_item::CHECK,
           wex::data::menu()
-            .action([=](wxCommandEvent& event) {
+            .action([=, this](wxCommandEvent& event) {
               wex::config("list.SortSync")
                 .set(!wex::config("list.SortSync").get(true));
             })
-            .ui([=](wxUpdateUIEvent& event) {
+            .ui([=, this](wxUpdateUIEvent& event) {
               event.Check(wex::config("list.SortSync").get(true));
             })}}),
       _("&Project")},
@@ -646,7 +651,9 @@ decorated_frame::decorated_frame(app* app)
      {menuOptions, _("&Options")},
 
      {new wex::menu(
-        {{wxID_ABOUT, "", wex::data::menu().action([=](wxCommandEvent& event) {
+        {{wxID_ABOUT,
+          "",
+          wex::data::menu().action([=, this](wxCommandEvent& event) {
             wxAboutDialogInfo info;
             info.SetIcon(GetIcon());
             info.SetVersion(m_app->version());
@@ -667,7 +674,9 @@ decorated_frame::decorated_frame(app* app)
             wxAboutBox(info, this);
           })},
 
-         {wxID_HELP, "", wex::data::menu().action([=](wxCommandEvent& event) {
+         {wxID_HELP,
+          "",
+          wex::data::menu().action([=, this](wxCommandEvent& event) {
             wxLaunchDefaultBrowser(
               "http://antonvw.github.io/syncped/v" +
               wex::before(m_app->version(), '.', false) + "/syncped.htm");

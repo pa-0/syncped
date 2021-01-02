@@ -1,7 +1,7 @@
 # Name:      test-syncped.robot
 # Purpose:   Testcase file for testing syncped
 # Author:    Anton van Wezenbeek
-# Copyright: (c) 2020 Anton van Wezenbeek
+# Copyright: (c) 2021 Anton van Wezenbeek
 
 *** Settings ***
 
@@ -18,7 +18,8 @@ Library	Process
 ${quit}	1
 
 # Normally syncped runs in quiet mode, only errors are logged,
-# override this variable to run in verbose mode
+# override this variable using '-v severity-level:1' to run in verbose mode
+# (only shown in the log file).
 ${severity-level}	4
 	
 ${file-config}	test.json

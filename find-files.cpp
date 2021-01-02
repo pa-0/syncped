@@ -2,7 +2,7 @@
 // Name:      find-files.cpp
 // Purpose:   Implementation of class find_files
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020 Anton van Wezenbeek
+// Copyright: (c) 2021 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <wex/wex.h>
@@ -27,7 +27,7 @@ find_files::find_files()
   assert(c != nullptr && l != nullptr);
 
   c->SetFocus();
-  c->Bind(wxEVT_TEXT_ENTER, [=](wxCommandEvent& event) {
+  c->Bind(wxEVT_TEXT_ENTER, [=, this](wxCommandEvent& event) {
     reload(true);
 
     c->SetInsertionPointEnd();

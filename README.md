@@ -6,7 +6,7 @@ syncped offers a full featured source code text editor.
 
 - [cmake](http://www.cmake.org/)
 - [wex lib](https://github.com/antonvw/wex/)
-- a `c++17` standard supporting compiler
+- a `c++20` standard supporting compiler
 
 ## Building
 
