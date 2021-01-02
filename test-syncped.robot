@@ -177,7 +177,7 @@ tc-ex-process
 tc-ex-set
 	Input	:set all *
 	Syncped
-	Output Contains	2
+	Output Contains	ts=
 
 tc-ex-set-bool
 	Input	:set nosws *
@@ -188,7 +188,7 @@ tc-ex-set-bool
 tc-ex-set-info
 	Input	:set ts ? *
 	Syncped
-	Output Contains	2
+	Output Contains	ts=
 	
 tc-ex-substitute
 	Input	:a|line has text
