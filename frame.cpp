@@ -993,7 +993,7 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
       wex::data::stc(editor, data).inject();
     }
 
-    if (!m_app->data().flags().test(wex::data::stc::WIN_EX))
+    if (editor->is_visual())
     {
       editor->SetFocus();
     }
