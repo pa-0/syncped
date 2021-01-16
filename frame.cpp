@@ -30,7 +30,6 @@ EVT_MENU_RANGE(ID_SPLIT, ID_SPLIT_VERTICALLY, frame::on_command)
 EVT_UPDATE_UI(wex::ID_ALL_CLOSE, frame::on_update_ui)
 EVT_UPDATE_UI(wex::ID_ALL_SAVE, frame::on_update_ui)
 EVT_UPDATE_UI(wxID_EXECUTE, frame::on_update_ui)
-EVT_UPDATE_UI(wxID_FIND, frame::on_update_ui)
 EVT_UPDATE_UI(wxID_JUMP_TO, frame::on_update_ui)
 EVT_UPDATE_UI(wxID_PRINT, frame::on_update_ui)
 EVT_UPDATE_UI(wxID_PREVIEW, frame::on_update_ui)
@@ -46,6 +45,7 @@ EVT_UPDATE_UI(ID_EDIT_MACRO_PLAYBACK, frame::on_update_ui)
 EVT_UPDATE_UI(ID_EDIT_MACRO_START_RECORD, frame::on_update_ui)
 EVT_UPDATE_UI(ID_EDIT_MACRO_STOP_RECORD, frame::on_update_ui)
 EVT_UPDATE_UI(wex::report::ID_PROJECT_SAVE, frame::on_update_ui)
+EVT_UPDATE_UI_RANGE(wxID_CUT, wxID_SELECTALL, frame::on_update_ui)
 EVT_UPDATE_UI_RANGE(
   wex::ID_EDIT_FIND_NEXT,
   wex::ID_EDIT_FIND_PREVIOUS,
@@ -709,6 +709,12 @@ void frame::on_update_ui(wxUpdateUIEvent& event)
           case wxID_FIND:
           case wxID_JUMP_TO:
           case wxID_REPLACE:
+          case wxID_CUT:
+          case wxID_COPY:
+          case wxID_PASTE:
+          case wxID_CLEAR:
+          case wxID_DUPLICATE:
+          case wxID_SELECTALL:
           case wex::ID_EDIT_FIND_NEXT:
           case wex::ID_EDIT_FIND_PREVIOUS:
             event.Enable(editor->GetLength() > 0);
