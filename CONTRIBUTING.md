@@ -2,7 +2,7 @@
 
 - fork the repository on GitLab
 
-- create a feature branch from the develop branch to base your work
+- create a feature branch from the master branch to base your work
 
 ## Adding functionality
 
@@ -34,4 +34,13 @@
 
   - To add translation files add -DENABLE_GETTEXT=ON to cmake.
 
-- Do a pull request from the feature branch to the develop branch
+  - Do a pull request from the feature branch to the master branch
+
+## ctags osx
+- see external/ctags/docs/osx.rst:
+
+```bash
+brew tap universal-ctags/universal-ctags
+brew install --HEAD universal-ctags
+brew reinstall universal-ctags
+```
