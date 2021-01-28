@@ -2,7 +2,7 @@
 // Name:      app.cpp
 // Purpose:   Implementation of class app
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020 Anton van Wezenbeek
+// Copyright: (c) 2021 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <wex/wex.h>
@@ -23,7 +23,7 @@ void app::MacOpenFiles(const wxArrayString& fileNames)
 bool app::OnInit()
 {
   SetAppName("syncped");
-  m_version = "21.04.0"; // for now same a wex
+  m_version = "21.10.0"; // for now same a wex
 
   bool               list_lexers = false;
   wex::data::cmdline data(argc, argv);

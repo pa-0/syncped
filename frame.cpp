@@ -6,6 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <thread>
+#include <boost/algorithm/string.hpp>
 #include <wex/wex.h>
 #include <wx/imaglist.h>
 #include <wx/stockitem.h>
@@ -380,7 +381,7 @@ bool frame::exec_ex_command(wex::ex_command& command)
   {
     if (m_editors->GetPageCount() > 0)
     {
-      if (wex::trim(command.command()) == ":n")
+      if (boost::algorithm::trim_copy(command.command()) == ":n")
       {
         if (m_editors->GetSelection() == m_editors->GetPageCount() - 1)
           return false;
@@ -388,7 +389,7 @@ bool frame::exec_ex_command(wex::ex_command& command)
         m_editors->AdvanceSelection();
         handled = true;
       }
-      else if (wex::trim(command.command()) == ":prev")
+      else if (boost::algorithm::trim_copy(command.command()) == ":prev")
       {
         if (m_editors->GetSelection() == 0)
           return false;
