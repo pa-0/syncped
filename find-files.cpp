@@ -34,7 +34,7 @@ find_files::find_files()
     l->clear();
 
     if (const auto& v(wex::get_all_files(
-          m_root,
+          m_root.string(),
           wex::data::dir()
             .file_spec("*" + c->GetValue() + "*")
             .max_matches(wex::config("find.Max").get(50))

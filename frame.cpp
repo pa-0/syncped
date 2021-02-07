@@ -5,8 +5,8 @@
 // Copyright: (c) 2021 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <thread>
 #include <boost/algorithm/string.hpp>
+#include <thread>
 #include <wex/wex.h>
 #include <wx/imaglist.h>
 #include <wx/stockitem.h>
@@ -46,7 +46,7 @@ EVT_UPDATE_UI(ID_EDIT_MACRO_PLAYBACK, frame::on_update_ui)
 EVT_UPDATE_UI(ID_EDIT_MACRO_START_RECORD, frame::on_update_ui)
 EVT_UPDATE_UI(ID_EDIT_MACRO_STOP_RECORD, frame::on_update_ui)
 EVT_UPDATE_UI(wex::report::ID_PROJECT_SAVE, frame::on_update_ui)
-// Some wxID's are shared between stc and listview, so 
+// Some wxID's are shared between stc and listview, so
 // enable / disable is more complex, not yet done
 // for the range wxID_CUT wxID_SELECTALL
 EVT_UPDATE_UI_RANGE(
