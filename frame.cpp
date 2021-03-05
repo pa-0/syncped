@@ -678,7 +678,7 @@ void frame::on_update_ui(wxUpdateUIEvent& event)
   {
     case wxID_EXECUTE:
       event.Enable(
-        !is_closing() && !m_process->get_exec().empty() &&
+        !is_closing() && !m_process->get_exe().empty() &&
         !m_process->is_running());
       break;
 

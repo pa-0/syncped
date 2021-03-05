@@ -17,4 +17,4 @@ cmake .. && make
 ```
 
 For Visual Studio 2019 you should possibly add
-`-DCMAKE_INSTALL_PREFIX=c:\program files x86\wex"`
+`-DCMAKE_INSTALL_PREFIX=c:\program files (x86)\wex`
