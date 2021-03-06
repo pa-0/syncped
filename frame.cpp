@@ -419,7 +419,7 @@ wex::process* frame::get_process(const std::string& command)
   if (!m_app->get_is_debug())
     return nullptr;
 
-  m_process->execute(command, wex::process::EXEC_NO_WAIT);
+  m_process->async(command);
 
   return m_process;
 }
