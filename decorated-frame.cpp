@@ -472,7 +472,7 @@ decorated_frame::decorated_frame(app* app)
             if (wex::process::config_dialog() == wxID_OK)
             {
               pane_show("PROCESS");
-              m_process->async();
+              m_process->async_system();
             };
           })},
 
@@ -482,7 +482,7 @@ decorated_frame::decorated_frame(app* app)
           "",
           wex::data::menu().action([=, this](wxCommandEvent& event) {
             pane_show("PROCESS");
-            m_process->async();
+            m_process->async_system();
           })},
 
          {wxID_STOP,
