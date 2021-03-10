@@ -1,6 +1,4 @@
 # roadmap
-- for 21.04 publish mac osx version as well
-  - update README.md on sourceforge
 
 # backlog
 - understand gitlab ci

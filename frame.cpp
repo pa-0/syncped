@@ -419,6 +419,8 @@ wex::process* frame::get_process(const std::string& command)
   if (!m_app->get_is_debug())
     return nullptr;
 
+  delete m_process;
+  m_process = new wex::process;
   m_process->async_system(command);
 
   return m_process;
@@ -635,10 +637,7 @@ void frame::on_command_item_dialog(
       {
         m_editors->for_each<wex::stc>(wex::ID_ALL_CONFIG_GET);
 
-        if (m_process->get_shell() != nullptr)
-        {
-          m_process->get_shell()->config_get();
-        }
+        wex::process::get_shell()->config_get();
 
         m_statusbar->pane_show(
           "PaneMacro",

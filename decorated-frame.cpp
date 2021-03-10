@@ -99,7 +99,7 @@ decorated_frame::decorated_frame(app* app)
         .Name("OUTPUT")
         .Row(0)
         .Caption(_("Output"))},
-     {m_process->get_shell(),
+     {wex::process::get_shell(),
       wxAuiPaneInfo().Bottom().Hide().Name("PROCESS").MinSize(250, 100).Caption(
         _("Process"))},
      {m_projects,
@@ -472,6 +472,8 @@ decorated_frame::decorated_frame(app* app)
             if (wex::process::config_dialog() == wxID_OK)
             {
               pane_show("PROCESS");
+              delete m_process;
+              m_process = new wex::process;
               m_process->async_system();
             };
           })},
@@ -482,6 +484,8 @@ decorated_frame::decorated_frame(app* app)
           "",
           wex::data::menu().action([=, this](wxCommandEvent& event) {
             pane_show("PROCESS");
+            delete m_process;
+            m_process = new wex::process;
             m_process->async_system();
           })},
 
