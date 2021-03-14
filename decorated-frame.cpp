@@ -24,9 +24,10 @@ const long pane_flag = wxAUI_NB_DEFAULT_STYLE | wxAUI_NB_CLOSE_ON_ALL_TABS |
                        wxAUI_NB_CLOSE_BUTTON | wxAUI_NB_WINDOWLIST_BUTTON |
                        wxAUI_NB_SCROLL_BUTTONS;
 
-void build_ascii_table(wex::frame* frame)
+void build_ascii_table(wex::factory::frame* frame)
 {
-  auto* stc = frame->open_file(wex::path("Ascii table"), std::string());
+  auto* stc = dynamic_cast<wex::stc*>(
+    frame->open_file(wex::path("Ascii table"), wex::data::stc()));
 
   // Do not show an edge, eol whitespace for ascii table.
   stc->SetEdgeMode(wxSTC_EDGE_NONE);
@@ -59,12 +60,12 @@ void build_ascii_table(wex::frame* frame)
 }
 
 decorated_frame::decorated_frame(app* app)
-  : wex::report::frame(
+  : wex::del::frame(
       25, // maxFiles
       4,  // maxProjects
       wex::data::window().name("mainFrame").style(wxDEFAULT_FRAME_STYLE))
   , m_app(app)
-  , m_dirctrl(new wex::report::dirctrl(this))
+  , m_dirctrl(new wex::del::dirctrl(this))
   , m_editors(
       new editors(wex::data::window().id(ID_NOTEBOOK_EDITORS).style(pane_flag)))
   , m_lists(new wex::notebook(
@@ -195,7 +196,9 @@ decorated_frame::decorated_frame(app* app)
        {ID_EDIT_MACRO,
         wxGetStockLabel(wxID_EDIT),
         wex::data::menu().action([=, this](wxCommandEvent&) {
-          open_file(wex::ex::get_macros().get_filename());
+          wex::factory::frame::open_file(
+            wex::ex::get_macros().get_filename(),
+            wex::data::stc());
         })}});
   }
 
@@ -510,10 +513,10 @@ decorated_frame::decorated_frame(app* app)
                    get_project_history().get_history_file().get_path() :
                    wex::config::dir()),
                 text + ".prj");
-              wxWindow* page = new wex::report::file(
+              wxWindow* page = new wex::del::file(
                 fn.string(),
                 wex::data::window().parent(m_projects));
-              ((wex::report::file*)page)->file_new(fn.string());
+              ((wex::del::file*)page)->file_new(fn.string());
               // This file does yet exist, so do not give it a bitmap.
               m_projects->add_page(wex::data::notebook()
                                      .page(page)
@@ -569,7 +572,9 @@ decorated_frame::decorated_frame(app* app)
                   wex::file_dialog(project).show_modal_if_changed() !=
                   wxID_CANCEL)
                 {
-                  open_file(project->get_filename());
+                  wex::factory::frame::open_file(
+                    project->get_filename(),
+                    wex::data::stc());
                 }
               };
             })
@@ -602,7 +607,7 @@ decorated_frame::decorated_frame(app* app)
                 get_project() != nullptr && get_project()->IsShown());
             })},
 
-         {wex::report::ID_PROJECT_SAVE,
+         {wex::del::ID_PROJECT_SAVE,
           wxGetStockLabel(wxID_SAVE),
           wex::data::menu().art(wxART_FILE_SAVE)},
 
@@ -690,7 +695,7 @@ decorated_frame::decorated_frame(app* app)
 
 void decorated_frame::add_pane_history()
 {
-  m_history = new wex::report::listview(
+  m_history = new wex::del::listview(
     wex::data::listview().type(wex::data::listview::HISTORY));
 
   pane_add(
@@ -725,7 +730,7 @@ bool decorated_frame::allow_close(wxWindowID id, wxWindow* page)
 
     case ID_NOTEBOOK_PROJECTS:
       if (
-        wex::file_dialog((wex::report::file*)page).show_modal_if_changed() ==
+        wex::file_dialog((wex::del::file*)page).show_modal_if_changed() ==
         wxID_CANCEL)
       {
         return false;
@@ -733,12 +738,12 @@ bool decorated_frame::allow_close(wxWindowID id, wxWindow* page)
       break;
   }
 
-  return wex::report::frame::allow_close(id, page);
+  return wex::del::frame::allow_close(id, page);
 }
 
 void decorated_frame::on_notebook(wxWindowID id, wxWindow* page)
 {
-  wex::report::frame::on_notebook(id, page);
+  wex::del::frame::on_notebook(id, page);
 
   switch (id)
   {
@@ -750,8 +755,8 @@ void decorated_frame::on_notebook(wxWindowID id, wxWindow* page)
       break;
 
     case ID_NOTEBOOK_PROJECTS:
-      wex::log::status() << ((wex::report::file*)page)->get_filename();
-      update_statusbar((wex::report::file*)page);
+      wex::log::status() << ((wex::del::file*)page)->get_filename();
+      update_statusbar((wex::del::file*)page);
       break;
 
     default:

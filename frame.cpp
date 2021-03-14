@@ -45,7 +45,7 @@ EVT_UPDATE_UI(ID_EDIT_MACRO_MENU, frame::on_update_ui)
 EVT_UPDATE_UI(ID_EDIT_MACRO_PLAYBACK, frame::on_update_ui)
 EVT_UPDATE_UI(ID_EDIT_MACRO_START_RECORD, frame::on_update_ui)
 EVT_UPDATE_UI(ID_EDIT_MACRO_STOP_RECORD, frame::on_update_ui)
-EVT_UPDATE_UI(wex::report::ID_PROJECT_SAVE, frame::on_update_ui)
+EVT_UPDATE_UI(wex::del::ID_PROJECT_SAVE, frame::on_update_ui)
 // Some wxID's are shared between stc and listview, so
 // enable / disable is more complex, not yet done
 // for the range wxID_CUT wxID_SELECTALL
@@ -231,7 +231,7 @@ frame::frame(app* app)
       if (
         m_process->is_running() ||
         !m_editors->for_each<wex::stc>(wex::ID_ALL_CLOSE) ||
-        !m_projects->for_each<wex::report::file>(wex::ID_ALL_CLOSE))
+        !m_projects->for_each<wex::del::file>(wex::ID_ALL_CLOSE))
       {
         event.Veto();
         if (m_process->is_running())
@@ -340,7 +340,7 @@ frame::frame(app* app)
   }
 }
 
-wex::report::listview*
+wex::del::listview*
 frame::activate(wex::data::listview::type_t type, const wex::lexer* lexer)
 {
   if (type == wex::data::listview::FILE)
@@ -354,11 +354,11 @@ frame::activate(wex::data::listview::type_t type, const wex::lexer* lexer)
     const std::string name =
       wex::data::listview().type(type).type_description() +
       (lexer != nullptr ? " " + lexer->display_lexer() : std::string());
-    auto* list = (wex::report::listview*)m_lists->page_by_key(name);
+    auto* list = (wex::del::listview*)m_lists->page_by_key(name);
 
     if (list == nullptr && type != wex::data::listview::FILE)
     {
-      list = new wex::report::listview(
+      list = new wex::del::listview(
         wex::data::listview(wex::data::window().parent(m_lists))
           .type(type)
           .lexer(lexer));
@@ -426,7 +426,7 @@ wex::process* frame::get_process(const std::string& command)
   return m_process;
 }
 
-wex::report::file* frame::get_project()
+wex::del::file* frame::get_project()
 {
   if (!m_projects->IsShown() || m_projects->GetPageCount() == 0)
   {
@@ -434,7 +434,7 @@ wex::report::file* frame::get_project()
   }
   else
   {
-    return (wex::report::file*)m_projects->GetPage(m_projects->GetSelection());
+    return (wex::del::file*)m_projects->GetPage(m_projects->GetSelection());
   }
 }
 
@@ -445,7 +445,7 @@ bool frame::is_open(const wex::path& filename)
 
 void frame::on_command(wxCommandEvent& event)
 {
-  switch (auto* editor = get_stc(); event.GetId())
+  switch (auto* editor = dynamic_cast<wex::stc*>(get_stc()); event.GetId())
   {
     // edit commands
     // Do not change the wxID* in wxID_LOWEST and wdID_HIGHEST,
@@ -697,14 +697,14 @@ void frame::on_update_ui(wxUpdateUIEvent& event)
       event.Enable(m_editors->GetPageCount() > 2);
       break;
 
-    case wex::report::ID_PROJECT_SAVE:
+    case wex::del::ID_PROJECT_SAVE:
       event.Enable(
         get_project() != nullptr && get_project()->is_contents_changed());
       break;
 
     default:
     {
-      if (auto* editor = get_stc(); editor != nullptr)
+      if (auto* editor = dynamic_cast<wex::stc*>(get_stc()); editor != nullptr)
       {
         switch (event.Enable(true); event.GetId())
         {
@@ -775,7 +775,7 @@ void frame::on_update_ui(wxUpdateUIEvent& event)
             assert(0);
         }
       }
-      else if (auto* list = (wex::report::file*)get_listview();
+      else if (auto* list = (wex::del::file*)get_listview();
                list != nullptr && list->IsShown())
       {
         event.Enable(false);
@@ -900,7 +900,7 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
 
     if (page == nullptr)
     {
-      auto* project = new wex::report::file(
+      auto* project = new wex::del::file(
         filename.string(),
         wex::data::window().parent(m_projects));
 
@@ -1167,8 +1167,8 @@ void frame::sync_close_all(wxWindowID id)
 
 void frame::update_listviews()
 {
-  m_lists->for_each<wex::report::file>(wex::ID_ALL_CONFIG_GET);
-  m_projects->for_each<wex::report::file>(wex::ID_ALL_CONFIG_GET);
+  m_lists->for_each<wex::del::file>(wex::ID_ALL_CONFIG_GET);
+  m_projects->for_each<wex::del::file>(wex::ID_ALL_CONFIG_GET);
 
   if (m_history != nullptr)
   {

@@ -2,21 +2,21 @@
 // Name:      decorated-frame.h
 // Purpose:   Declaration of decorated_frame class
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020 Anton van Wezenbeek
+// Copyright: (c) 2021 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
+#include <wex/del/dirctrl.h>
+#include <wex/del/frame.h>
+#include <wex/del/listview.h>
 #include <wex/notebook.h>
 #include <wex/process.h>
-#include <wex/report/dirctrl.h>
-#include <wex/report/frame.h>
-#include <wex/report/listview.h>
 
 class app;
 class editors;
 
-class decorated_frame : public wex::report::frame
+class decorated_frame : public wex::del::frame
 {
 public:
   decorated_frame(app* app);
@@ -24,9 +24,9 @@ public:
 protected:
   void add_pane_history();
 
-  editors*               m_editors{nullptr};
-  wex::report::dirctrl*  m_dirctrl{nullptr};
-  wex::report::listview* m_history{nullptr};
+  editors*            m_editors{nullptr};
+  wex::del::dirctrl*  m_dirctrl{nullptr};
+  wex::del::listview* m_history{nullptr};
 
   app* m_app;
 

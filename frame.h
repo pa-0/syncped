@@ -8,7 +8,7 @@
 #pragma once
 
 #include "decorated-frame.h"
-#include <wex/report/listview.h>
+#include <wex/del/listview.h>
 
 class app;
 class find_files;
@@ -21,7 +21,7 @@ public:
 private:
   // All overrides.
 
-  wex::report::listview* activate(
+  wex::del::listview* activate(
     wex::data::listview::type_t type,
     const wex::lexer*           lexer = nullptr) override;
 
@@ -29,7 +29,7 @@ private:
 
   wex::process* get_process(const std::string& command) override;
 
-  wex::report::file* get_project() override;
+  wex::del::file* get_project() override;
 
   bool is_open(const wex::path& filename) override;
 

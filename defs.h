@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include <wex/report/defs.h>
+#include <wex/del/defs.h>
 
 // Command id's used.
 enum
 {
-  ID_EDIT_MACRO = wex::report::ID_HIGHEST + 1,
+  ID_EDIT_MACRO = wex::del::ID_HIGHEST + 1,
   ID_EDIT_MACRO_MENU,
   ID_EDIT_MACRO_PLAYBACK,
   ID_EDIT_MACRO_START_RECORD,
