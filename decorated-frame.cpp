@@ -66,8 +66,9 @@ decorated_frame::decorated_frame(app* app)
       wex::data::window().name("mainFrame").style(wxDEFAULT_FRAME_STYLE))
   , m_app(app)
   , m_dirctrl(new wex::del::dirctrl(this))
-  , m_editors(
-      new editors(wex::data::window().id(ID_NOTEBOOK_EDITORS).style(pane_flag)))
+  , m_editors(new editors(
+      this,
+      wex::data::window().id(ID_NOTEBOOK_EDITORS).style(pane_flag)))
   , m_lists(new wex::notebook(
       wex::data::window().id(ID_NOTEBOOK_LISTS).style(pane_flag)))
   , m_process(new wex::process())

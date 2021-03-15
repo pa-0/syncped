@@ -1,4 +1,5 @@
 # roadmap
+- add debug test
 
 # backlog
 - understand gitlab ci

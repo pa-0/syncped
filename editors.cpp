@@ -5,11 +5,12 @@
 // Copyright: (c) 2021 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "editors.h"
-#include "defs.h"
 #include <wex/wex.h>
 
-editors::editors(const wex::data::window& data)
+#include "editors.h"
+#include "defs.h"
+
+editors::editors(wex::del::frame* frame, const wex::data::window& data)
   : wex::notebook(data)
 {
   Bind(
@@ -65,7 +66,7 @@ editors::editors(const wex::data::window& data)
         stc->get_file().get_filename().file_exists() &&
         wex::vcs::dir_exists(stc->get_file().get_filename()))
     {
-      menu.append({{}, {stc->get_file().get_filename()}});
+      menu.append({{}, {stc->get_file().get_filename(), frame}});
     }
 
     PopupMenu(&menu);
