@@ -8,7 +8,6 @@
 #pragma once
 
 #include "decorated-frame.h"
-#include <wex/del/listview.h>
 
 class app;
 class find_files;
