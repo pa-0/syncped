@@ -581,7 +581,6 @@ void frame::on_command(wxCommandEvent& event)
           wex::data::stc().window(wex::data::window().parent(m_editors)));
         editor->sync(false);
         stc->sync(false);
-        stc->get_ex().copy(&editor->get_ex());
         stc->get_vi().copy(&editor->get_vi());
 
         wex::data::notebook nd;
