@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <wex/item-dialog.h>
+#include <wex/wex.h>
 
 class frame;
 

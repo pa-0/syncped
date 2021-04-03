@@ -7,11 +7,7 @@
 
 #pragma once
 
-#include <wex/del/dirctrl.h>
-#include <wex/del/frame.h>
-#include <wex/del/listview.h>
-#include <wex/notebook.h>
-#include <wex/process.h>
+#include <wex/wex.h>
 
 class app;
 class editors;

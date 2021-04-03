@@ -7,7 +7,6 @@
 
 #include <boost/algorithm/string.hpp>
 #include <thread>
-#include <wex/wex.h>
 #include <wx/imaglist.h>
 #include <wx/stockitem.h>
 
@@ -1017,7 +1016,7 @@ bool frame::output(const std::string& text) const
   return true;
 }
 
-void frame::print_ex(wex::ex* ex, const std::string& text)
+bool frame::print_ex(wex::factory::stc* stc, const std::string& text)
 {
   auto* page = (wex::stc*)m_editors->set_selection("Print");
 
@@ -1037,7 +1036,9 @@ void frame::print_ex(wex::ex* ex, const std::string& text)
     page->SetSavePoint();
   }
 
-  page->get_lexer().set(ex->get_stc()->get_lexer());
+  page->get_lexer().set(stc->get_lexer());
+
+  return true;
 }
 
 void frame::provide_output(const std::string& text) const

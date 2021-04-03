@@ -7,9 +7,7 @@
 
 #pragma once
 
-#include <wex/app.h>
-#include <wex/path.h>
-#include <wex/stc-data.h>
+#include <wex/wex.h>
 
 class app : public wex::app
 {
@@ -28,8 +26,8 @@ public:
   auto& get_tag() const { return m_tag; };
 
   void reset();
-  
-  const auto& version() const {return m_version;};
+
+  const auto& version() const { return m_version; };
 
 private:
 #ifdef __WXOSX__

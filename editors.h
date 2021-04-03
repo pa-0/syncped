@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <wex/notebook.h>
+#include <wex/wex.h>
 
 class editors : public wex::notebook
 {

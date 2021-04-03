@@ -51,7 +51,7 @@ private:
 
   bool output(const std::string& text) const override;
 
-  void print_ex(wex::ex* ex, const std::string& text);
+  bool print_ex(wex::factory::stc* stc, const std::string& text) override;
 
   void record(const std::string& command) override;
 
