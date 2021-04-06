@@ -829,7 +829,7 @@ wex::stc* frame::open_file(
 
     wex::vcs_command_stc(
       vcs.get_command(),
-      filename.lexer(),
+      wex::path_lexer(filename).lexer(),
       (wex::stc*)nd.page());
 
     if (const int index = m_editors->page_index_by_key(filename.string());
@@ -862,7 +862,7 @@ wex::stc* frame::open_file(
       wex::data::stc(data).window(
         wex::data::window().parent(m_editors).name(filename.string())));
 
-    page->get_lexer().set(filename.lexer());
+    page->get_lexer().set(wex::path_lexer(filename).lexer());
 
     m_editors->add_page(wex::data::notebook()
                           .page(page)
