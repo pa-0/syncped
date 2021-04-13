@@ -572,9 +572,7 @@ decorated_frame::decorated_frame(app* app)
                   wex::file_dialog(project).show_modal_if_changed() !=
                   wxID_CANCEL)
                 {
-                  wex::factory::frame::open_file(
-                    project->get_filename(),
-                    wex::data::stc());
+                  wex::open_files(this, {project->get_filename()});
                 }
               };
             })
