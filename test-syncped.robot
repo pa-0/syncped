@@ -1,10 +1,9 @@
 # Name:      test-syncped.robot
 # Purpose:   Testcase file for testing syncped
 # Author:    Anton van Wezenbeek
-# Copyright: (c) 2021 Anton van Wezenbeek
+# Copyright: (c) 2020-2021 Anton van Wezenbeek
 
 *** Settings ***
-
 Test Setup	Test Setup
 Suite Setup	Suite Setup
 Suite Teardown	Suite Teardown
@@ -12,73 +11,79 @@ Library	OperatingSystem
 Library	Process
 
 *** Variables ***
-
 # Normally syncped exits after each test, override this
-# variable on the commandline using '-v quit:0' to remain active
-${quit}	1
+# variable on the commandline using '-v QUIT:0' to remain active
+${QUIT}	1
 
 # Normally syncped runs in quiet mode, only errors are logged,
-# override this variable using '-v severity-level:1' to run in verbose mode
+# override this variable using '-v SEVERITY-LEVEL:1' to run in verbose mode
 # (only shown in the log file).
-${severity-level}	4
-	
-${file-config}	test.json
-${file-contents}	contents.txt
-${file-input}	input.txt
-${file-output}	output.txt
-${file-startup}	empty.txt
+${SEVERITY-LEVEL}	4
 
-${syncped}
+${FILE-CONFIG}	test.json
+${FILE-CONTENTS}	contents.txt
+${FILE-INPUT}	input.txt
+${FILE-OUTPUT}	output.txt
+${FILE-STARTUP}	empty.txt
+
+${SYNCPED}
 
 *** Keywords ***
-
 Suite Setup
 	Find Syncped
-	Variable Should Exist	${syncped}
+	Variable Should Exist	${SYNCPED}
 
 Test Setup
-	Create File	${file-input}
-	Create File	${file-output}
+	Create File	${FILE-INPUT}
+	Create File	${FILE-OUTPUT}
 
 Input
 	[Arguments]	@{text}
 	FOR	${cmd}	IN	@{text}
-		Append To File	${file-input}	${cmd}
-		Append To File	${file-input}	\n
+		Append To File	${FILE-INPUT}	${cmd}
+		Append To File	${FILE-INPUT}	\n
 	END
-	
-	Append To File	${file-input}	:w ${file-contents}\n
-	Run Keyword If	${quit} == 1	Append To File	${file-input}	:q!
+
+	Append To File	${FILE-INPUT}	:w ${FILE-CONTENTS}\n
+	IF	${QUIT} == 1
+		Append To File	${FILE-INPUT}
+	ELSE
+		Input	:q!
+	END
 
 Input Many
 	[Arguments]	${line}	${count}
-	[Documentation]	As Input, but extra argument for repeat count, 
+	[Documentation]	As Input, but extra argument for repeat count,
 	...	and does not end write output and with quit
 	FOR    ${index}	IN RANGE	${count}
 		Append To File	${file-input}	${line}
 		Append To File	${file-input}	\n
 	END
-	
+
 Input No Write
 	[Arguments]	@{text}
 	FOR	${cmd}	IN	@{text}
 		Append To File	${file-input}	${cmd}
 		Append To File	${file-input}	\n
 	END
-	
-	Run Keyword If	${quit} == 1	Append To File	${file-input}	:q!
+
+	IF	${quit} == 1
+		Append To File	${file-input}
+	ELSE
+		Input	:q!
+	END
 
 Find Syncped
-	${result}=	Run Process	
+	${result}=	Run Process
 	...	find	./
 	...	-name	syncped
 	...	-type	f
-	Set Suite Variable	${syncped}	${result.stdout}
+	Set Suite Variable	${SYNCPED}	${result.stdout}
 
 Syncped
 	[Documentation]	Runs syncped with suitable arguments
 	Run Process
-	...	${syncped}
+	...	${SYNCPED}
 	...	-j 	${file-config}
 	...	-s 	${file-input}
 	...	-X 	${file-output}
@@ -88,44 +93,43 @@ Syncped
 Syncped Ex Mode
 	[Documentation]	Runs syncped with suitable arguments in ex mode
 	Run Process
-	...	${syncped}
+	...	${SYNCPED}
 	...	--ex
 	...	-j 	${file-config}
 	...	-s 	${file-input}
 	...	-X 	${file-output}
 	...	-V	${severity-level}
 	...	${file-startup}
-	
+
 Contents Contains
 	[Arguments]	${text}
-	${result} =	Get File	${file-contents}
+	${result}=	Get File	${file-contents}
 	Should Contain	${result}	${text}
 
 Contents Does Not Contain
 	[Arguments]	${text}
-	${result} =	Get File	${file-contents}
+	${result}=	Get File	${FILE-CONTENTS}
 	Should Not Contain	${result}	${text}
 
 Output Contains
 	[Arguments]	${text}
-	${result} =	Get File	${file-output}
+	${result}=	Get File	${FILE-OUTPUT}
 	Should Contain	${result}	${text}
 
 Output Does Not Contain
 	[Arguments]	${text}
-	${result} =	Get File	${file-output}
+	${result}=	Get File	${file-output}
 	Should Not Contain	${result}	${text}
-	
+
 Suite Teardown
 	Remove File	${file-contents}
 	Remove File	${file-input}
 	Remove File	${file-output}
 
 *** Test Cases ***
-
-tc-help
+TC-HELP
 	[Documentation]	Check whether we can startup correctly
-	${result}=	Run Process	${syncped}	-h
+	${result}=	Run Process	${SYNCPED}	-h
 	# required by OpenGroup
 	Should Contain	${result.stdout}		-c
 	Should Contain	${result.stdout}		-R
@@ -138,59 +142,59 @@ tc-help
 	Should Contain	${result.stdout}		-X
 	Should Contain	${result.stdout}		version
 
-tc-empty
+TC-EMPTY
 	Input	:1000
 	...	:.=
 	Syncped
 	Output Contains	1
-	
+
 # ex tests
 
-tc-ex-edit
+TC-EX-EDIT
 	Input	:e other.txt
 	...	:f
 	Syncped
 	# the :e command is handled by event, so other.txt not yet active
-	Output Contains	${file-startup}
+	Output Contains	${FILE-STARTUP}
 
-tc-ex-info
+TC-EX-INFO
 	Input	:a|line has text
 	...	:f
 	Syncped
-	Output Contains	${file-startup}
+	Output Contains	${FILE-STARTUP}
 	Output Contains	1
 	Output Contains	%
 	Output Contains	level
 
-tc-ex-mdi
+TC-EX-MDI
 	Input	:a|line has text
 	...	:e other.txt
 	...	:e more.txt
 	# We cannot test mdi, because of events.
 	Syncped
 
-tc-ex-process
+TC-EX-PROCESS
 	Input	:!pwd
 	Syncped
 	Output Contains	build
 
-tc-ex-set
+TC-EX-SET
 	Input	:set all *
 	Syncped
 	Output Contains	ts=
 
-tc-ex-set-bool
+TC-EX-SET-BOOL
 	Input	:set nosws *
 	...	:set sws ? *
 	Syncped
 	Output Contains	nosws
-	
-tc-ex-set-info
+
+TC-EX-SET-INFO
 	Input	:set ts ? *
 	Syncped
 	Output Contains	ts=
-	
-tc-ex-substitute
+
+TC-EX-SUBSTITUTE
 	Input	:a|line has text
 	...	:a|line has a tiger
 	...	:a|line has simon and simon and garfunkel
@@ -199,7 +203,7 @@ tc-ex-substitute
 	Output Contains	1
 	Output Contains	simon
 
-tc-ex-substitute-global
+TC-EX-SUBSTITUTE-GLOBAL
 	Input	:a|line has text
 	...	:a|line has a tiger
 	...	:a|line has simon and simon and garfunkel
@@ -211,13 +215,13 @@ tc-ex-substitute-global
 
 # vi tests
 
-tc-vi-calculate
+TC-VI-CALCULATE
 	Input	:a|x
 	...	=9+9+9+9
 	Syncped
 	Output Contains	36
-	
-tc-vi-delete
+
+TC-VI-DELETE
 	Input Many	:a|line	100
 	Input	:1
 	...	59dd
@@ -225,7 +229,7 @@ tc-vi-delete
 	Output Contains	59
 	Output Contains	fewer
 
-tc-vi-delete-D
+TC-VI-DELETE-D
 	Input	:a|line has some text
 	...	:1
 	...	ww
@@ -233,7 +237,7 @@ tc-vi-delete-D
 	Syncped
 	Contents Does Not Contain	some text
 
-tc-vi-find-not
+TC-VI-FIND-NOT
 	Input	:a|x
 	...	:a|y
 	...	:a|z
@@ -242,7 +246,7 @@ tc-vi-find-not
 	Syncped
 	Output Contains	4
 
-tc-vi-find-ok
+TC-VI-FIND-OK
 	Input	:a|x
 	...	:a|y
 	...	:a|z
@@ -251,7 +255,7 @@ tc-vi-find-ok
 	Syncped
 	Output Contains	3
 
-tc-vi-info
+TC-VI-INFO
 	Input	:a|line has text
 	...	
 	Syncped
@@ -259,7 +263,7 @@ tc-vi-info
 	Output Contains	%
 	Output Contains	level
 
-tc-vi-macro
+TC-VI-MACRO
 	Input	@Template-test@
 	Syncped
 	Contents Does Not Contain	@Created@
@@ -269,7 +273,7 @@ tc-vi-macro
 	Contents Does Not Contain	@Process@
 	Contents Does Not Contain	@Year@
 
-tc-vi-marker
+TC-VI-MARKER
 	Input Many	:a|line has text	50
 	Input 	:10
 	...	mx
@@ -279,7 +283,7 @@ tc-vi-marker
 	Syncped
 	Output Contains	10
 
-tc-vi-mode-block
+TC-VI-MODE-BLOCK
 	Input Many	:a|line has text	50
 	Input 	:1
 	...	w
@@ -289,18 +293,18 @@ tc-vi-mode-block
 	...	d
 	Syncped
 	Output Does Not Contain	10
-	
-tc-vi-mode-ex
+
+TC-VI-MODE-EX
 	Input No Write	:vi
 	Syncped Ex Mode
 
-tc-vi-mode-insert
+TC-VI-MODE-INSERT
 	Input 	:a|one line
 	...	ijjjjjjj
 	Syncped
 	Contents Contains	jjjjjjj
 
-tc-vi-mode-visual
+TC-VI-MODE-VISUAL
 	Input Many	:a|line has text	50
 	Input 	:1
 	...	v
@@ -316,7 +320,7 @@ tc-vi-mode-visual
 	Output Contains	fewer
 	Output Does Not Contain	9
 
-tc-vi-navigate
+TC-VI-NAVIGATE
 	Input Many	:a|line has text	50
 	Input 	:1
 	...	jjjjjjj
@@ -324,7 +328,7 @@ tc-vi-navigate
 	Syncped
 	Output Contains	8
 
-tc-vi-yank
+TC-VI-YANK
 	Input Many	:a|line	100
 	Input	:1
 	...	59yy
