@@ -162,7 +162,8 @@ frame::frame(app* app)
       "",
       _("Explorer"),
       pane_is_shown("DIRCTRL"),
-      [&](wxCheckBox* cb) {
+      [&](wxCheckBox* cb)
+      {
         pane_toggle("DIRCTRL");
         cb->SetValue(pane_is_shown("DIRCTRL"));
         get_toolbar()->Realize();
@@ -180,7 +181,8 @@ frame::frame(app* app)
       "",
       _("History"),
       wex::config("show.History").get(false),
-      [&](wxCheckBox* cb) {
+      [&](wxCheckBox* cb)
+      {
         if (m_history == nullptr)
         {
           add_pane_history();
@@ -200,76 +202,85 @@ frame::frame(app* app)
 
   Bind(
     wxEVT_AUINOTEBOOK_BG_DCLICK,
-    [=, this](wxAuiNotebookEvent& event) {
+    [=, this](wxAuiNotebookEvent& event)
+    {
       file_history().popup_menu(this, wex::ID_CLEAR_FILES);
     },
     ID_NOTEBOOK_EDITORS);
 
   Bind(
     wxEVT_AUINOTEBOOK_BG_DCLICK,
-    [=, this](wxAuiNotebookEvent& event) {
+    [=, this](wxAuiNotebookEvent& event)
+    {
       get_project_history().popup_menu(this, wex::ID_CLEAR_PROJECTS);
     },
     ID_NOTEBOOK_PROJECTS);
 
-  Bind(wxEVT_CLOSE_WINDOW, [=, this](wxCloseEvent& event) {
-    int count = 0;
-    for (size_t i = 0; i < m_editors->GetPageCount(); i++)
+  Bind(
+    wxEVT_CLOSE_WINDOW,
+    [=, this](wxCloseEvent& event)
     {
-      if (auto* stc = dynamic_cast<wex::stc*>(m_editors->GetPage(i));
-          stc->get_filename().file_exists())
+      int count = 0;
+      for (size_t i = 0; i < m_editors->GetPageCount(); i++)
       {
-        count++;
-      }
-    }
-
-    const bool project_open(m_projects->IsShown());
-
-    if (event.CanVeto())
-    {
-      if (
-        m_process->is_running() ||
-        !m_editors->for_each<wex::stc>(wex::ID_ALL_CLOSE) ||
-        !m_projects->for_each<wex::del::file>(wex::ID_ALL_CLOSE))
-      {
-        event.Veto();
-        if (m_process->is_running())
+        if (auto* stc = dynamic_cast<wex::stc*>(m_editors->GetPage(i));
+            stc->get_filename().file_exists())
         {
-          wex::log::status(_("Process is running"));
+          count++;
         }
-        return;
       }
-    }
 
-    wex::ex::get_macros().save_document();
+      const bool project_open(m_projects->IsShown());
 
-    wex::config("recent.OpenFiles").set(count);
-    wex::config("show.History")
-      .set(m_history != nullptr && m_history->IsShown());
-    wex::config("show.Projects").set(project_open);
+      if (event.CanVeto())
+      {
+        if (
+          m_process->is_running() ||
+          !m_editors->for_each<wex::stc>(wex::ID_ALL_CLOSE) ||
+          !m_projects->for_each<wex::del::file>(wex::ID_ALL_CLOSE))
+        {
+          event.Veto();
+          if (m_process->is_running())
+          {
+            wex::log::status(_("Process is running"));
+          }
+          return;
+        }
+      }
 
-    if (m_app->data().control().command().empty())
-    {
-      delete m_process;
-    }
-    event.Skip();
-  });
+      wex::ex::get_macros().save_document();
+
+      wex::config("recent.OpenFiles").set(count);
+      wex::config("show.History")
+        .set(m_history != nullptr && m_history->IsShown());
+      wex::config("show.Projects").set(project_open);
+
+      if (m_app->data().control().command().empty())
+      {
+        delete m_process;
+      }
+      event.Skip();
+    });
 
   wex::bind(this).command(
-    {{[=, this](wxCommandEvent& event) {
+    {{[=, this](wxCommandEvent& event)
+      {
         get_debug()->execute(event.GetId() - wex::ID_EDIT_DEBUG_FIRST);
       },
       wex::ID_EDIT_DEBUG_FIRST},
-     {[=, this](wxCommandEvent& event) {
+     {[=, this](wxCommandEvent& event)
+      {
         m_editors->for_each<wex::stc>(event.GetId());
       },
       wex::ID_ALL_CLOSE},
-     {[=, this](wxCommandEvent& event) {
+     {[=, this](wxCommandEvent& event)
+      {
         m_find_files->set_root(this);
         m_find_files->Show();
       },
       ID_FIND_FILE},
-     {[=, this](wxCommandEvent& event) {
+     {[=, this](wxCommandEvent& event)
+      {
         wex::vcs(
           std::vector<wex::path>(),
           event.GetId() - wex::ID_VCS_LOWEST - 1)
@@ -277,27 +288,31 @@ frame::frame(app* app)
       },
       wex::ID_VCS_LOWEST}});
 
-  Bind(wxEVT_SIZE, [=, this](wxSizeEvent& event) {
-    event.Skip();
-    if (IsMaximized())
+  Bind(
+    wxEVT_SIZE,
+    [=, this](wxSizeEvent& event)
     {
-      m_maximized = true;
-    }
-    else if (m_maximized)
-    {
-      if (m_editors->is_split())
+      event.Skip();
+      if (IsMaximized())
       {
-        m_editors->rearrange(wxLEFT);
-        m_editors->reset();
+        m_maximized = true;
       }
+      else if (m_maximized)
+      {
+        if (m_editors->is_split())
+        {
+          m_editors->rearrange(wxLEFT);
+          m_editors->reset();
+        }
 
-      m_maximized = false;
-    };
-  });
+        m_maximized = false;
+      };
+    });
 
   Bind(
     wxEVT_UPDATE_UI,
-    [=, this](wxUpdateUIEvent& event) {
+    [=, this](wxUpdateUIEvent& event)
+    {
       event.Enable(m_app->get_is_debug());
     },
     wex::ID_EDIT_DEBUG_FIRST + 2,
@@ -307,33 +322,35 @@ frame::frame(app* app)
 
   if (m_app->get_is_stdin())
   {
-    std::thread v([&] {
-      std::string text;
-
-      while (!std::cin.fail())
+    std::thread v(
+      [&]
       {
-        const int c(std::cin.get());
+        std::string text;
 
-        if (text.empty() || text.back() != WXK_ESCAPE)
+        while (!std::cin.fail())
         {
-          text.push_back(c);
-        }
+          const int c(std::cin.get());
 
-        if (c == '\n')
-        {
-          if (auto* stc(((wex::stc*)m_editors->GetCurrentPage()));
-              stc != nullptr)
+          if (text.empty() || text.back() != WXK_ESCAPE)
           {
-            wxCommandEvent event(wxEVT_MENU, wex::id::stc::vi_command);
-            event.SetString(
-              text == "\n" && !stc->get_vi().mode().is_insert() ? "j" : text);
-            wxPostEvent(stc, event);
+            text.push_back(c);
           }
 
-          text.clear();
+          if (c == '\n')
+          {
+            if (auto* stc(((wex::stc*)m_editors->GetCurrentPage()));
+                stc != nullptr)
+            {
+              wxCommandEvent event(wxEVT_MENU, wex::id::stc::vi_command);
+              event.SetString(
+                text == "\n" && !stc->get_vi().mode().is_insert() ? "j" : text);
+              wxPostEvent(stc, event);
+            }
+
+            text.clear();
+          }
         }
-      }
-    });
+      });
 
     v.detach();
   }
@@ -1097,10 +1114,12 @@ void frame::statusbar_clicked(const std::string& pane)
       update_listviews();
 
       wex::lexers::get()->apply_default_style(
-        [=, this](const std::string& back) {
+        [=, this](const std::string& back)
+        {
           m_dirctrl->GetTreeCtrl()->SetBackgroundColour(wxColour(back));
         },
-        [=, this](const std::string& fore) {
+        [=, this](const std::string& fore)
+        {
           m_dirctrl->GetTreeCtrl()->SetForegroundColour(wxColour(fore));
         });
 
