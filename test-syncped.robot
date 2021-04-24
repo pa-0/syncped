@@ -1,9 +1,5 @@
-# Name:      test-syncped.robot
-# Purpose:   Testcase file for testing syncped
-# Author:    Anton van Wezenbeek
-# Copyright: (c) 2020-2021 Anton van Wezenbeek
-
 *** Settings ***
+Documentation	Testcases for syncped
 Test Setup	Test Setup
 Suite Setup	Suite Setup
 Suite Teardown	Suite Teardown
@@ -27,104 +23,6 @@ ${FILE-OUTPUT}	output.txt
 ${FILE-STARTUP}	empty.txt
 
 ${SYNCPED}
-
-*** Keywords ***
-Suite Setup
-	Find Syncped
-	Variable Should Exist	${SYNCPED}
-
-Test Setup
-	Create File	${FILE-INPUT}
-	Create File	${FILE-OUTPUT}
-
-Input
-	[Arguments]	@{text}
-	FOR	${cmd}	IN	@{text}
-		Append To File	${FILE-INPUT}	${cmd}
-		Append To File	${FILE-INPUT}	\n
-	END
-
-	Append To File	${FILE-INPUT}	:w ${FILE-CONTENTS}\n
-	IF	${QUIT} == 1
-		Append To File	${FILE-INPUT}
-	ELSE
-		Input	:q!
-	END
-
-Input Many
-	[Arguments]	${line}	${count}
-	[Documentation]	As Input, but extra argument for repeat count,
-	...	and does not end write output and with quit
-	FOR    ${index}	IN RANGE	${count}
-		Append To File	${file-input}	${line}
-		Append To File	${file-input}	\n
-	END
-
-Input No Write
-	[Arguments]	@{text}
-	FOR	${cmd}	IN	@{text}
-		Append To File	${file-input}	${cmd}
-		Append To File	${file-input}	\n
-	END
-
-	IF	${quit} == 1
-		Append To File	${file-input}
-	ELSE
-		Input	:q!
-	END
-
-Find Syncped
-	${result}=	Run Process
-	...	find	./
-	...	-name	syncped
-	...	-type	f
-	Set Suite Variable	${SYNCPED}	${result.stdout}
-
-Syncped
-	[Documentation]	Runs syncped with suitable arguments
-	Run Process
-	...	${SYNCPED}
-	...	-j 	${file-config}
-	...	-s 	${file-input}
-	...	-X 	${file-output}
-	...	-V	${severity-level}
-	...	${file-startup}
-
-Syncped Ex Mode
-	[Documentation]	Runs syncped with suitable arguments in ex mode
-	Run Process
-	...	${SYNCPED}
-	...	--ex
-	...	-j 	${file-config}
-	...	-s 	${file-input}
-	...	-X 	${file-output}
-	...	-V	${severity-level}
-	...	${file-startup}
-
-Contents Contains
-	[Arguments]	${text}
-	${result}=	Get File	${file-contents}
-	Should Contain	${result}	${text}
-
-Contents Does Not Contain
-	[Arguments]	${text}
-	${result}=	Get File	${FILE-CONTENTS}
-	Should Not Contain	${result}	${text}
-
-Output Contains
-	[Arguments]	${text}
-	${result}=	Get File	${FILE-OUTPUT}
-	Should Contain	${result}	${text}
-
-Output Does Not Contain
-	[Arguments]	${text}
-	${result}=	Get File	${file-output}
-	Should Not Contain	${result}	${text}
-
-Suite Teardown
-	Remove File	${file-contents}
-	Remove File	${file-input}
-	Remove File	${file-output}
 
 *** Test Cases ***
 TC-HELP
@@ -275,7 +173,7 @@ TC-VI-MACRO
 
 TC-VI-MARKER
 	Input Many	:a|line has text	50
-	Input 	:10
+	Input	:10
 	...	mx
 	...	:1
 	...	'x
@@ -285,7 +183,7 @@ TC-VI-MARKER
 
 TC-VI-MODE-BLOCK
 	Input Many	:a|line has text	50
-	Input 	:1
+	Input	:1
 	...	w
 	...	K
 	...	10j
@@ -299,18 +197,18 @@ TC-VI-MODE-EX
 	Syncped Ex Mode
 
 TC-VI-MODE-INSERT
-	Input 	:a|one line
+	Input	:a|one line
 	...	ijjjjjjj
 	Syncped
 	Contents Contains	jjjjjjj
 
 TC-VI-MODE-VISUAL
 	Input Many	:a|line has text	50
-	Input 	:1
+	Input	:1
 	...	v
 	...	10j
 	...	d
-	... 	:1
+	...	:1
 	...	v
 	...	35j
 	...	d
@@ -322,7 +220,7 @@ TC-VI-MODE-VISUAL
 
 TC-VI-NAVIGATE
 	Input Many	:a|line has text	50
-	Input 	:1
+	Input	:1
 	...	jjjjjjj
 	...	:.=
 	Syncped
@@ -335,3 +233,100 @@ TC-VI-YANK
 	Syncped
 	Output Contains	59
 	Output Contains	yanked
+
+*** Keywords ***
+Suite Setup
+	Find Syncped
+	Variable Should Exist	${SYNCPED}
+
+Suite Teardown
+	Remove File	${file-contents}
+	Remove File	${file-input}
+	Remove File	${file-output}
+
+Test Setup
+	Create File	${FILE-INPUT}
+	Create File	${FILE-OUTPUT}
+
+Input
+	[Arguments]	@{text}
+	FOR	${cmd}	IN	@{text}
+		Append To File	${FILE-INPUT}	${cmd}
+		Append To File	${FILE-INPUT}	\n
+	END
+
+	Append To File	${FILE-INPUT}	:w ${FILE-CONTENTS}\n
+	IF	${QUIT} == 1
+		Append To File	${FILE-INPUT}	:q!
+	END
+
+Input Many
+	[Arguments]	${line}	${count}
+	[Documentation]	As Input, but extra argument for repeat count,
+	...	and does not end write output and with quit
+	FOR	${index}	IN RANGE	${count}
+		Append To File	${file-input}	${line}
+		Append To File	${file-input}	\n
+	END
+
+Input No Write
+	[Arguments]	@{text}
+	FOR	${cmd}	IN	@{text}
+		Append To File	${file-input}	${cmd}
+		Append To File	${file-input}	\n
+	END
+
+	IF	${quit} == 1
+		Append To File	${file-input}	:q!
+	END
+
+Find Syncped
+	${result}=	Run Process
+	...	find	./
+	...	-name	syncped
+	...	-type	f
+	Set Suite Variable	${SYNCPED}	${result.stdout}
+
+Syncped
+	[Documentation]	Runs syncped with suitable arguments
+	Run Process
+	...	${SYNCPED}
+	...	-j	${file-config}
+	...	-s	${file-input}
+	...	-X	${file-output}
+	...	-V	${severity-level}
+	...	${file-startup}
+
+Syncped Ex Mode
+	[Documentation]	Runs syncped with suitable arguments in ex mode
+	Run Process
+	...	${SYNCPED}
+	...	--ex
+	...	-j	${file-config}
+	...	-s	${file-input}
+	...	-X	${file-output}
+	...	-V	${severity-level}
+	...	${file-startup}
+
+Contents Contains
+	[Arguments]	${text}
+	${result}=	Get File	${file-contents}
+	Should Contain	${result}	${text}
+
+Contents Does Not Contain
+	[Arguments]	${text}
+	${result}=	Get File	${FILE-CONTENTS}
+	Should Not Contain	${result}	${text}
+
+Output Contains
+	[Arguments]	${text}
+	${result}=	Get File	${FILE-OUTPUT}
+	Should Contain	${result}	${text}
+
+Output Does Not Contain
+	[Arguments]	${text}
+	${result}=	Get File	${file-output}
+	Should Not Contain	${result}	${text}
+
+*** Comments ***
+Copyright: (c) 2020-2021 Anton van Wezenbeek
