@@ -29,16 +29,21 @@ TC-HELP
 	[Documentation]	Check whether we can startup correctly
 	${result}=	Run Process	${SYNCPED}	-h
 	# required by OpenGroup
-	Should Contain	${result.stdout}		-c
-	Should Contain	${result.stdout}		-R
-	Should Contain	${result.stdout}		-s
-	Should Contain	${result.stdout}		-t
+	Should Contain	${result.stdout}	-c
+	Should Contain	${result.stdout}	-R
+	Should Contain	${result.stdout}	-s
+	Should Contain	${result.stdout}	-t
 	# our own
-	Should Contain	${result.stdout}		--ex
-	Should Contain	${result.stdout}		-j
-	Should Contain	${result.stdout}		-V
-	Should Contain	${result.stdout}		-X
-	Should Contain	${result.stdout}		version
+	Should Contain	${result.stdout}	--ex
+	Should Contain	${result.stdout}	-j
+	Should Contain	${result.stdout}	-V
+	Should Contain	${result.stdout}	-X
+	Should Contain	${result.stdout}	version
+
+TC-LEXERS
+	[Documentation]	Check whether we have at least a rfw lexer
+	${result}=	Run Process	${SYNCPED}	-L
+	Should Contain	${result.stdout}	rfw
 
 TC-EMPTY
 	Input	:1000
