@@ -97,7 +97,7 @@ frame::frame(app* app)
           wex::data::stc(m_app->data())
             .window(wex::data::window().parent(m_editors)));
 
-        page->get_file().file_new("no name");
+        page->get_file().file_new(wex::path("no name"));
 
         m_editors->add_page(
           wex::data::notebook().page(page).key("no name").select());
@@ -513,7 +513,7 @@ void frame::on_command(wxCommandEvent& event)
         {
           wex::ex::get_macros().load_document();
         }
-        else if (editor->get_filename() == wex::config::file())
+        else if (editor->get_filename() == wex::path(wex::config::file()))
         {
           wex::config::read();
         }
@@ -525,7 +525,8 @@ void frame::on_command(wxCommandEvent& event)
       {
         if (!event.GetString().empty())
         {
-          if (!editor->get_file().file_save(event.GetString().ToStdString()))
+          if (!editor->get_file().file_save(
+                wex::path(event.GetString().ToStdString())))
           {
             return;
           }
@@ -542,7 +543,8 @@ void frame::on_command(wxCommandEvent& event)
             return;
           }
 
-          if (!editor->get_file().file_save(dlg.GetPath().ToStdString()))
+          if (!editor->get_file().file_save(
+                wex::path(dlg.GetPath().ToStdString())))
           {
             return;
           }
@@ -994,7 +996,7 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
 
       if (pane_is_shown("DIRCTRL"))
       {
-        m_dirctrl->expand_and_select_path(nd.key());
+        m_dirctrl->expand_and_select_path(wex::path(nd.key()));
       }
 
       // Do not show an edge for project files opened as text.
@@ -1067,7 +1069,9 @@ void frame::provide_output(const std::string& text) const
 
   if (!m_app->get_output().empty())
   {
-    wex::file(m_app->get_output(), std::ios_base::out | std::ios_base::app)
+    wex::file(
+      wex::path(m_app->get_output()),
+      std::ios_base::out | std::ios_base::app)
       .write(text + "\n");
   }
 }
@@ -1081,14 +1085,16 @@ void frame::record(const std::string& command)
 
   if (!m_app->get_scriptout().empty())
   {
-    wex::file(m_app->get_scriptout(), std::ios_base::out | std::ios_base::app)
+    wex::file(
+      wex::path(m_app->get_scriptout()),
+      std::ios_base::out | std::ios_base::app)
       .write(command + "\n");
   }
 }
 
 wex::stc* frame::restore_page(const std::string& key)
 {
-  if (!m_saved_page.empty() && is_open(m_saved_page))
+  if (!m_saved_page.empty() && is_open(wex::path(m_saved_page)))
   {
     m_editors->change_selection(m_saved_page);
     return (wex::stc*)m_editors->page_by_key(m_saved_page);

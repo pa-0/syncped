@@ -43,7 +43,7 @@ find_files::find_files()
     {
       for (const auto& e : v)
       {
-        wex::listitem(l, e).insert();
+        wex::listitem(l, wex::path(e)).insert();
       }
 
       reload(true);
