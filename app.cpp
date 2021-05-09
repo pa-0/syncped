@@ -30,22 +30,26 @@ bool app::OnInit()
       !wex::cmdline(
          {// --- boolean options ---
           {{"end,+", "start at end any file opened"},
-           [&](const std::any& s) {
+           [&](const std::any& s)
+           {
              m_data.control(wex::data::control().command("G"));
            }},
 
           {{"debug,d", "use debug mode, opens specified file as debug target"},
-           [&](bool on) {
+           [&](bool on)
+           {
              m_is_debug = on;
            }},
 
           {{"echo,e", "echo commands"},
-           [&](bool on) {
+           [&](bool on)
+           {
              m_is_echo = on;
            }},
 
           {{"ex", "ex mode"},
-           [&](bool on) {
+           [&](bool on)
+           {
              if (!on)
                return;
              m_data.flags(
@@ -54,12 +58,14 @@ bool app::OnInit()
            }},
 
           {{"stdin,E", "use stdin"},
-           [&](bool on) {
+           [&](bool on)
+           {
              m_is_stdin = on;
            }},
 
           {{"hex,H", "hex mode"},
-           [&](bool on) {
+           [&](bool on)
+           {
              if (!on)
                return;
              m_data.flags(
@@ -68,7 +74,8 @@ bool app::OnInit()
            }},
 
           {{"info,i", "show versions"},
-           [&](bool on) {
+           [&](bool on)
+           {
              if (on)
              {
                std::cout << "syncped-" << m_version << " using\n"
@@ -78,17 +85,20 @@ bool app::OnInit()
            }},
 
           {{"keep,k", "keep vi options: +, c, s"},
-           [&](bool on) {
+           [&](bool on)
+           {
              m_keep = on;
            }},
 
           {{"list-lexers,L", "show list of lexers"},
-           [&](bool on) {
+           [&](bool on)
+           {
              list_lexers = on;
            }},
 
           {{"locale,l", "show locale"},
-           [&](bool on) {
+           [&](bool on)
+           {
              if (!on)
                return;
              std::cout << "Catalog dir: " << get_catalog_dir()
@@ -114,7 +124,8 @@ bool app::OnInit()
            }},
 
           {{"no-config,n", "do not save json config on exit"},
-           [&](bool on) {
+           [&](bool on)
+           {
              if (on)
              {
                wex::config::discard();
@@ -122,24 +133,28 @@ bool app::OnInit()
            }},
 
           {{"project,p", "open specified files as projects"},
-           [&](bool on) {
+           [&](bool on)
+           {
              m_is_project = on;
            }},
 
           {{"splithor,o", "split tabs horizontally"},
-           [&](bool on) {
+           [&](bool on)
+           {
              if (on)
                m_split = wxBOTTOM;
            }},
 
           {{"splitver,O", "split tabs vertically"},
-           [&](bool on) {
+           [&](bool on)
+           {
              if (on)
                m_split = wxRIGHT;
            }},
 
           {{"readonly,R", "readonly mode"},
-           [&](bool on) {
+           [&](bool on)
+           {
              if (on)
                m_data.flags(
                  wex::data::stc::window_t().set(wex::data::stc::WIN_READ_ONLY),
@@ -147,52 +162,60 @@ bool app::OnInit()
            }},
 
           {{"echo-output,x", "echo output commands"},
-           [&](bool on) {
+           [&](bool on)
+           {
              m_is_output = on;
            }}},
 
          {// --- options with arguments ---
           {{"command,c", "vi command"},
            {wex::cmdline::STRING,
-            [&](const std::any& s) {
+            [&](const std::any& s)
+            {
               m_data.control(
                 wex::data::control().command(std::any_cast<std::string>(s)));
             }}},
 
           {{"config,j", "json config file"},
            {wex::cmdline::STRING,
-            [&](const std::any& s) {
-              wex::config::set_file(std::any_cast<std::string>(s));
+            [&](const std::any& s)
+            {
+              wex::config::set_path(wex::path(std::any_cast<std::string>(s)));
             }}},
 
           {{"tag,t", "start at tag"},
            {wex::cmdline::STRING,
-            [&](const std::any& s) {
+            [&](const std::any& s)
+            {
               m_tag = std::any_cast<std::string>(s);
             }}},
 
           {{"tagfile,u", "use tagfile"},
            {wex::cmdline::STRING,
-            [&](const std::any& s) {
+            [&](const std::any& s)
+            {
               wex::ctags::open(std::any_cast<std::string>(s));
             }}},
 
           {{"scriptin,s", "script in (:so <arg> applied on any file opened)"},
            {wex::cmdline::STRING,
-            [&](const std::any& s) {
+            [&](const std::any& s)
+            {
               m_data.control(wex::data::control().command(
                 ":so " + std::any_cast<std::string>(s)));
             }}},
 
           {{"scriptout,w", "script out append (echo to file <arg>)"},
            {wex::cmdline::STRING,
-            [&](const std::any& s) {
+            [&](const std::any& s)
+            {
               m_scriptout = std::any_cast<std::string>(s);
             }}},
 
           {{"output,X", "output (statusbar) append to file"},
            {wex::cmdline::STRING,
-            [&](const std::any& s) {
+            [&](const std::any& s)
+            {
               m_output = std::any_cast<std::string>(s);
             }}}},
 
@@ -200,7 +223,8 @@ bool app::OnInit()
            "input file[:line number][:column number]\n"
            "or project files is -p was specified\n"
            "or executable file if -d was specified"},
-          [&](const std::vector<std::string>& v) {
+          [&](const std::vector<std::string>& v)
+          {
             for (const auto& f : v)
               m_files.emplace_back(f);
           }},

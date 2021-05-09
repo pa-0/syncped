@@ -68,10 +68,10 @@ frame::frame(app* app)
 
     if (
       wex::config("show.Projects").get(false) &&
-      !get_project_history().get_history_file().empty())
+      !get_project_history().path().empty())
     {
       open_file(
-        wex::path(get_project_history().get_history_file()),
+        get_project_history().path(),
         wex::data::stc().flags(
           wex::data::stc::window_t().set(wex::data::stc::WIN_IS_PROJECT)));
       project_opened = true;
@@ -171,7 +171,7 @@ frame::frame(app* app)
         {
           if (auto* editor = get_stc(); editor != nullptr)
           {
-            m_dirctrl->expand_and_select_path(editor->get_filename());
+            m_dirctrl->expand_and_select_path(editor->path());
           }
         }
       }},
@@ -224,7 +224,7 @@ frame::frame(app* app)
       for (size_t i = 0; i < m_editors->GetPageCount(); i++)
       {
         if (auto* stc = dynamic_cast<wex::stc*>(m_editors->GetPage(i));
-            stc->get_filename().file_exists())
+            stc->path().file_exists())
         {
           count++;
         }
@@ -492,9 +492,9 @@ void frame::on_command(wxCommandEvent& event)
         if (!editor->IsModified() || !editor->get_file().file_save())
           return;
 
-        set_recent_file(editor->get_filename());
+        set_recent_file(editor->path());
 
-        if (editor->get_filename() == wex::lexers::get()->get_filename())
+        if (editor->path() == wex::lexers::get()->path())
         {
           if (wex::lexers::get()->load_document())
           {
@@ -505,15 +505,15 @@ void frame::on_command(wxCommandEvent& event)
             update_statusbar(editor, "PaneLexer");
           }
         }
-        else if (editor->get_filename() == wex::menus::get_filename())
+        else if (editor->path() == wex::menus::path())
         {
           wex::vcs::load_document();
         }
-        else if (editor->get_filename() == wex::ex::get_macros().get_filename())
+        else if (editor->path() == wex::ex::get_macros().path())
         {
           wex::ex::get_macros().load_document();
         }
-        else if (editor->get_filename() == wex::path(wex::config::file()))
+        else if (editor->path() == wex::config::path())
         {
           wex::config::read();
         }
@@ -551,20 +551,20 @@ void frame::on_command(wxCommandEvent& event)
         }
 
         const auto& bitmap =
-          (editor->get_filename().stat().is_ok() ?
+          (editor->path().stat().is_ok() ?
              wxTheFileIconsTable->GetSmallImageList()->GetBitmap(
-               wex::get_iconid(editor->get_filename())) :
+               wex::get_iconid(editor->path())) :
              wxNullBitmap);
 
         m_editors->set_page_text(
           m_editors->key_by_page(editor),
-          editor->get_filename().string(),
-          editor->get_filename().fullname(),
+          editor->path().string(),
+          editor->path().filename(),
           bitmap);
 
         editor->properties_message();
 
-        set_recent_file(editor->get_filename());
+        set_recent_file(editor->path());
       }
       break;
 
@@ -595,7 +595,7 @@ void frame::on_command(wxCommandEvent& event)
       else
       {
         auto* stc = new wex::stc(
-          editor->get_filename(),
+          editor->path(),
           wex::data::stc().window(wex::data::window().parent(m_editors)));
         editor->sync(false);
         stc->sync(false);
@@ -603,10 +603,10 @@ void frame::on_command(wxCommandEvent& event)
 
         wex::data::notebook nd;
 
-        if (editor->get_filename().file_exists())
+        if (editor->path().file_exists())
         {
           nd.bitmap(wxTheFileIconsTable->GetSmallImageList()->GetBitmap(
-            wex::get_iconid(editor->get_filename())));
+            wex::get_iconid(editor->path())));
         }
         else if (!editor->get_lexer().scintilla_lexer().empty())
         {
@@ -619,7 +619,7 @@ void frame::on_command(wxCommandEvent& event)
         // Place new page before page for editor.
         m_editors->insert_page(nd.index(m_editors->GetPageIndex(editor))
                                  .page(stc)
-                                 .caption(editor->get_filename().fullname())
+                                 .caption(editor->path().filename())
                                  .select());
 
         stc->SetDocPointer(editor->GetDocPointer());
@@ -627,12 +627,12 @@ void frame::on_command(wxCommandEvent& event)
         if (event.GetId() == ID_SPLIT_HORIZONTALLY)
         {
           m_editors->split(nd.key(), wxBOTTOM);
-          m_editors->set_selection(editor->get_filename().string());
+          m_editors->set_selection(editor->path().string());
         }
         else if (event.GetId() == ID_SPLIT_VERTICALLY)
         {
           m_editors->split(nd.key(), wxRIGHT);
-          m_editors->set_selection(editor->get_filename().string());
+          m_editors->set_selection(editor->path().string());
         }
       }
       break;
@@ -743,7 +743,7 @@ void frame::on_update_ui(wxUpdateUIEvent& event)
             event.Enable(
               editor->get_vi().is_active() &&
               !editor->get_vi().get_macros().mode().is_recording() &&
-              wex::ex::get_macros().get_filename().file_exists());
+              wex::ex::get_macros().path().file_exists());
             break;
 
           case ID_EDIT_MACRO_MENU:
@@ -768,8 +768,7 @@ void frame::on_update_ui(wxUpdateUIEvent& event)
             break;
 
           case wxID_SAVE:
-            event.Enable(
-              !editor->get_filename().empty() && editor->GetModify());
+            event.Enable(!editor->path().empty() && editor->GetModify());
             break;
 
           case wxID_REDO:
@@ -844,7 +843,7 @@ wex::stc* frame::open_file(
     nd.page(new wex::stc(
       vcs.get_stdout(),
       wex::data::stc(data).window(wex::data::window().parent(m_editors).name(
-        filename.fullname() + " " + unique))));
+        filename.filename() + " " + unique))));
 
     wex::vcs_command_stc(
       vcs.get_command(),
@@ -886,7 +885,7 @@ wex::stc* frame::open_file(
     m_editors->add_page(wex::data::notebook()
                           .page(page)
                           .key(filename.string())
-                          .caption(filename.fullname())
+                          .caption(filename.filename())
                           .select());
   }
   else
@@ -917,9 +916,8 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
 
     if (page == nullptr)
     {
-      auto* project = new wex::del::file(
-        filename.string(),
-        wex::data::window().parent(m_projects));
+      auto* project =
+        new wex::del::file(filename, wex::data::window().parent(m_projects));
 
       notebook->add_page(
         wex::data::notebook()
@@ -943,7 +941,7 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
       pane_show("FILES");
     }
 
-    if (filename == wex::ex::get_macros().get_filename())
+    if (filename == wex::ex::get_macros().path())
     {
       wex::ex::get_macros().save_document();
     }
@@ -984,7 +982,7 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
 
       notebook->add_page(
         nd.page(editor)
-          .caption(filename.fullname())
+          .caption(filename.filename())
           .select()
           .bitmap(wxTheFileIconsTable->GetSmallImageList()->GetBitmap(
             wex::get_iconid(filename))));

@@ -25,37 +25,40 @@ find_files::find_files()
   assert(c != nullptr && l != nullptr);
 
   c->SetFocus();
-  c->Bind(wxEVT_TEXT_ENTER, [=, this](wxCommandEvent& event) {
-    reload(true);
-
-    c->SetInsertionPointEnd();
-    l->clear();
-
-    if (const auto& v(wex::get_all_files(
-          m_root.string(),
-          wex::data::dir()
-            .file_spec("*" + c->GetValue() + "*")
-            .max_matches(wex::config("find.Max").get(50))
-            .type(wex::data::dir::type_t()
-                    .set(wex::data::dir::FILES)
-                    .set(wex::data::dir::RECURSIVE))));
-        !v.empty())
+  c->Bind(
+    wxEVT_TEXT_ENTER,
+    [=, this](wxCommandEvent& event)
     {
-      for (const auto& e : v)
-      {
-        wex::listitem(l, wex::path(e)).insert();
-      }
-
       reload(true);
-    }
-  });
+
+      c->SetInsertionPointEnd();
+      l->clear();
+
+      if (const auto& v(wex::get_all_files(
+            m_root.string(),
+            wex::data::dir()
+              .file_spec("*" + c->GetValue() + "*")
+              .max_matches(wex::config("find.Max").get(50))
+              .type(wex::data::dir::type_t()
+                      .set(wex::data::dir::FILES)
+                      .set(wex::data::dir::RECURSIVE))));
+          !v.empty())
+      {
+        for (const auto& e : v)
+        {
+          wex::listitem(l, wex::path(e)).insert();
+        }
+
+        reload(true);
+      }
+    });
 }
 
 void find_files::set_root(frame* f)
 {
   if (auto* editor = f->get_stc(); editor != nullptr)
   {
-    m_root = wex::vcs({editor->get_filename()}).toplevel();
+    m_root = wex::vcs({editor->path()}).toplevel();
 
     wex::log::trace("find files root") << m_root.string();
   }

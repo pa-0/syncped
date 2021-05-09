@@ -189,7 +189,7 @@ decorated_frame::decorated_frame(app* app)
      {},
      {ID_EDIT_MACRO_PLAYBACK, wex::ellipsed(_("Playback"))}});
 
-  if (wex::ex::get_macros().get_filename().file_exists())
+  if (wex::ex::get_macros().path().file_exists())
   {
     menuMacro->append(
       {{},
@@ -199,7 +199,7 @@ decorated_frame::decorated_frame(app* app)
           [=, this](wxCommandEvent&)
           {
             wex::factory::frame::open_file(
-              wex::ex::get_macros().get_filename(),
+              wex::ex::get_macros().path(),
               wex::data::stc());
           })}});
   }
@@ -327,7 +327,7 @@ decorated_frame::decorated_frame(app* app)
           wex::data::menu().ui(
             [=, this](wxUpdateUIEvent& event)
             {
-              event.Enable(!file_history().get_history_file().empty());
+              event.Enable(!file_history().path().empty());
             })},
 
          {wxID_CLOSE,
@@ -559,13 +559,12 @@ decorated_frame::decorated_frame(app* app)
                 wxString::Format("%s%d", _("project"), m_project_id++)
                   .ToStdString();
               const wex::path fn(
-                (!get_project_history().get_history_file().empty() ?
-                   get_project_history().get_history_file().get_path() :
+                (!get_project_history().path().empty() ?
+                   wex::path(get_project_history().path().parent_path()) :
                    wex::config::dir()),
                 text + ".prj");
-              wxWindow* page = new wex::del::file(
-                fn.string(),
-                wex::data::window().parent(m_projects));
+              wxWindow* page =
+                new wex::del::file(fn, wex::data::window().parent(m_projects));
               ((wex::del::file*)page)->file_new(fn);
               // This file does yet exist, so do not give it a bitmap.
               m_projects->add_page(wex::data::notebook()
@@ -587,9 +586,9 @@ decorated_frame::decorated_frame(app* app)
                 wxFileDialog dlg(
                   this,
                   _("Select Projects"),
-                  (!get_project_history().get_history_file().empty() ?
-                     get_project_history().get_history_file().get_path() :
-                     wex::config::dir()),
+                  (!get_project_history().path().empty() ?
+                     get_project_history().path().parent_path() :
+                     wex::config::dir().string()),
                   wxEmptyString,
                   m_project_wildcard,
 // osx asserts on GetPath with wxFD_MULTIPLE flag,
@@ -626,7 +625,7 @@ decorated_frame::decorated_frame(app* app)
                     wex::file_dialog(project).show_modal_if_changed() !=
                     wxID_CANCEL)
                   {
-                    wex::open_files(this, {project->get_filename()});
+                    wex::open_files(this, {project->path()});
                   }
                 };
               })
@@ -634,8 +633,7 @@ decorated_frame::decorated_frame(app* app)
               [=, this](wxUpdateUIEvent& event)
               {
                 event.Enable(
-                  get_project() != nullptr &&
-                  !get_project()->get_filename().empty());
+                  get_project() != nullptr && !get_project()->path().empty());
               })},
 
          {},
@@ -645,7 +643,7 @@ decorated_frame::decorated_frame(app* app)
           wex::data::menu().ui(
             [=, this](wxUpdateUIEvent& event)
             {
-              event.Enable(!get_project_history().get_history_file().empty());
+              event.Enable(!get_project_history().path().empty());
             })},
 
          {NewControlId(),
@@ -657,7 +655,7 @@ decorated_frame::decorated_frame(app* app)
               {
                 if (auto* project = get_project(); project != nullptr)
                 {
-                  m_projects->delete_page(project->get_filename().string());
+                  m_projects->delete_page(project->path().string());
                 };
               })
             .ui(
@@ -692,8 +690,8 @@ decorated_frame::decorated_frame(app* app)
                     project->file_save(wex::path(dlg.GetPath().ToStdString()));
                     m_projects->set_page_text(
                       m_projects->key_by_page(project),
-                      project->get_filename().string(),
-                      project->get_filename().name());
+                      project->path().string(),
+                      project->path().name());
                   }
                 };
               })
@@ -796,7 +794,7 @@ bool decorated_frame::allow_close(wxWindowID id, wxWindow* page)
       else if (wex::beautify b; b.is_active() && stc->get_file().is_written())
       {
         stc->get_file().close();
-        b.file(stc->get_filename());
+        b.file(stc->path());
       }
       break;
 
@@ -827,7 +825,7 @@ void decorated_frame::on_notebook(wxWindowID id, wxWindow* page)
       break;
 
     case ID_NOTEBOOK_PROJECTS:
-      wex::log::status() << ((wex::del::file*)page)->get_filename();
+      wex::log::status() << ((wex::del::file*)page)->path();
       update_statusbar((wex::del::file*)page);
       break;
 
