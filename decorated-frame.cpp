@@ -327,7 +327,7 @@ decorated_frame::decorated_frame(app* app)
           wex::data::menu().ui(
             [=, this](wxUpdateUIEvent& event)
             {
-              event.Enable(!file_history().path().empty());
+              event.Enable(!file_history()[0].empty());
             })},
 
          {wxID_CLOSE,
@@ -559,8 +559,8 @@ decorated_frame::decorated_frame(app* app)
                 wxString::Format("%s%d", _("project"), m_project_id++)
                   .ToStdString();
               const wex::path fn(
-                (!get_project_history().path().empty() ?
-                   wex::path(get_project_history().path().parent_path()) :
+                (!get_project_history()[0].empty() ?
+                   wex::path(get_project_history()[0].parent_path()) :
                    wex::config::dir()),
                 text + ".prj");
               wxWindow* page =
@@ -586,8 +586,8 @@ decorated_frame::decorated_frame(app* app)
                 wxFileDialog dlg(
                   this,
                   _("Select Projects"),
-                  (!get_project_history().path().empty() ?
-                     get_project_history().path().parent_path() :
+                  (!get_project_history()[0].empty() ?
+                     get_project_history()[0].parent_path() :
                      wex::config::dir().string()),
                   wxEmptyString,
                   m_project_wildcard,
@@ -643,7 +643,7 @@ decorated_frame::decorated_frame(app* app)
           wex::data::menu().ui(
             [=, this](wxUpdateUIEvent& event)
             {
-              event.Enable(!get_project_history().path().empty());
+              event.Enable(!get_project_history()[0].empty());
             })},
 
          {NewControlId(),

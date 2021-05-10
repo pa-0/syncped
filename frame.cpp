@@ -68,10 +68,10 @@ frame::frame(app* app)
 
     if (
       wex::config("show.Projects").get(false) &&
-      !get_project_history().path().empty())
+      !get_project_history()[0].empty())
     {
       open_file(
-        get_project_history().path(),
+        get_project_history()[0],
         wex::data::stc().flags(
           wex::data::stc::window_t().set(wex::data::stc::WIN_IS_PROJECT)));
       project_opened = true;
