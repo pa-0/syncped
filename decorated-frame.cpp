@@ -198,9 +198,7 @@ decorated_frame::decorated_frame(app* app)
         wex::data::menu().action(
           [=, this](wxCommandEvent&)
           {
-            wex::factory::frame::open_file(
-              wex::ex::get_macros().path(),
-              wex::data::stc());
+            open_file(wex::ex::get_macros().path(), wex::data::stc());
           })}});
   }
 
