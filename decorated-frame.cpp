@@ -327,7 +327,7 @@ decorated_frame::decorated_frame(app* app)
           wex::data::menu().ui(
             [=, this](wxUpdateUIEvent& event)
             {
-              event.Enable(!file_history()[0].empty());
+              event.Enable(!file_history().empty());
             })},
 
          {wxID_CLOSE,
