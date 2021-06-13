@@ -6,13 +6,14 @@ Suite Teardown	Suite Teardown
 Library	OperatingSystem
 Library	Process
 
+
 *** Variables ***
 # Normally syncped exits after each test, override this
 # variable on the commandline using '-v QUIT:0' to remain active
 ${QUIT}	1
 
 # Normally syncped runs in quiet mode, only errors are logged,
-# override this variable using '-v SEVERITY-LEVEL:1' to run in verbose mode
+# override this variable using '-v SEVERITY-LEVEL:0' to run in verbose mode
 # (only shown in the log file).
 ${SEVERITY-LEVEL}	4
 
@@ -23,6 +24,7 @@ ${FILE-OUTPUT}	output.txt
 ${FILE-STARTUP}	empty.txt
 
 ${SYNCPED}
+
 
 *** Test Cases ***
 TC-HELP
@@ -96,6 +98,11 @@ TC-EX-SET-INFO
 	Input	:set ts ? *
 	Syncped
 	Output Contains	ts=
+
+TC-EX-SET-VERBOSITY
+	Input	:set ve?
+	Syncped
+	Output Contains	ve=${SEVERITY-LEVEL}
 
 TC-EX-SUBSTITUTE
 	Input	:a|line has text
@@ -239,6 +246,7 @@ TC-VI-YANK
 	Output Contains	59
 	Output Contains	yanked
 
+
 *** Keywords ***
 Suite Setup
 	Find Syncped
@@ -332,6 +340,7 @@ Output Does Not Contain
 	[Arguments]	${text}
 	${result}=	Get File	${file-output}
 	Should Not Contain	${result}	${text}
+
 
 *** Comments ***
 Copyright: (c) 2020-2021 Anton van Wezenbeek

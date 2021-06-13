@@ -174,7 +174,7 @@ decorated_frame::decorated_frame(app* app)
 
   menuFind->append(
     {{},
-     {ID_FIND_FILE, "Find Files\tCtrl+L"},
+     {ID_FIND_FILE, _("Find Files\tCtrl+L")},
      {wex::ID_TOOL_REPORT_FIND, wex::ellipsed(_("Find &in Files"))}});
 
   if (!m_app->data().flags().test(wex::data::stc::WIN_READ_ONLY))
@@ -740,7 +740,7 @@ decorated_frame::decorated_frame(app* app)
                                "and saved in the same directory as "
                                "where the executable is.");
 #endif
-              description += "\n\nUsing:\n" +
+              description += _("\n\nUsing:\n") +
                              wex::get_version_info().external_libraries().str();
 
               info.SetDescription(description);

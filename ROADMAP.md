@@ -1,4 +1,6 @@
 # roadmap
+- process_po_files in syncped
+- fix severity level during rfw
 - find files thread
 - add debug test
 

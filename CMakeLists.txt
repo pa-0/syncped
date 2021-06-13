@@ -4,6 +4,10 @@ project(syncped)
 
 find_package(WEX REQUIRED)
 
+if (wexENABLE_GETTEXT)
+  include(FindGettext)
+endif ()
+
 include_directories(${wex_INCLUDE_DIR})
 link_directories(${wex_LIB_DIR})
 

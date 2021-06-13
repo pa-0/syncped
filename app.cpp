@@ -99,28 +99,11 @@ bool app::OnInit()
           {{"locale,l", "show locale"},
            [&](bool on)
            {
-             if (!on)
-               return;
-             std::cout << "Catalog dir: " << get_catalog_dir()
-                       << "\nName: " << get_locale().GetName().c_str()
-                       << "\nCanonical name: "
-                       << get_locale().GetCanonicalName().c_str()
-                       << "\nLanguage: " << get_locale().GetLanguage()
-                       << "\nLocale: " << get_locale().GetLocale().c_str()
-                       << "\nIsOk: " << get_locale().IsOk();
-             if (const auto* info =
-                   wxLocale::GetLanguageInfo(get_locale().GetLanguage());
-                 info == nullptr)
+             if (on)
              {
-               std::cout << "\nNo info\n";
+               show_locale();
+               exit = true;
              }
-             else
-             {
-               std::cout << "\nIs available: "
-                         << get_locale().IsAvailable(get_locale().GetLanguage())
-                         << "\n";
-             }
-             exit = true;
            }},
 
           {{"no-config,n", "do not save json config on exit"},
@@ -268,4 +251,25 @@ void app::reset()
   m_is_project = false;
   m_split      = -1;
   m_tag.clear();
+}
+
+void app::show_locale()
+{
+  std::cout << "Catalog dir: " << get_catalog_dir()
+            << "\nName: " << get_locale().GetName().c_str()
+            << "\nCanonical name: " << get_locale().GetCanonicalName().c_str()
+            << "\nLanguage: " << get_locale().GetLanguage()
+            << "\nLocale: " << get_locale().GetLocale().c_str()
+            << "\nIsOk: " << get_locale().IsOk();
+
+  if (const auto* info = wxLocale::GetLanguageInfo(get_locale().GetLanguage());
+      info == nullptr)
+  {
+    std::cout << "\nNo info\n";
+  }
+  else
+  {
+    std::cout << "\nIs available: "
+              << get_locale().IsAvailable(get_locale().GetLanguage()) << "\n";
+  }
 }
