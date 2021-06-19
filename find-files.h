@@ -15,20 +15,21 @@ class find_files : public wex::item_dialog
 {
 public:
   // Constructor.
-  find_files();
-  
+  explicit find_files(wex::frame* f);
+
   // Destructor.
- ~find_files();
+  ~find_files();
 
   // Sets root path to search for, using toplevel vcs dir of
-  // current page on specified frame.
-  void set_root(wex::frame* f);
+  // current page on frame.
+  void set_root();
 
 private:
   void run();
 
-  wex::path m_root;
+  wex::frame*    m_frame;
+  wex::listview* m_listview;
+  wex::path      m_root;
 
-  wex::listview* m_listview{nullptr};
-  wxComboBox*    m_combobox{nullptr};
+  wxComboBox* m_combobox;
 };

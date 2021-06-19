@@ -7,7 +7,7 @@
 
 #include "find-files.h"
 
-find_files::find_files()
+find_files::find_files(wex::frame* f)
   : item_dialog(
       {{_("find.File"),
         wex::item::COMBOBOX,
@@ -19,6 +19,7 @@ find_files::find_files()
       wex::data::window().title(_("Find Files")).size({400, 400}).button(0))
   , m_listview((wex::listview*)find(_("find.Matches")).window())
   , m_combobox((wxComboBox*)find(_("find.File")).window())
+  , m_frame(f)
 {
   assert(m_combobox != nullptr && m_listview != nullptr);
 
@@ -38,6 +39,8 @@ find_files::~find_files()
 
 void find_files::run()
 {
+  set_root();
+
   reload(true);
 
   m_combobox->SetInsertionPointEnd();
@@ -54,9 +57,9 @@ void find_files::run()
     m_listview).find_files();
 }
 
-void find_files::set_root(wex::frame* f)
+void find_files::set_root()
 {
-  if (auto* editor = f->get_stc(); editor != nullptr)
+  if (auto* editor = m_frame->get_stc(); editor != nullptr)
   {
     m_root = wex::vcs({editor->path()}).toplevel();
 

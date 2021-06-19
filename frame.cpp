@@ -56,7 +56,7 @@ END_EVENT_TABLE()
 
 frame::frame(app* app)
   : decorated_frame(app)
-  , m_find_files(new find_files())
+  , m_find_files(new find_files(this))
 {
   if (!m_app->get_tag().empty())
   {
@@ -275,7 +275,7 @@ frame::frame(app* app)
       wex::ID_ALL_CLOSE},
      {[=, this](wxCommandEvent& event)
       {
-        m_find_files->set_root(this);
+        m_find_files->set_root();
         m_find_files->Show();
       },
       ID_FIND_FILE},
