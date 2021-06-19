@@ -14,9 +14,12 @@ class frame;
 class find_files : public wex::item_dialog
 {
 public:
+  // Constructor.
   find_files();
 
-  void set_root(frame* f);
+  // Sets root path to search for, using toplevel vcs dir of
+  // current page on specified frame.
+  void set_root(wex::frame* f);
 
 private:
   wex::path m_root;

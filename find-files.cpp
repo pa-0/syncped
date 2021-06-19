@@ -10,35 +10,35 @@
 
 find_files::find_files()
   : item_dialog(
-      {{"find.File",
+      {{_("find.File"),
         wex::item::COMBOBOX,
         std::any(),
         wex::data::item().window(
           wex::data::window().style(wxTE_PROCESS_ENTER))},
-       {"find.Max", wex::item::TEXTCTRL_INT, std::string("50")},
-       {"find.Matches", wex::data::listview().type(wex::data::listview::FILE)}},
-      wex::data::window().title("Find Files").size({400, 400}).button(0))
+       {_("find.Max"), wex::item::TEXTCTRL_INT, std::string("50")},
+       {_("find.Matches"), wex::data::listview().type(wex::data::listview::FILE)}},
+      wex::data::window().title(_("Find Files")).size({400, 400}).button(0))
 {
-  auto* l = (wex::listview*)find("find.Matches").window();
-  auto* c = (wxComboBox*)find("find.File").window();
+  auto* lv = (wex::listview*)find(_("find.Matches")).window();
+  auto* cb = (wxComboBox*)find(_("find.File")).window();
 
-  assert(c != nullptr && l != nullptr);
+  assert(cb != nullptr && lv != nullptr);
 
-  c->SetFocus();
-  c->Bind(
+  cb->SetFocus();
+  cb->Bind(
     wxEVT_TEXT_ENTER,
     [=, this](wxCommandEvent& event)
     {
       reload(true);
 
-      c->SetInsertionPointEnd();
-      l->clear();
+      cb->SetInsertionPointEnd();
+      lv->clear();
 
       if (const auto& v(wex::get_all_files(
-            m_root.string(),
+            m_root,
             wex::data::dir()
-              .file_spec("*" + c->GetValue() + "*")
-              .max_matches(wex::config("find.Max").get(50))
+              .file_spec("*" + cb->GetValue() + "*")
+              .max_matches(wex::config(_("find.Max")).get(50))
               .type(wex::data::dir::type_t()
                       .set(wex::data::dir::FILES)
                       .set(wex::data::dir::RECURSIVE))));
@@ -46,7 +46,7 @@ find_files::find_files()
       {
         for (const auto& e : v)
         {
-          wex::listitem(l, wex::path(e)).insert();
+          wex::listitem(lv, e).insert();
         }
 
         reload(true);
@@ -54,7 +54,7 @@ find_files::find_files()
     });
 }
 
-void find_files::set_root(frame* f)
+void find_files::set_root(wex::frame* f)
 {
   if (auto* editor = f->get_stc(); editor != nullptr)
   {

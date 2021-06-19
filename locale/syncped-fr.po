@@ -2,19 +2,19 @@
 # Copyright (C) 2017-2021 A.M. van Wezenbeek
 # This file is distributed under the same license as the syncped package.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: syncped 21.10\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-13 09:15+0200\n"
-"PO-Revision-Date: 2017-2021-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2021-06-19 11:31+0200\n"
+"PO-Revision-Date: 2021-06-19 11:35+0200\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 3.0\n"
 
 msgid "&Ascending"
 msgstr "&Monter"
@@ -26,7 +26,7 @@ msgid "&Toggle"
 msgstr "&Alterner"
 
 msgid "Ascii Table"
-msgstr "Ascii Tableu"
+msgstr "Ascii Tableau"
 
 msgid "Auto blame"
 msgstr "Blâme automatique"
@@ -278,6 +278,18 @@ msgstr "Fermer T&ous"
 
 msgid "Close Others"
 msgstr "Fermer les autres"
+
+msgid "find.File"
+msgstr "find.Fichier"
+
+msgid "find.Max"
+msgstr "find.Max"
+
+msgid "find.Matches"
+msgstr "find.Matches"
+
+msgid "Find Files"
+msgstr "Rechercher dans des fichiers"
 
 msgid "Process is running"
 msgstr "Processus passe"
