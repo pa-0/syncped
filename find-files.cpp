@@ -19,39 +19,44 @@ find_files::find_files()
        {_("find.Matches"), wex::data::listview().type(wex::data::listview::FILE)}},
       wex::data::window().title(_("Find Files")).size({400, 400}).button(0))
 {
-  auto* lv = (wex::listview*)find(_("find.Matches")).window();
-  auto* cb = (wxComboBox*)find(_("find.File")).window();
+  m_listview = (wex::listview*)find(_("find.Matches")).window();
+  m_combobox = (wxComboBox*)find(_("find.File")).window();
 
-  assert(cb != nullptr && lv != nullptr);
+  assert(m_combobox != nullptr && m_listview != nullptr);
 
-  cb->SetFocus();
-  cb->Bind(
+  m_combobox->SetFocus();
+  m_combobox->Bind(
     wxEVT_TEXT_ENTER,
     [=, this](wxCommandEvent& event)
     {
-      reload(true);
-
-      cb->SetInsertionPointEnd();
-      lv->clear();
-
-      if (const auto& v(wex::get_all_files(
-            m_root,
-            wex::data::dir()
-              .file_spec("*" + cb->GetValue() + "*")
-              .max_matches(wex::config(_("find.Max")).get(50))
-              .type(wex::data::dir::type_t()
-                      .set(wex::data::dir::FILES)
-                      .set(wex::data::dir::RECURSIVE))));
-          !v.empty())
-      {
-        for (const auto& e : v)
-        {
-          wex::listitem(lv, e).insert();
-        }
-
-        reload(true);
-      }
+      run();
     });
+}
+
+void find_files::run()
+{
+  reload(true);
+
+  m_combobox->SetInsertionPointEnd();
+  m_listview->clear();
+
+  if (const auto& v(wex::get_all_files(
+        m_root,
+        wex::data::dir()
+          .file_spec("*" + m_combobox->GetValue() + "*")
+          .max_matches(wex::config(_("find.Max")).get(50))
+          .type(wex::data::dir::type_t()
+                  .set(wex::data::dir::FILES)
+                  .set(wex::data::dir::RECURSIVE))));
+      !v.empty())
+  {
+    for (const auto& e : v)
+    {
+      wex::listitem(m_listview, e).insert();
+    }
+
+    reload(true);
+  }
 }
 
 void find_files::set_root(wex::frame* f)

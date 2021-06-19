@@ -22,5 +22,10 @@ public:
   void set_root(wex::frame* f);
 
 private:
+  void run();
+
   wex::path m_root;
+
+  wex::listview* m_listview{nullptr};
+  wxComboBox*    m_combobox{nullptr};
 };
