@@ -1,6 +1,5 @@
 # roadmap
 - find files keeps matches in json
-- find files thread
 - fix severity level during rfw
 - add debug test
 
