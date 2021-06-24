@@ -37,8 +37,8 @@ find_files::~find_files()
 {
   reload(true);
 
-  std::list<std::string> filtered;
-  const std::string      item(_("find.Matches"));
+  wex::config::strings_t filtered;
+  const std::string item(_("find.Matches"));
 
   for (const auto& v : wex::config(item).get(filtered))
   {
