@@ -1,4 +1,6 @@
 # roadmap
+- fix merge etc.
+- use ci to build it
 - fix severity level during rfw
 - add debug test
 
