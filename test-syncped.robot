@@ -17,16 +17,22 @@ ${QUIT}	1
 # (only shown in the log file).
 ${SEVERITY-LEVEL}	4
 
+${SYNCPED}
+
 ${FILE-CONFIG}	test.json
 ${FILE-CONTENTS}	contents.txt
 ${FILE-INPUT}	input.txt
 ${FILE-OUTPUT}	output.txt
 ${FILE-STARTUP}	empty.txt
 
-${SYNCPED}
-
 
 *** Test Cases ***
+TC-EMPTY
+	Input	:1000
+	...	:.=
+	Syncped
+	Output Contains	1
+
 TC-HELP
 	[Documentation]	Check whether we can startup correctly
 	${result}=	Run Process	${SYNCPED}	-h
@@ -46,12 +52,6 @@ TC-LEXERS
 	[Documentation]	Check whether we have at least a rfw lexer
 	${result}=	Run Process	${SYNCPED}	-L
 	Should Contain	${result.stdout}	rfw
-
-TC-EMPTY
-	Input	:1000
-	...	:.=
-	Syncped
-	Output Contains	1
 
 # ex tests
 
@@ -130,6 +130,14 @@ TC-VI-CALCULATE
 	...	=9+9+9+9
 	Syncped
 	Output Contains	36
+
+TC-VI-DEBUG
+	Input	:e ../app.cpp
+	...	:23
+	...	:de b
+	Syncped Debug
+	Output Contains	lldb
+	Output Contains	Breakpoint
 
 TC-VI-DELETE
 	Input Many	:a|line	100
@@ -261,6 +269,23 @@ Test Setup
 	Create File	${FILE-INPUT}
 	Create File	${FILE-OUTPUT}
 
+Contents Contains
+	[Arguments]	${text}
+	${result}=	Get File	${file-contents}
+	Should Contain	${result}	${text}
+
+Contents Does Not Contain
+	[Arguments]	${text}
+	${result}=	Get File	${FILE-CONTENTS}
+	Should Not Contain	${result}	${text}
+
+Find Syncped
+	${result}=	Run Process
+	...	find	./
+	...	-name	syncped
+	...	-type	f
+	Set Suite Variable	${SYNCPED}	${result.stdout}
+
 Input
 	[Arguments]	@{text}
 	FOR	${cmd}	IN	@{text}
@@ -293,12 +318,15 @@ Input No Write
 		Append To File	${file-input}	:q!
 	END
 
-Find Syncped
-	${result}=	Run Process
-	...	find	./
-	...	-name	syncped
-	...	-type	f
-	Set Suite Variable	${SYNCPED}	${result.stdout}
+Output Contains
+	[Arguments]	${text}
+	${result}=	Get File	${FILE-OUTPUT}
+	Should Contain	${result}	${text}
+
+Output Does Not Contain
+	[Arguments]	${text}
+	${result}=	Get File	${file-output}
+	Should Not Contain	${result}	${text}
 
 Syncped
 	[Documentation]	Runs syncped with suitable arguments
@@ -310,6 +338,17 @@ Syncped
 	...	-V	${severity-level}
 	...	${file-startup}
 
+Syncped Debug
+	[Documentation]	Runs syncped with suitable arguments in debug mode
+	Run Process
+	...	${SYNCPED}
+	...	-d
+	...	-j	${file-config}
+	...	-s	${file-input}
+	...	-X	${file-output}
+	...	-V	${severity-level}
+	...	${SYNCPED}
+
 Syncped Ex Mode
 	[Documentation]	Runs syncped with suitable arguments in ex mode
 	Run Process
@@ -320,27 +359,6 @@ Syncped Ex Mode
 	...	-X	${file-output}
 	...	-V	${severity-level}
 	...	${file-startup}
-
-Contents Contains
-	[Arguments]	${text}
-	${result}=	Get File	${file-contents}
-	Should Contain	${result}	${text}
-
-Contents Does Not Contain
-	[Arguments]	${text}
-	${result}=	Get File	${FILE-CONTENTS}
-	Should Not Contain	${result}	${text}
-
-Output Contains
-	[Arguments]	${text}
-	${result}=	Get File	${FILE-OUTPUT}
-	Should Contain	${result}	${text}
-
-Output Does Not Contain
-	[Arguments]	${text}
-	${result}=	Get File	${file-output}
-	Should Not Contain	${result}	${text}
-
 
 *** Comments ***
 Copyright: (c) 2020-2021 Anton van Wezenbeek
