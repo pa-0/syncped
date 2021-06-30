@@ -110,22 +110,21 @@ frame::frame(app* app)
   {
     if (m_app->get_is_debug())
     {
-      if (m_app->get_files().size() == 1)
-      {
-        get_debug()->execute("file " + m_app->get_files().front().string());
+      auto        files(m_app->get_files());
+      const auto& p(files.back());
 
-        if (const int count = wex::config("recent.OpenFiles").get(0); count > 0)
-        {
-          wex::open_files(
-            this,
-            file_history().get_history_files(count),
-            m_app->data());
-        }
-      }
-      else
+      if (const auto l(wex::lexers::get()->find_by_filename(p.filename()));
+          !l.is_ok())
       {
-        wex::log("only one executable allowed");
+        get_debug()->execute("file " + p.string());
+        files.pop_back();
       }
+
+      wex::open_files(
+        this,
+        files,
+        m_app->data(),
+        wex::data::dir::type_t().set(wex::data::dir::FILES));
     }
     else if (m_app->get_is_project())
     {
@@ -1062,7 +1061,7 @@ void frame::provide_output(const std::string& text) const
 {
   if (m_app->get_is_output())
   {
-    std::cout << text << "\n";
+    std::cout << text;
   }
 
   if (!m_app->get_output().empty())
@@ -1070,7 +1069,7 @@ void frame::provide_output(const std::string& text) const
     wex::file(
       wex::path(m_app->get_output()),
       std::ios_base::out | std::ios_base::app)
-      .write(text + "\n");
+      .write(text);
   }
 }
 
