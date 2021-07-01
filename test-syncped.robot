@@ -132,13 +132,15 @@ TC-VI-CALCULATE
 	Syncped
 	Output Contains	36
 
-TC-VI-DEBUG
-	Input	:e ../app.cpp
-	...	:23
-	...	:de b
+TC-VI-DEBUG	[Documentation]	Set a breakpoint, and give time to process it
+	Input Many	:23	1
+	Input Many	:de b	1
+	Input Many	:1	1000
+	Input Many	:100	1000
+	Input	:1
 	Syncped Debug
-#	Output Contains	lldb
-#	Output Contains	Breakpoint
+	Output Contains	lldb
+	Output Contains	Breakpoint
 
 TC-VI-DELETE
 	Input Many	:a|line	100
@@ -350,7 +352,7 @@ Syncped Debug
 	...	-s	${file-input}
 	...	-X	${file-output}
 	...	-V	${level}
-	...	${file-startup}
+	...	../app.cpp
 	...	${SYNCPED}
 	...	stdout=${file-stdout}
 

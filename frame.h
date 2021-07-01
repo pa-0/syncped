@@ -2,7 +2,7 @@
 // Name:      frame.h
 // Purpose:   Declaration of class frame
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020 Anton van Wezenbeek
+// Copyright: (c) 2020-2021 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -23,6 +23,8 @@ private:
   wex::del::listview* activate(
     wex::data::listview::type_t type,
     const wex::lexer*           lexer = nullptr) override;
+
+  void debug_exe(const wex::path& p) override;
 
   bool exec_ex_command(wex::ex_command& command) override;
 
@@ -80,6 +82,8 @@ private:
   int m_split_id{1};
 
   std::string m_saved_page;
+
+  std::vector<wex::path> m_files;
 
   find_files* m_find_files{nullptr};
 

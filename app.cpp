@@ -35,7 +35,8 @@ bool app::OnInit()
              m_data.control(wex::data::control().command("G"));
            }},
 
-          {{"debug,d", "use debug mode, opens specified file as debug target"},
+          {{"debug,d",
+            "use debug mode, opens last specified file as debug target"},
            [&](bool on)
            {
              m_is_debug = on;

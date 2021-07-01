@@ -110,21 +110,15 @@ frame::frame(app* app)
   {
     if (m_app->get_is_debug())
     {
-      auto        files(m_app->get_files());
-      const auto& p(files.back());
+      m_files = m_app->get_files();
+      const auto& p(m_files.back());
 
       if (const auto l(wex::lexers::get()->find_by_filename(p.filename()));
           !l.is_ok())
       {
         get_debug()->execute("file " + p.string());
-        files.pop_back();
+        m_files.pop_back();
       }
-
-      wex::open_files(
-        this,
-        files,
-        m_app->data(),
-        wex::data::dir::type_t().set(wex::data::dir::FILES));
     }
     else if (m_app->get_is_project())
     {
@@ -317,7 +311,10 @@ frame::frame(app* app)
     wex::ID_EDIT_DEBUG_FIRST + 2,
     wex::ID_EDIT_DEBUG_LAST);
 
-  m_app->reset();
+  if (m_files.empty())
+  {
+    m_app->reset();
+  }
 
   if (m_app->get_is_stdin())
   {
@@ -382,6 +379,21 @@ frame::activate(wex::data::listview::type_t type, const wex::lexer* lexer)
     }
 
     return list;
+  }
+}
+
+void frame::debug_exe(const wex::path& p)
+{
+  if (!m_files.empty())
+  {
+    wex::open_files(
+      this,
+      m_files,
+      m_app->data(),
+      wex::data::dir::type_t().set(wex::data::dir::FILES));
+
+    m_files.clear();
+    m_app->reset();
   }
 }
 
