@@ -28,7 +28,7 @@ else()
   set( MACOSX_BUNDLE_INFO_STRING ${PROJECT_NAME} )
   set( MACOSX_BUNDLE_SHORT_VERSION_STRING ${WEX_VERSION} )
   set( MACOSX_BUNDLE_BUNDLE_VERSION ${WEX_VERSION} )
-  set( MACOSX_BUNDLE_COPYRIGHT "(c) ${WEX_COPYRIGHT} Anton van Wezenbeek" )
+  set( MACOSX_BUNDLE_COPYRIGHT ${WEX_COPYRIGHT} )
 
   # create a bundle with an icon too!
   add_executable( ${PROJECT_NAME} MACOSX_BUNDLE ${SRCS} )
