@@ -110,21 +110,14 @@ frame::frame(app* app)
   {
     if (m_app->get_is_debug())
     {
-      if (m_app->get_files().size() == 1)
-      {
-        get_debug()->execute("file " + m_app->get_files().front().string());
+      m_files = m_app->get_files();
+      const auto& p(m_files.back());
 
-        if (const int count = wex::config("recent.OpenFiles").get(0); count > 0)
-        {
-          wex::open_files(
-            this,
-            file_history().get_history_files(count),
-            m_app->data());
-        }
-      }
-      else
+      if (const auto l(wex::lexers::get()->find_by_filename(p.filename()));
+          !l.is_ok())
       {
-        wex::log("only one executable allowed");
+        get_debug()->execute("file " + p.string());
+        m_files.pop_back();
       }
     }
     else if (m_app->get_is_project())
@@ -318,7 +311,10 @@ frame::frame(app* app)
     wex::ID_EDIT_DEBUG_FIRST + 2,
     wex::ID_EDIT_DEBUG_LAST);
 
-  m_app->reset();
+  if (m_files.empty())
+  {
+    m_app->reset();
+  }
 
   if (m_app->get_is_stdin())
   {
@@ -383,6 +379,21 @@ frame::activate(wex::data::listview::type_t type, const wex::lexer* lexer)
     }
 
     return list;
+  }
+}
+
+void frame::debug_exe(const wex::path& p)
+{
+  if (!m_files.empty())
+  {
+    wex::open_files(
+      this,
+      m_files,
+      m_app->data(),
+      wex::data::dir::type_t().set(wex::data::dir::FILES));
+
+    m_files.clear();
+    m_app->reset();
   }
 }
 
@@ -1062,7 +1073,7 @@ void frame::provide_output(const std::string& text) const
 {
   if (m_app->get_is_output())
   {
-    std::cout << text << "\n";
+    std::cout << text;
   }
 
   if (!m_app->get_output().empty())
@@ -1070,7 +1081,7 @@ void frame::provide_output(const std::string& text) const
     wex::file(
       wex::path(m_app->get_output()),
       std::ios_base::out | std::ios_base::app)
-      .write(text + "\n");
+      .write(text);
   }
 }
 

@@ -9,24 +9,31 @@ Library	Process
 
 *** Variables ***
 # Normally syncped exits after each test, override this
-# variable on the commandline using '-v QUIT:0' to remain active
-${QUIT}	1
+# variable on the commandline using '-v quit:0' to remain active
+${quit}	1
 
 # Normally syncped runs in quiet mode, only errors are logged,
-# override this variable using '-v SEVERITY-LEVEL:0' to run in verbose mode
+# override this variable using '-v level:0' to run in verbose mode
 # (only shown in the log file).
-${SEVERITY-LEVEL}	4
-
-${FILE-CONFIG}	test.json
-${FILE-CONTENTS}	contents.txt
-${FILE-INPUT}	input.txt
-${FILE-OUTPUT}	output.txt
-${FILE-STARTUP}	empty.txt
+${level}	4
 
 ${SYNCPED}
 
+${file-config}	test.json
+${file-contents}	contents.txt
+${file-input}	input.txt
+${file-output}	output.txt
+${file-startup}	empty.txt
+${file-stdout}	stdout.txt
+
 
 *** Test Cases ***
+TC-EMPTY
+	Input	:1000
+	...	:.=
+	Syncped
+	Output Contains	1
+
 TC-HELP
 	[Documentation]	Check whether we can startup correctly
 	${result}=	Run Process	${SYNCPED}	-h
@@ -47,12 +54,6 @@ TC-LEXERS
 	${result}=	Run Process	${SYNCPED}	-L
 	Should Contain	${result.stdout}	rfw
 
-TC-EMPTY
-	Input	:1000
-	...	:.=
-	Syncped
-	Output Contains	1
-
 # ex tests
 
 TC-EX-EDIT
@@ -60,13 +61,13 @@ TC-EX-EDIT
 	...	:f
 	Syncped
 	# the :e command is handled by event, so other.txt not yet active
-	Output Contains	${FILE-STARTUP}
+	Output Contains	${file-startup}
 
 TC-EX-INFO
 	Input	:a|line has text
 	...	:f
 	Syncped
-	Output Contains	${FILE-STARTUP}
+	Output Contains	${file-startup}
 	Output Contains	1
 	Output Contains	%
 	Output Contains	level
@@ -102,7 +103,7 @@ TC-EX-SET-INFO
 TC-EX-SET-VERBOSITY
 	Input	:set ve?
 	Syncped
-	Output Contains	ve=${SEVERITY-LEVEL}
+	Output Contains	ve=${level}
 
 TC-EX-SUBSTITUTE
 	Input	:a|line has text
@@ -130,6 +131,16 @@ TC-VI-CALCULATE
 	...	=9+9+9+9
 	Syncped
 	Output Contains	36
+
+TC-VI-DEBUG	[Documentation]	Set a breakpoint, and give time to process it
+	Input Many	:23	1
+	Input Many	:de b	1
+	Input Many	:1	1000
+	Input Many	:100	1000
+	Input	:1
+	Syncped Debug
+	Output Contains	lldb
+	Output Contains	Breakpoint
 
 TC-VI-DELETE
 	Input Many	:a|line	100
@@ -256,21 +267,39 @@ Suite Teardown
 	Remove File	${file-contents}
 	Remove File	${file-input}
 	Remove File	${file-output}
+	Run Keyword If	${level} == 4	Remove File	${file-stdout}
 
 Test Setup
-	Create File	${FILE-INPUT}
-	Create File	${FILE-OUTPUT}
+	Create File	${file-input}
+	Create File	${file-output}
+
+Contents Contains
+	[Arguments]	${text}
+	${result}=	Get File	${file-contents}
+	Should Contain	${result}	${text}
+
+Contents Does Not Contain
+	[Arguments]	${text}
+	${result}=	Get File	${file-contents}
+	Should Not Contain	${result}	${text}
+
+Find Syncped
+	${result}=	Run Process
+	...	find	./
+	...	-name	syncped
+	...	-type	f
+	Set Suite Variable	${SYNCPED}	${result.stdout}
 
 Input
 	[Arguments]	@{text}
 	FOR	${cmd}	IN	@{text}
-		Append To File	${FILE-INPUT}	${cmd}
-		Append To File	${FILE-INPUT}	\n
+		Append To File	${file-input}	${cmd}
+		Append To File	${file-input}	\n
 	END
 
-	Append To File	${FILE-INPUT}	:w ${FILE-CONTENTS}\n
-	IF	${QUIT} == 1
-		Append To File	${FILE-INPUT}	:q!
+	Append To File	${file-input}	:w ${file-contents}\n
+	IF	${quit} == 1
+		Append To File	${file-input}	:q!
 	END
 
 Input Many
@@ -293,12 +322,15 @@ Input No Write
 		Append To File	${file-input}	:q!
 	END
 
-Find Syncped
-	${result}=	Run Process
-	...	find	./
-	...	-name	syncped
-	...	-type	f
-	Set Suite Variable	${SYNCPED}	${result.stdout}
+Output Contains
+	[Arguments]	${text}
+	${result}=	Get File	${file-output}
+	Should Contain	${result}	${text}
+
+Output Does Not Contain
+	[Arguments]	${text}
+	${result}=	Get File	${file-output}
+	Should Not Contain	${result}	${text}
 
 Syncped
 	[Documentation]	Runs syncped with suitable arguments
@@ -307,8 +339,22 @@ Syncped
 	...	-j	${file-config}
 	...	-s	${file-input}
 	...	-X	${file-output}
-	...	-V	${severity-level}
+	...	-V	${level}
 	...	${file-startup}
+	...	stdout=${file-stdout}
+
+Syncped Debug
+	[Documentation]	Runs syncped with suitable arguments in debug mode
+	Run Process
+	...	${SYNCPED}
+	...	-d
+	...	-j	${file-config}
+	...	-s	${file-input}
+	...	-X	${file-output}
+	...	-V	${level}
+	...	../app.cpp
+	...	${SYNCPED}
+	...	stdout=${file-stdout}
 
 Syncped Ex Mode
 	[Documentation]	Runs syncped with suitable arguments in ex mode
@@ -318,29 +364,9 @@ Syncped Ex Mode
 	...	-j	${file-config}
 	...	-s	${file-input}
 	...	-X	${file-output}
-	...	-V	${severity-level}
+	...	-V	${level}
 	...	${file-startup}
-
-Contents Contains
-	[Arguments]	${text}
-	${result}=	Get File	${file-contents}
-	Should Contain	${result}	${text}
-
-Contents Does Not Contain
-	[Arguments]	${text}
-	${result}=	Get File	${FILE-CONTENTS}
-	Should Not Contain	${result}	${text}
-
-Output Contains
-	[Arguments]	${text}
-	${result}=	Get File	${FILE-OUTPUT}
-	Should Contain	${result}	${text}
-
-Output Does Not Contain
-	[Arguments]	${text}
-	${result}=	Get File	${file-output}
-	Should Not Contain	${result}	${text}
-
+	...	stdout=${file-stdout}
 
 *** Comments ***
 Copyright: (c) 2020-2021 Anton van Wezenbeek

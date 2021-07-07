@@ -35,7 +35,8 @@ bool app::OnInit()
              m_data.control(wex::data::control().command("G"));
            }},
 
-          {{"debug,d", "use debug mode, opens specified file as debug target"},
+          {{"debug,d",
+            "use debug mode, opens last specified file as debug target"},
            [&](bool on)
            {
              m_is_debug = on;
@@ -144,7 +145,7 @@ bool app::OnInit()
                  wex::data::control::OR);
            }},
 
-          {{"echo-output,x", "echo output commands"},
+          {{"echo-output,x", "echo output commands (process, statusbar)"},
            [&](bool on)
            {
              m_is_output = on;
@@ -195,7 +196,7 @@ bool app::OnInit()
               m_scriptout = std::any_cast<std::string>(s);
             }}},
 
-          {{"output,X", "output (statusbar) append to file"},
+          {{"output,X", "output commands append to file"},
            {wex::cmdline::STRING,
             [&](const std::any& s)
             {
@@ -205,7 +206,8 @@ bool app::OnInit()
          {{"files",
            "input file[:line number][:column number]\n"
            "or project files is -p was specified\n"
-           "or executable file if -d was specified"},
+           "or executable file if -d was specified and last file has no known "
+           "extension"},
           [&](const std::vector<std::string>& v)
           {
             for (const auto& f : v)

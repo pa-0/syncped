@@ -33,12 +33,12 @@ find_files::find_files(wex::frame* f)
     });
 }
 
-find_files::~find_files()
+bool find_files::Destroy()
 {
   reload(true);
 
   wex::config::strings_t filtered;
-  const std::string item(_("find.Matches"));
+  const std::string      item(_("find.Matches"));
 
   for (const auto& v : wex::config(item).get(filtered))
   {
@@ -49,6 +49,8 @@ find_files::~find_files()
   }
 
   wex::config(item).set(filtered);
+
+  return wex::item_dialog::Destroy();
 }
 
 void find_files::run()
