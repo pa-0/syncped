@@ -271,15 +271,7 @@ frame::frame(app* app)
         m_find_files->set_root();
         m_find_files->Show();
       },
-      ID_FIND_FILE},
-     {[=, this](wxCommandEvent& event)
-      {
-        wex::vcs(
-          std::vector<wex::path>(),
-          event.GetId() - wex::ID_VCS_LOWEST - 1)
-          .request();
-      },
-      wex::ID_VCS_LOWEST}});
+      ID_FIND_FILE}});
 
   Bind(
     wxEVT_SIZE,
