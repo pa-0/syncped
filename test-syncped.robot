@@ -28,13 +28,7 @@ ${file-stdout}	stdout.txt
 
 
 *** Test Cases ***
-TC-EMPTY
-	Input	:1000
-	...	:.=
-	Syncped
-	Output Contains	1
-
-TC-HELP
+CMDLINE-HELP
 	[Documentation]	Check whether we can startup correctly
 	${result}=	Run Process	${SYNCPED}	-h
 	# required by OpenGroup
@@ -49,21 +43,27 @@ TC-HELP
 	Should Contain	${result.stdout}	-X
 	Should Contain	${result.stdout}	version
 
-TC-LEXERS
+CMDLINE-LEXERS
 	[Documentation]	Check whether we have at least a rfw lexer
 	${result}=	Run Process	${SYNCPED}	-L
 	Should Contain	${result.stdout}	rfw
 
 # ex tests
 
-TC-EX-EDIT
+EX-EDIT
 	Input	:e other.txt
 	...	:f
 	Syncped
 	# the :e command is handled by event, so other.txt not yet active
 	Output Contains	${file-startup}
 
-TC-EX-INFO
+EX-EMPTY
+	Input	:1000
+	...	:.=
+	Syncped
+	Output Contains	1
+
+EX-INFO
 	Input	:a|line has text
 	...	:f
 	Syncped
@@ -72,40 +72,40 @@ TC-EX-INFO
 	Output Contains	%
 	Output Contains	level
 
-TC-EX-MDI
+EX-MDI
 	Input	:a|line has text
 	...	:e other.txt
 	...	:e more.txt
 	# We cannot test mdi, because of events.
 	Syncped
 
-TC-EX-PROCESS
+EX-PROCESS
 	Input	:!pwd
 	Syncped
 	Output Contains	build
 
-TC-EX-SET
+EX-SET
 	Input	:set all *
 	Syncped
 	Output Contains	ts=
 
-TC-EX-SET-BOOL
+EX-SET-BOOL
 	Input	:set nosws *
 	...	:set sws ? *
 	Syncped
 	Output Contains	nosws
 
-TC-EX-SET-INFO
+EX-SET-INFO
 	Input	:set ts ? *
 	Syncped
 	Output Contains	ts=
 
-TC-EX-SET-VERBOSITY
+EX-SET-VERBOSITY
 	Input	:set ve?
 	Syncped
 	Output Contains	ve=${level}
 
-TC-EX-SUBSTITUTE
+EX-SUBSTITUTE
 	Input	:a|line has text
 	...	:a|line has a tiger
 	...	:a|line has simon and simon and garfunkel
@@ -114,7 +114,7 @@ TC-EX-SUBSTITUTE
 	Output Contains	1
 	Output Contains	simon
 
-TC-EX-SUBSTITUTE-GLOBAL
+EX-SUBSTITUTE-GLOBAL
 	Input	:a|line has text
 	...	:a|line has a tiger
 	...	:a|line has simon and simon and garfunkel
@@ -126,13 +126,13 @@ TC-EX-SUBSTITUTE-GLOBAL
 
 # vi tests
 
-TC-VI-CALCULATE
+VI-CALCULATE
 	Input	:a|x
 	...	=9+9+9+9
 	Syncped
 	Output Contains	36
 
-TC-VI-DEBUG	[Documentation]	Set a breakpoint, and give time to process it
+VI-DEBUG	[Documentation]	Set a breakpoint, and give time to process it
 	Input Many	:23	1
 	Input Many	:de b	1
 	Input Many	:1	1000
@@ -142,7 +142,7 @@ TC-VI-DEBUG	[Documentation]	Set a breakpoint, and give time to process it
 	Output Contains	lldb
 	Output Contains	Breakpoint
 
-TC-VI-DELETE
+VI-DELETE
 	Input Many	:a|line	100
 	Input	:1
 	...	59dd
@@ -150,7 +150,7 @@ TC-VI-DELETE
 	Output Contains	59
 	Output Contains	fewer
 
-TC-VI-DELETE-D
+VI-DELETE-D
 	Input	:a|line has some text
 	...	:1
 	...	ww
@@ -158,7 +158,7 @@ TC-VI-DELETE-D
 	Syncped
 	Contents Does Not Contain	some text
 
-TC-VI-FIND-NOT
+VI-FIND-NOT
 	Input	:a|x
 	...	:a|y
 	...	:a|z
@@ -167,7 +167,7 @@ TC-VI-FIND-NOT
 	Syncped
 	Output Contains	4
 
-TC-VI-FIND-OK
+VI-FIND-OK
 	Input	:a|x
 	...	:a|y
 	...	:a|z
@@ -176,7 +176,7 @@ TC-VI-FIND-OK
 	Syncped
 	Output Contains	3
 
-TC-VI-INFO
+VI-INFO
 	Input	:a|line has text
 	...	
 	Syncped
@@ -184,7 +184,7 @@ TC-VI-INFO
 	Output Contains	%
 	Output Contains	level
 
-TC-VI-MACRO
+VI-MACRO
 	Input	@Template-test@
 	Syncped
 	Contents Does Not Contain	@Created@
@@ -194,7 +194,7 @@ TC-VI-MACRO
 	Contents Does Not Contain	@Process@
 	Contents Does Not Contain	@Year@
 
-TC-VI-MARKER
+VI-MARKER
 	Input Many	:a|line has text	50
 	Input	:10
 	...	mx
@@ -204,7 +204,7 @@ TC-VI-MARKER
 	Syncped
 	Output Contains	10
 
-TC-VI-MODE-BLOCK
+VI-MODE-BLOCK
 	Input Many	:a|line has text	50
 	Input	:1
 	...	w
@@ -215,17 +215,17 @@ TC-VI-MODE-BLOCK
 	Syncped
 	Output Does Not Contain	10
 
-TC-VI-MODE-EX
+VI-MODE-EX
 	Input No Write	:vi
 	Syncped Ex Mode
 
-TC-VI-MODE-INSERT
+VI-MODE-INSERT
 	Input	:a|one line
 	...	ijjjjjjj
 	Syncped
 	Contents Contains	jjjjjjj
 
-TC-VI-MODE-VISUAL
+VI-MODE-VISUAL
 	Input Many	:a|line has text	50
 	Input	:1
 	...	v
@@ -241,7 +241,7 @@ TC-VI-MODE-VISUAL
 	Output Contains	fewer
 	Output Does Not Contain	9
 
-TC-VI-NAVIGATE
+VI-NAVIGATE
 	Input Many	:a|line has text	50
 	Input	:1
 	...	jjjjjjj
@@ -249,7 +249,7 @@ TC-VI-NAVIGATE
 	Syncped
 	Output Contains	8
 
-TC-VI-YANK
+VI-YANK
 	Input Many	:a|line	100
 	Input	:1
 	...	59yy
