@@ -7,6 +7,7 @@
 
 #include "app.h"
 #include "frame.h"
+#include "version.h"
 
 wxIMPLEMENT_APP(app);
 
@@ -21,7 +22,6 @@ void app::MacOpenFiles(const wxArrayString& fileNames)
 bool app::OnInit()
 {
   SetAppName("syncped");
-  m_version = "21.10.0"; // for now same a wex
 
   bool               list_lexers = false;
   wex::data::cmdline data(argc, argv);
@@ -79,7 +79,7 @@ bool app::OnInit()
            {
              if (on)
              {
-               std::cout << "syncped-" << m_version << " using\n"
+               std::cout << "syncped-" << version().get() << " using\n"
                          << wex::get_version_info().external_libraries().str();
                exit = true;
              }

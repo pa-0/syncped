@@ -731,20 +731,9 @@ decorated_frame::decorated_frame(app* app)
             {
               wxAboutDialogInfo info;
               info.SetIcon(GetIcon());
-              info.SetVersion(m_app->version());
-              wxString description(_("This program offers a portable text or "
-                                     "binary editor\n"
-                                     "with automatic syncing."));
-#ifdef __WXMSW__
-              description += _(" All its config files are read\n"
-                               "and saved in the same directory as "
-                               "where the executable is.");
-#endif
-              description += _("\n\nUsing:\n") +
-                             wex::get_version_info().external_libraries().str();
-
-              info.SetDescription(description);
-              info.SetCopyright(wex::get_version_info().copyright());
+              info.SetVersion(m_app->version().get());
+              info.SetDescription(m_app->version().description());
+              info.SetCopyright(m_app->version().copyright());
               info.SetWebSite("http://sourceforge.net/projects/syncped/");
               wxAboutBox(info, this);
             })},
@@ -756,7 +745,8 @@ decorated_frame::decorated_frame(app* app)
             {
               wxLaunchDefaultBrowser(
                 "http://antonvw.github.io/syncped/v" +
-                wex::before(m_app->version(), '.', false) + "/syncped.htm");
+                wex::before(m_app->version().get(), '.', false) +
+                "/syncped.htm");
             })}}),
       wxGetStockLabel(wxID_HELP)}}));
 }
