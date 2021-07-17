@@ -1,4 +1,5 @@
 # roadmap
+- WEX_SOURCE_DIR is not ok (for msw)
 - use GET_RUNTIME_DEPENDENCIES to add msvc dll's
 
 # backlog

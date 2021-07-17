@@ -729,13 +729,10 @@ decorated_frame::decorated_frame(app* app)
           wex::data::menu().action(
             [=, this](wxCommandEvent& event)
             {
-              wxAboutDialogInfo info;
-              info.SetIcon(GetIcon());
-              info.SetVersion(m_app->version().get());
-              info.SetDescription(m_app->version().description());
-              info.SetCopyright(m_app->version().copyright());
-              info.SetWebSite("http://sourceforge.net/projects/syncped/");
-              wxAboutBox(info, this);
+              wex::version_info_dialog(
+                wex::about_info().website(
+                  "http://sourceforge.net/projects/syncped/"))
+                .show();
             })},
 
          {wxID_HELP,
