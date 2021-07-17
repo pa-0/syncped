@@ -5,7 +5,6 @@
 // Copyright: (c) 2021 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <wx/aboutdlg.h>
 #include <wx/generic/textdlgg.h>
 #include <wx/stockitem.h> // for wxGetStockLabel
 #include <wx/valtext.h>
