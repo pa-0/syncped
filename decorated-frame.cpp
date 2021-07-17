@@ -729,6 +729,7 @@ decorated_frame::decorated_frame(app* app)
             [=, this](wxCommandEvent& event)
             {
               wex::version_info_dialog(
+                m_app->version(),
                 wex::about_info().website(
                   "http://sourceforge.net/projects/syncped/"))
                 .show();
