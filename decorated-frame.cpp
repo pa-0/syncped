@@ -315,7 +315,19 @@ decorated_frame::decorated_frame(app* app)
               };
             })},
 
-         {wxID_OPEN},
+         {wxID_OPEN,
+          std::string(),
+
+          wex::data::menu().action(
+            [=, this](wxCommandEvent& event)
+            {
+              wex::data::window data;
+              data
+                .style(
+                  wxFD_OPEN | wxFD_MULTIPLE | wxFD_CHANGE_DIR | wxFD_HEX_MODE)
+                .allow_move_path_extension(allow_move_ext());
+              wex::open_files_dialog(this, false, wex::data::stc(data));
+            })},
 
          {},
 
@@ -794,6 +806,41 @@ bool decorated_frame::allow_close(wxWindowID id, wxWindow* page)
   }
 
   return wex::del::frame::allow_close(id, page);
+}
+
+bool decorated_frame::allow_move_ext() const
+{
+  // Allow move if more than 2 open files have same extension.
+  if (m_editors->GetPageCount() <= 2)
+  {
+    return false;
+  }
+
+  size_t      count = 0;
+  std::string same_ext("/"); // invalid extension, so not used
+
+  for (size_t i = 0; i < m_editors->GetPageCount(); ++i)
+  {
+    auto* stc  = (wex::stc*)m_editors->GetPage(i);
+    auto& path = stc->path();
+
+    if (path.extension() == same_ext)
+    {
+      count++;
+
+      if (count > 2)
+      {
+        return true;
+      }
+    }
+    else
+    {
+      same_ext = path.extension();
+      count    = 1;
+    }
+  }
+
+  return false;
 }
 
 void decorated_frame::on_notebook(wxWindowID id, wxWindow* page)
