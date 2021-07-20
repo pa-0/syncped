@@ -808,12 +808,12 @@ bool decorated_frame::allow_close(wxWindowID id, wxWindow* page)
   return wex::del::frame::allow_close(id, page);
 }
 
-bool decorated_frame::allow_move_ext() const
+const std::string decorated_frame::allow_move_ext() const
 {
   // Allow move if more than 2 open files have same extension.
   if (m_editors->GetPageCount() <= 2)
   {
-    return false;
+    return std::string();
   }
 
   size_t      count = 0;
@@ -830,7 +830,7 @@ bool decorated_frame::allow_move_ext() const
 
       if (count > 2)
       {
-        return true;
+        return same_ext;
       }
     }
     else
@@ -840,7 +840,7 @@ bool decorated_frame::allow_move_ext() const
     }
   }
 
-  return false;
+  return std::string();
 }
 
 void decorated_frame::on_notebook(wxWindowID id, wxWindow* page)

@@ -34,7 +34,7 @@ private:
   bool allow_close(wxWindowID id, wxWindow* page) override;
   void on_notebook(wxWindowID id, wxWindow* page) override;
 
-  bool allow_move_ext() const;
+  const std::string allow_move_ext() const;
 
   const std::string m_project_wildcard{_("Project Files") + " (*.prj)|*.prj"};
 
