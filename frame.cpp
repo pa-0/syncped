@@ -526,10 +526,9 @@ void frame::on_command(wxCommandEvent& event)
     case wxID_SAVEAS:
       if (editor != nullptr)
       {
-        if (!event.GetString().empty())
+        if (const auto& name(event.GetString()); !name.empty())
         {
-          if (!editor->get_file().file_save(
-                wex::path(event.GetString().ToStdString())))
+          if (!editor->get_file().file_save(wex::path(name.ToStdString())))
           {
             return;
           }
@@ -553,21 +552,7 @@ void frame::on_command(wxCommandEvent& event)
           }
         }
 
-        const auto& bitmap =
-          (editor->path().stat().is_ok() ?
-             wxTheFileIconsTable->GetSmallImageList()->GetBitmap(
-               wex::get_iconid(editor->path())) :
-             wxNullBitmap);
-
-        m_editors->set_page_text(
-          m_editors->key_by_page(editor),
-          editor->path().string(),
-          editor->path().filename(),
-          bitmap);
-
-        editor->properties_message();
-
-        set_recent_file(editor->path());
+        open_file(editor->path(), wex::data::stc(m_app->data()));
       }
       break;
 
