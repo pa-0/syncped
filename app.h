@@ -27,7 +27,7 @@ public:
 
   void reset();
 
-  const auto& version() const { return m_version; };
+  const wex::version_info version() const;
 
 private:
 #ifdef __WXOSX__
@@ -38,7 +38,7 @@ private:
 
   void show_locale();
 
-  std::string m_output, m_scriptout, m_tag, m_version;
+  std::string m_output, m_scriptout, m_tag;
 
   std::vector<wex::path> m_files;
 
