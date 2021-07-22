@@ -108,7 +108,7 @@ frame::frame(app* app)
   }
   else
   {
-    if (m_app->get_is_debug())
+    if (m_app->is_debug())
     {
       m_files = m_app->get_files();
       const auto& p(m_files.back());
@@ -120,7 +120,7 @@ frame::frame(app* app)
         m_files.pop_back();
       }
     }
-    else if (m_app->get_is_project())
+    else if (m_app->is_project())
     {
       wex::open_files(
         this,
@@ -298,7 +298,7 @@ frame::frame(app* app)
     wxEVT_UPDATE_UI,
     [=, this](wxUpdateUIEvent& event)
     {
-      event.Enable(m_app->get_is_debug());
+      event.Enable(m_app->is_debug());
     },
     wex::ID_EDIT_DEBUG_FIRST + 2,
     wex::ID_EDIT_DEBUG_LAST);
@@ -308,7 +308,7 @@ frame::frame(app* app)
     m_app->reset();
   }
 
-  if (m_app->get_is_stdin())
+  if (m_app->is_stdin())
   {
     std::thread v(
       [&]
@@ -435,7 +435,7 @@ bool frame::exec_ex_command(wex::ex_command& command)
 
 wex::process* frame::get_process(const std::string& command)
 {
-  if (!m_app->get_is_debug())
+  if (!m_app->is_debug())
     return nullptr;
 
   delete m_process;
@@ -535,17 +535,12 @@ void frame::on_command(wxCommandEvent& event)
         }
         else
         {
-          wex::file_dialog dlg(
-            &editor->get_file(),
-            wex::data::window().style(wxFD_SAVE).parent(this).title(
-              wxGetStockLabel(wxID_SAVEAS, wxSTOCK_NOFLAGS).ToStdString()));
-
-          if (dlg.ShowModal() != wxID_OK)
-          {
-            return;
-          }
-
-          if (!editor->get_file().file_save(
+          if (wex::file_dialog dlg(
+                &editor->get_file(),
+                wex::data::window().style(wxFD_SAVE).parent(this).title(
+                  wxGetStockLabel(wxID_SAVEAS, wxSTOCK_NOFLAGS).ToStdString()));
+              dlg.ShowModal() != wxID_OK ||
+              !editor->get_file().file_save(
                 wex::path(dlg.GetPath().ToStdString())))
           {
             return;
@@ -949,7 +944,7 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
 
       if (wex::config("is_hexmode").get(false))
         wf.set(wex::data::stc::WIN_HEX);
-      if (m_app->get_is_debug())
+      if (m_app->is_debug())
         mf.set(wex::data::stc::MENU_DEBUG);
 
       editor = new wex::stc(
@@ -960,7 +955,7 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
           .flags(wf, wex::data::control::OR)
           .menu(mf));
 
-      if (m_app->get_is_debug())
+      if (m_app->is_debug())
       {
         get_debug()->apply_breakpoints(editor);
       }
@@ -1048,7 +1043,7 @@ bool frame::print_ex(wex::factory::stc* stc, const std::string& text)
 
 void frame::provide_output(const std::string& text) const
 {
-  if (m_app->get_is_output())
+  if (m_app->is_output())
   {
     std::cout << text;
   }
@@ -1064,7 +1059,7 @@ void frame::provide_output(const std::string& text) const
 
 void frame::record(const std::string& command)
 {
-  if (m_app->get_is_echo())
+  if (m_app->is_echo())
   {
     std::cout << command << "\n";
   }
