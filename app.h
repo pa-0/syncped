@@ -15,15 +15,16 @@ public:
   auto& data() { return m_data; };
 
   auto& get_files() const { return m_files; };
-  auto  get_is_debug() const { return m_is_debug; };
-  auto  get_is_echo() const { return m_is_echo; };
-  auto  get_is_output() const { return m_is_output; };
-  auto  get_is_project() const { return m_is_project; };
-  auto  get_is_stdin() const { return m_is_stdin; };
-  auto& get_output() { return m_output; };
-  auto& get_scriptout() { return m_scriptout; };
+  auto& get_output() const { return m_output; };
+  auto& get_scriptout() const { return m_scriptout; };
   auto  get_split() const { return m_split; };
   auto& get_tag() const { return m_tag; };
+
+  auto is_debug() const { return m_is_debug; };
+  auto is_echo() const { return m_is_echo; };
+  auto is_output() const { return m_is_output; };
+  auto is_project() const { return m_is_project; };
+  auto is_stdin() const { return m_is_stdin; };
 
   void reset();
 

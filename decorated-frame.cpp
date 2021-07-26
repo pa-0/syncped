@@ -203,7 +203,7 @@ decorated_frame::decorated_frame(app* app)
 
   wex::menu* menuDebug = nullptr;
 
-  if (m_app->get_is_debug())
+  if (m_app->is_debug())
   {
     menuDebug = new wex::menu();
 
@@ -321,12 +321,7 @@ decorated_frame::decorated_frame(app* app)
           wex::data::menu().action(
             [=, this](wxCommandEvent& event)
             {
-              wex::data::window data;
-              data
-                .style(
-                  wxFD_OPEN | wxFD_MULTIPLE | wxFD_CHANGE_DIR | wxFD_HEX_MODE)
-                .allow_move_path_extension(allow_move_ext());
-              wex::open_files_dialog(this, false, wex::data::stc(data));
+              open_from_event(event, allow_move_ext());
             })},
 
          {},
