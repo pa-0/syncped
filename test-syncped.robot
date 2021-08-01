@@ -193,6 +193,25 @@ VI-MACRO
 	Contents Does Not Contain	@Datetime@
 	Contents Does Not Contain	@Process@
 	Contents Does Not Contain	@Year@
+	
+VI-MACRO-RECORD
+	Input	:a|10 1123
+	...	:1
+	...	qb
+	...	w
+	...	"x
+	...	yw
+	...	b
+	...	cw
+	...	=x+100
+	...	
+	...	0
+	...	j
+	...	q
+	...	:1
+	...	@b
+	Syncped
+	Contents Contains	1223
 
 VI-MARKER
 	Input Many	:a|line has text	50
@@ -256,6 +275,18 @@ VI-YANK
 	Syncped
 	Output Contains	59
 	Output Contains	yanked
+
+VI-YANK-REGISTER
+	Input Many	:a|line	10
+	Input	:1
+	...	"x
+	...	yw
+	...	:%d
+	...	i
+	...	xx
+	...	
+	Syncped
+	Contents Contains	lineline
 
 
 *** Keywords ***
