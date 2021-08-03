@@ -16,15 +16,9 @@ build:
 
   artifacts:
     paths:
-#  - mybinary
+  - syncped.app/Contents/MacOS/syncped
 
 test:
   stage: test
   script:
   - robot test-syncped.robot
-
-sast:
-  stage: test
-  
-include:
-- template: Security/SAST.gitlab-ci.yml
