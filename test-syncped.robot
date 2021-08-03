@@ -127,10 +127,15 @@ EX-SUBSTITUTE-GLOBAL
 # vi tests
 
 VI-CALCULATE
-	Input	:a|x
-	...	=9+9+9+9
+	Input	=9+9+9+9-2+(3*3)
+	...	=2<4
+	...	=128/2
+	...	=127&7
 	Syncped
-	Output Contains	36
+	Output Contains	43
+	Output Contains	32
+	Output Contains	64
+	Output Contains	7
 
 VI-DEBUG	[Documentation]	Set a breakpoint, and give time to process it
 	Input Many	:23	1
