@@ -16,4 +16,5 @@ build:
 test:
   stage: test
   script:
-  - robot test-syncped.robot
+  - cd test
+  - robot *.robot
