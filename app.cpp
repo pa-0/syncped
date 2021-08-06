@@ -167,6 +167,28 @@ bool app::OnInit()
               wex::config::set_path(wex::path(std::any_cast<std::string>(s)));
             }}},
 
+          {{"quit,q", "quit after specified number of seconds"},
+           {wex::cmdline::INT,
+            [&](const std::any& s)
+            {
+              if (const auto quit(std::any_cast<int>(s)); quit > 0)
+              {
+                const auto id_quit = wxWindowBase::NewControlId();
+
+                auto* timer_start = new wxTimer(this, id_quit);
+
+                timer_start->StartOnce(1000 * quit);
+
+                Bind(
+                  wxEVT_TIMER,
+                  [=, this](wxTimerEvent& event)
+                  {
+                    Exit();
+                  },
+                  id_quit);
+              }
+            }}},
+
           {{"tag,t", "start at tag"},
            {wex::cmdline::STRING,
             [&](const std::any& s)

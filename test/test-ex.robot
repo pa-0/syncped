@@ -81,5 +81,6 @@ SUBSTITUTE-GLOBAL
 	Output Contains	simon
 	Contents Does Not Contain	simon
 
+
 *** Comments ***
 Copyright: (c) 2020-2021 Anton van Wezenbeek

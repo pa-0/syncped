@@ -23,16 +23,19 @@ ${file-output}	output.txt
 ${file-startup}	empty.txt
 ${file-stdout}	stdout.txt
 
+
 *** Keywords ***
 Suite Setup
 	Find Syncped
 	Variable Should Exist	${SYNCPED}
 
 Suite Teardown
-	Remove File	${file-contents}
-	Remove File	${file-input}
-	Remove File	${file-output}
-	Run Keyword If	${level} == 4	Remove File	${file-stdout}
+	IF	${level} > 0
+		Remove File	${file-stdout}
+		Remove File	${file-contents}
+		Remove File	${file-input}
+		Remove File	${file-output}
+	END
 
 Test Setup
 	Create File	${file-input}
@@ -63,6 +66,7 @@ Input
 	END
 
 	Append To File	${file-input}	:w ${file-contents}\n
+
 	IF	${quit} == 1
 		Append To File	${file-input}	:q!
 	END
@@ -99,24 +103,28 @@ Output Does Not Contain
 
 Syncped
 	[Documentation]	Runs syncped with suitable arguments
+	[Arguments]	${quit}=0
 	Run Process
 	...	${SYNCPED}
 	...	-j	${file-config}
+	...	-q	${quit}
 	...	-s	${file-input}
-	...	-X	${file-output}
 	...	-V	${level}
+	...	-X	${file-output}
 	...	${file-startup}
 	...	stdout=${file-stdout}
 
 Syncped Debug
 	[Documentation]	Runs syncped with suitable arguments in debug mode
+	[Arguments]	${quit}=0
 	Run Process
 	...	${SYNCPED}
 	...	-d
 	...	-j	${file-config}
+	...	-q	${quit}
 	...	-s	${file-input}
-	...	-X	${file-output}
 	...	-V	${level}
+	...	-X	${file-output}
 	...	../app.cpp
 	...	${SYNCPED}
 	...	stdout=${file-stdout}
@@ -132,6 +140,7 @@ Syncped Ex Mode
 	...	-V	${level}
 	...	${file-startup}
 	...	stdout=${file-stdout}
+
 
 *** Comments ***
 Copyright: (c) 2020-2021 Anton van Wezenbeek

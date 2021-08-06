@@ -21,10 +21,7 @@ CALCULATE
 DEBUG	[Documentation]	Set a breakpoint, and give time to process it
 	Input Many	:23	1
 	Input Many	:de b	1
-	Input Many	:1	1000
-	Input Many	:100	1000
-	Input	:1
-	Syncped Debug
+	Syncped Debug	20
 	Output Contains	lldb
 	Output Contains	Breakpoint
 
@@ -79,7 +76,7 @@ MACRO
 	Contents Does Not Contain	@Datetime@
 	Contents Does Not Contain	@Process@
 	Contents Does Not Contain	@Year@
-	
+
 MACRO-RECORD
 	Input	:a|10 1123
 	...	:1
@@ -173,6 +170,7 @@ YANK-REGISTER
 	...	
 	Syncped
 	Contents Contains	lineline
+
 
 *** Comments ***
 Copyright: (c) 2020-2021 Anton van Wezenbeek

@@ -27,5 +27,6 @@ LEXERS
 	${result}=	Run Process	${SYNCPED}	-L
 	Should Contain	${result.stdout}	rfw
 
+
 *** Comments ***
 Copyright: (c) 2020-2021 Anton van Wezenbeek
