@@ -56,7 +56,7 @@ END_EVENT_TABLE()
 
 frame::frame(app* app)
   : decorated_frame(app)
-  , m_find_files(new find_files())
+  , m_find_files(new find_files(this))
 {
   if (!m_app->get_tag().empty())
   {
@@ -108,26 +108,19 @@ frame::frame(app* app)
   }
   else
   {
-    if (m_app->get_is_debug())
+    if (m_app->is_debug())
     {
-      if (m_app->get_files().size() == 1)
-      {
-        get_debug()->execute("file " + m_app->get_files().front().string());
+      m_files = m_app->get_files();
+      const auto& p(m_files.back());
 
-        if (const int count = wex::config("recent.OpenFiles").get(0); count > 0)
-        {
-          wex::open_files(
-            this,
-            file_history().get_history_files(count),
-            m_app->data());
-        }
-      }
-      else
+      if (const auto l(wex::lexers::get()->find_by_filename(p.filename()));
+          !l.is_ok())
       {
-        wex::log("only one executable allowed");
+        get_debug()->execute("file " + p.string());
+        m_files.pop_back();
       }
     }
-    else if (m_app->get_is_project())
+    else if (m_app->is_project())
     {
       wex::open_files(
         this,
@@ -275,18 +268,10 @@ frame::frame(app* app)
       wex::ID_ALL_CLOSE},
      {[=, this](wxCommandEvent& event)
       {
-        m_find_files->set_root(this);
+        m_find_files->set_root();
         m_find_files->Show();
       },
-      ID_FIND_FILE},
-     {[=, this](wxCommandEvent& event)
-      {
-        wex::vcs(
-          std::vector<wex::path>(),
-          event.GetId() - wex::ID_VCS_LOWEST - 1)
-          .request();
-      },
-      wex::ID_VCS_LOWEST}});
+      ID_FIND_FILE}});
 
   Bind(
     wxEVT_SIZE,
@@ -313,14 +298,17 @@ frame::frame(app* app)
     wxEVT_UPDATE_UI,
     [=, this](wxUpdateUIEvent& event)
     {
-      event.Enable(m_app->get_is_debug());
+      event.Enable(m_app->is_debug());
     },
     wex::ID_EDIT_DEBUG_FIRST + 2,
     wex::ID_EDIT_DEBUG_LAST);
 
-  m_app->reset();
+  if (m_files.empty())
+  {
+    m_app->reset();
+  }
 
-  if (m_app->get_is_stdin())
+  if (m_app->is_stdin())
   {
     std::thread v(
       [&]
@@ -386,6 +374,21 @@ frame::activate(wex::data::listview::type_t type, const wex::lexer* lexer)
   }
 }
 
+void frame::debug_exe(const wex::path& p)
+{
+  if (!m_files.empty())
+  {
+    wex::open_files(
+      this,
+      m_files,
+      m_app->data(),
+      wex::data::dir::type_t().set(wex::data::dir::FILES));
+
+    m_files.clear();
+    m_app->reset();
+  }
+}
+
 bool frame::exec_ex_command(wex::ex_command& command)
 {
   if (command.command() == ":")
@@ -432,7 +435,7 @@ bool frame::exec_ex_command(wex::ex_command& command)
 
 wex::process* frame::get_process(const std::string& command)
 {
-  if (!m_app->get_is_debug())
+  if (!m_app->is_debug())
     return nullptr;
 
   delete m_process;
@@ -523,48 +526,28 @@ void frame::on_command(wxCommandEvent& event)
     case wxID_SAVEAS:
       if (editor != nullptr)
       {
-        if (!event.GetString().empty())
+        if (const auto& name(event.GetString()); !name.empty())
         {
-          if (!editor->get_file().file_save(
-                wex::path(event.GetString().ToStdString())))
+          if (!editor->get_file().file_save(wex::path(name.ToStdString())))
           {
             return;
           }
         }
         else
         {
-          wex::file_dialog dlg(
-            &editor->get_file(),
-            wex::data::window().style(wxFD_SAVE).parent(this).title(
-              wxGetStockLabel(wxID_SAVEAS, wxSTOCK_NOFLAGS).ToStdString()));
-
-          if (dlg.ShowModal() != wxID_OK)
-          {
-            return;
-          }
-
-          if (!editor->get_file().file_save(
+          if (wex::file_dialog dlg(
+                &editor->get_file(),
+                wex::data::window().style(wxFD_SAVE).parent(this).title(
+                  wxGetStockLabel(wxID_SAVEAS, wxSTOCK_NOFLAGS).ToStdString()));
+              dlg.ShowModal() != wxID_OK ||
+              !editor->get_file().file_save(
                 wex::path(dlg.GetPath().ToStdString())))
           {
             return;
           }
         }
 
-        const auto& bitmap =
-          (editor->path().stat().is_ok() ?
-             wxTheFileIconsTable->GetSmallImageList()->GetBitmap(
-               wex::get_iconid(editor->path())) :
-             wxNullBitmap);
-
-        m_editors->set_page_text(
-          m_editors->key_by_page(editor),
-          editor->path().string(),
-          editor->path().filename(),
-          bitmap);
-
-        editor->properties_message();
-
-        set_recent_file(editor->path());
+        open_file(editor->path(), wex::data::stc(m_app->data()));
       }
       break;
 
@@ -961,7 +944,7 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
 
       if (wex::config("is_hexmode").get(false))
         wf.set(wex::data::stc::WIN_HEX);
-      if (m_app->get_is_debug())
+      if (m_app->is_debug())
         mf.set(wex::data::stc::MENU_DEBUG);
 
       editor = new wex::stc(
@@ -972,7 +955,7 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
           .flags(wf, wex::data::control::OR)
           .menu(mf));
 
-      if (m_app->get_is_debug())
+      if (m_app->is_debug())
       {
         get_debug()->apply_breakpoints(editor);
       }
@@ -1060,9 +1043,9 @@ bool frame::print_ex(wex::factory::stc* stc, const std::string& text)
 
 void frame::provide_output(const std::string& text) const
 {
-  if (m_app->get_is_output())
+  if (m_app->is_output())
   {
-    std::cout << text << "\n";
+    std::cout << text;
   }
 
   if (!m_app->get_output().empty())
@@ -1070,13 +1053,13 @@ void frame::provide_output(const std::string& text) const
     wex::file(
       wex::path(m_app->get_output()),
       std::ios_base::out | std::ios_base::app)
-      .write(text + "\n");
+      .write(text);
   }
 }
 
 void frame::record(const std::string& command)
 {
-  if (m_app->get_is_echo())
+  if (m_app->is_echo())
   {
     std::cout << command << "\n";
   }

@@ -5,7 +5,6 @@
 // Copyright: (c) 2021 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <wx/aboutdlg.h>
 #include <wx/generic/textdlgg.h>
 #include <wx/stockitem.h> // for wxGetStockLabel
 #include <wx/valtext.h>
@@ -204,7 +203,7 @@ decorated_frame::decorated_frame(app* app)
 
   wex::menu* menuDebug = nullptr;
 
-  if (m_app->get_is_debug())
+  if (m_app->is_debug())
   {
     menuDebug = new wex::menu();
 
@@ -316,7 +315,14 @@ decorated_frame::decorated_frame(app* app)
               };
             })},
 
-         {wxID_OPEN},
+         {wxID_OPEN,
+          std::string(),
+
+          wex::data::menu().action(
+            [=, this](wxCommandEvent& event)
+            {
+              open_from_event(event, allow_move_ext());
+            })},
 
          {},
 
@@ -729,24 +735,11 @@ decorated_frame::decorated_frame(app* app)
           wex::data::menu().action(
             [=, this](wxCommandEvent& event)
             {
-              wxAboutDialogInfo info;
-              info.SetIcon(GetIcon());
-              info.SetVersion(m_app->version());
-              wxString description(_("This program offers a portable text or "
-                                     "binary editor\n"
-                                     "with automatic syncing."));
-#ifdef __WXMSW__
-              description += _(" All its config files are read\n"
-                               "and saved in the same directory as "
-                               "where the executable is.");
-#endif
-              description += _("\n\nUsing:\n") +
-                             wex::get_version_info().external_libraries().str();
-
-              info.SetDescription(description);
-              info.SetCopyright(wex::get_version_info().copyright());
-              info.SetWebSite("http://sourceforge.net/projects/syncped/");
-              wxAboutBox(info, this);
+              wex::version_info_dialog(
+                m_app->version(),
+                wex::about_info().website(
+                  "http://sourceforge.net/projects/syncped/"))
+                .show();
             })},
 
          {wxID_HELP,
@@ -756,7 +749,8 @@ decorated_frame::decorated_frame(app* app)
             {
               wxLaunchDefaultBrowser(
                 "http://antonvw.github.io/syncped/v" +
-                wex::before(m_app->version(), '.', false) + "/syncped.htm");
+                wex::before(m_app->version().get(), '.', false) +
+                "/syncped.htm");
             })}}),
       wxGetStockLabel(wxID_HELP)}}));
 }
@@ -807,6 +801,41 @@ bool decorated_frame::allow_close(wxWindowID id, wxWindow* page)
   }
 
   return wex::del::frame::allow_close(id, page);
+}
+
+const std::string decorated_frame::allow_move_ext() const
+{
+  // Allow move if more than 2 open files have same extension.
+  if (m_editors->GetPageCount() <= 2)
+  {
+    return std::string();
+  }
+
+  size_t      count = 0;
+  std::string same_ext("/"); // invalid extension, so not used
+
+  for (size_t i = 0; i < m_editors->GetPageCount(); ++i)
+  {
+    auto* stc  = (wex::stc*)m_editors->GetPage(i);
+    auto& path = stc->path();
+
+    if (path.extension() == same_ext)
+    {
+      count++;
+
+      if (count > 2)
+      {
+        return same_ext;
+      }
+    }
+    else
+    {
+      same_ext = path.extension();
+      count    = 1;
+    }
+  }
+
+  return std::string();
 }
 
 void decorated_frame::on_notebook(wxWindowID id, wxWindow* page)

@@ -1,0 +1,20 @@
+image: gcc
+
+build:
+  stage: build
+
+  script:
+  - mkdir build
+  - cd build
+  - cmake -DwexBUILD_SHARED=ON ..
+  - make
+
+  artifacts:
+    paths:
+    - build/syncped.app/Contents/MacOS/syncped
+
+test:
+  stage: test
+  script:
+  - cd test
+  - robot *.robot

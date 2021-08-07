@@ -7,6 +7,7 @@
 
 #include "app.h"
 #include "frame.h"
+#include "version.h"
 
 wxIMPLEMENT_APP(app);
 
@@ -21,7 +22,6 @@ void app::MacOpenFiles(const wxArrayString& fileNames)
 bool app::OnInit()
 {
   SetAppName("syncped");
-  m_version = "21.10.0"; // for now same a wex
 
   bool               list_lexers = false;
   wex::data::cmdline data(argc, argv);
@@ -35,7 +35,8 @@ bool app::OnInit()
              m_data.control(wex::data::control().command("G"));
            }},
 
-          {{"debug,d", "use debug mode, opens specified file as debug target"},
+          {{"debug,d",
+            "use debug mode, opens last specified file as debug target"},
            [&](bool on)
            {
              m_is_debug = on;
@@ -78,7 +79,7 @@ bool app::OnInit()
            {
              if (on)
              {
-               std::cout << "syncped-" << m_version << " using\n"
+               std::cout << "syncped-" << version().get() << " using\n"
                          << wex::get_version_info().external_libraries().str();
                exit = true;
              }
@@ -144,7 +145,7 @@ bool app::OnInit()
                  wex::data::control::OR);
            }},
 
-          {{"echo-output,x", "echo output commands"},
+          {{"echo-output,x", "echo output commands (process, statusbar)"},
            [&](bool on)
            {
              m_is_output = on;
@@ -164,6 +165,28 @@ bool app::OnInit()
             [&](const std::any& s)
             {
               wex::config::set_path(wex::path(std::any_cast<std::string>(s)));
+            }}},
+
+          {{"quit,q", "quit after specified number of seconds"},
+           {wex::cmdline::INT,
+            [&](const std::any& s)
+            {
+              if (const auto quit(std::any_cast<int>(s)); quit > 0)
+              {
+                const auto id_quit = wxWindowBase::NewControlId();
+
+                auto* timer_start = new wxTimer(this, id_quit);
+
+                timer_start->StartOnce(1000 * quit);
+
+                Bind(
+                  wxEVT_TIMER,
+                  [=, this](wxTimerEvent& event)
+                  {
+                    Exit();
+                  },
+                  id_quit);
+              }
             }}},
 
           {{"tag,t", "start at tag"},
@@ -195,7 +218,7 @@ bool app::OnInit()
               m_scriptout = std::any_cast<std::string>(s);
             }}},
 
-          {{"output,X", "output (statusbar) append to file"},
+          {{"output,X", "output commands append to file"},
            {wex::cmdline::STRING,
             [&](const std::any& s)
             {
@@ -205,7 +228,8 @@ bool app::OnInit()
          {{"files",
            "input file[:line number][:column number]\n"
            "or project files is -p was specified\n"
-           "or executable file if -d was specified"},
+           "or executable file if -d was specified and last file has no known "
+           "extension"},
           [&](const std::vector<std::string>& v)
           {
             for (const auto& f : v)
