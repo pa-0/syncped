@@ -1,0 +1,12 @@
+////////////////////////////////////////////////////////////////////////////////
+// Name:      version.h
+// Purpose:   Declaration of get_version_info
+// Author:    Anton van Wezenbeek
+// Copyright: (c) 2020-2021 Anton van Wezenbeek
+////////////////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+#include <wex/version.h>
+
+const wex::version_info get_version_info();

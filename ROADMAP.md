@@ -1,12 +1,8 @@
 # roadmap
-- process_po_files in syncped
-- fix severity level during rfw
-- find files thread
-- add debug test
+- are the po files part of package
+- WEX_SOURCE_DIR is not ok (for msw)
+- use GET_RUNTIME_DEPENDENCIES to add msvc dll's
 
 # backlog
-- understand gitlab ci
-- at this moment FindWEX.cmake present in VC and Program Files\cmake paths.
-- fix processing locale, see recent locale update in wxWidgets
 - add automatic download
   use WinSparkle, see http://winsparkle.org/

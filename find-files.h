@@ -2,7 +2,7 @@
 // Name:      find-files.h
 // Purpose:   Declaration of class find_files
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020 Anton van Wezenbeek
+// Copyright: (c) 2020-2021 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -14,10 +14,21 @@ class frame;
 class find_files : public wex::item_dialog
 {
 public:
-  find_files();
+  // Constructor.
+  explicit find_files(wex::frame* f);
 
-  void set_root(frame* f);
+  // Sets root path to search for, using toplevel vcs dir of
+  // current page on frame.
+  void set_root();
 
 private:
-  wex::path m_root;
+  bool Destroy() override;
+
+  void run();
+
+  wex::frame*    m_frame;
+  wex::listview* m_listview;
+  wex::path      m_root;
+
+  wxComboBox* m_combobox;
 };
