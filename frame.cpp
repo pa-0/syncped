@@ -1010,12 +1010,6 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
   return (wex::stc*)page;
 }
 
-bool frame::output(const std::string& text) const
-{
-  provide_output(text);
-  return true;
-}
-
 bool frame::print_ex(wex::factory::stc* stc, const std::string& text)
 {
   auto* page = (wex::stc*)m_editors->set_selection("Print");
@@ -1039,38 +1033,6 @@ bool frame::print_ex(wex::factory::stc* stc, const std::string& text)
   page->get_lexer().set(stc->get_lexer());
 
   return true;
-}
-
-void frame::provide_output(const std::string& text) const
-{
-  if (m_app->is_output())
-  {
-    std::cout << text;
-  }
-
-  if (!m_app->get_output().empty())
-  {
-    wex::file(
-      wex::path(m_app->get_output()),
-      std::ios_base::out | std::ios_base::app)
-      .write(text);
-  }
-}
-
-void frame::record(const std::string& command)
-{
-  if (m_app->is_echo())
-  {
-    std::cout << command << "\n";
-  }
-
-  if (!m_app->get_scriptout().empty())
-  {
-    wex::file(
-      wex::path(m_app->get_scriptout()),
-      std::ios_base::out | std::ios_base::app)
-      .write(command + "\n");
-  }
 }
 
 wex::stc* frame::restore_page(const std::string& key)
@@ -1119,16 +1081,6 @@ void frame::statusbar_clicked(const std::string& pane)
   {
     decorated_frame::statusbar_clicked(pane);
   }
-}
-
-bool frame::statustext(const std::string& text, const std::string& pane) const
-{
-  if (pane.empty())
-  {
-    provide_output(text);
-  }
-
-  return decorated_frame::statustext(text, pane);
 }
 
 void frame::sync_all()

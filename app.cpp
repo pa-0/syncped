@@ -42,12 +42,6 @@ bool app::OnInit()
              m_is_debug = on;
            }},
 
-          {{"echo,e", "echo commands"},
-           [&](bool on)
-           {
-             m_is_echo = on;
-           }},
-
           {{"ex", "ex mode"},
            [&](bool on)
            {
@@ -143,12 +137,6 @@ bool app::OnInit()
                m_data.flags(
                  wex::data::stc::window_t().set(wex::data::stc::WIN_READ_ONLY),
                  wex::data::control::OR);
-           }},
-
-          {{"echo-output,x", "echo output commands (process, statusbar)"},
-           [&](bool on)
-           {
-             m_is_output = on;
            }}},
 
          {// --- options with arguments ---
@@ -165,28 +153,6 @@ bool app::OnInit()
             [&](const std::any& s)
             {
               wex::config::set_path(wex::path(std::any_cast<std::string>(s)));
-            }}},
-
-          {{"quit,q", "quit after specified number of seconds"},
-           {wex::cmdline::INT,
-            [&](const std::any& s)
-            {
-              if (const auto quit(std::any_cast<int>(s)); quit > 0)
-              {
-                const auto id_quit = wxWindowBase::NewControlId();
-
-                auto* timer_start = new wxTimer(this, id_quit);
-
-                timer_start->StartOnce(1000 * quit);
-
-                Bind(
-                  wxEVT_TIMER,
-                  [=, this](wxTimerEvent& event)
-                  {
-                    Exit();
-                  },
-                  id_quit);
-              }
             }}},
 
           {{"tag,t", "start at tag"},
@@ -209,20 +175,6 @@ bool app::OnInit()
             {
               m_data.control(wex::data::control().command(
                 ":so " + std::any_cast<std::string>(s)));
-            }}},
-
-          {{"scriptout,w", "script out append (echo to file <arg>)"},
-           {wex::cmdline::STRING,
-            [&](const std::any& s)
-            {
-              m_scriptout = std::any_cast<std::string>(s);
-            }}},
-
-          {{"output,X", "output commands append to file"},
-           {wex::cmdline::STRING,
-            [&](const std::any& s)
-            {
-              m_output = std::any_cast<std::string>(s);
             }}}},
 
          {{"files",
