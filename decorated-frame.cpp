@@ -149,7 +149,7 @@ decorated_frame::decorated_frame(app* app)
 
   auto* menuFind = new wex::menu();
 
-  if (wex::config(_("stc.vi mode")).get(false))
+  if (wex::config(_("stc.vi mode")).get(true))
   {
     // No accelerators for vi mode, Ctrl F is page down.
     menuFind->append(

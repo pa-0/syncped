@@ -119,6 +119,14 @@ frame::frame(app* app)
         get_debug()->execute("file " + p.string());
         m_files.pop_back();
       }
+      else
+      {
+        wex::open_files(
+          this,
+          m_app->get_files(),
+          m_app->data(),
+          wex::data::dir::type_t().set(wex::data::dir::FILES));
+      }
     }
     else if (m_app->is_project())
     {
