@@ -23,7 +23,9 @@ bool app::OnInit()
 {
   SetAppName("syncped");
 
-  bool               list_lexers = false;
+  bool        list_lexers = false;
+  std::string ctags_file;
+
   wex::data::cmdline data(argc, argv);
 
   if (bool exit = false;
@@ -166,7 +168,8 @@ bool app::OnInit()
            {wex::cmdline::STRING,
             [&](const std::any& s)
             {
-              wex::ctags::open(std::any_cast<std::string>(s));
+              // do not open here, to ensure app::OnInit is done (logging)
+              ctags_file = std::any_cast<std::string>(s);
             }}},
 
           {{"scriptin,s", "script in (:so <arg> applied on any file opened)"},
@@ -205,6 +208,11 @@ bool app::OnInit()
     }
 
     return false;
+  }
+
+  if (!ctags_file.empty())
+  {
+    wex::ctags::open(ctags_file);
   }
 
   auto* f = new frame(this);

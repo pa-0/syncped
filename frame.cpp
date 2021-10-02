@@ -281,6 +281,22 @@ frame::frame(app* app)
       },
       ID_FIND_FILE}});
 
+  wex::bind(this).ui(
+    {{[=, this](wxUpdateUIEvent& event)
+      {
+        event.Enable(!file_history().empty() && 
+          m_editors->GetPageCount() > 0 &&
+          m_browse_index < file_history().size() - 1);
+      },
+      wxID_FORWARD},
+     {[=, this](wxUpdateUIEvent& event)
+      {
+        event.Enable(!file_history().empty() && 
+          m_editors->GetPageCount() > 0 &&
+          m_browse_index > 0);
+      },
+      wxID_BACKWARD}});
+
   Bind(
     wxEVT_SIZE,
     [=, this](wxSizeEvent& event)
@@ -1016,6 +1032,51 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
   }
 
   return (wex::stc*)page;
+}
+
+void frame::open_file_same_page(wxCommandEvent& event)
+{
+  if (auto* page = (wex::stc*)m_editors->GetPage(m_editors->GetSelection());
+      page != nullptr && file_history().size() > 1)
+  {
+    if (event.GetId() == wxID_FORWARD)
+    {
+      if (m_browse_index < file_history().size() - 1)
+      {
+        m_browse_index++;
+      }
+      else if (m_browse_index > file_history().size() - 1)
+      {
+        m_browse_index = file_history().size() - 1;
+        return;
+      }
+      else
+      {
+        return;
+      }
+    }
+    else
+    {
+      if (m_browse_index > 0)
+      {
+        m_browse_index--;
+      }
+      else
+      {
+        return;
+      }
+    }
+
+    const auto& p(file_history()[m_browse_index]);
+
+    m_editors->set_page_text(
+      m_editors->key_by_page(page),
+      p.string(),
+      p.filename());
+    page->open(p, wex::data::stc().recent(false));
+    page->get_lexer().set(wex::path_lexer(p).lexer().display_lexer(), true);
+    page->properties_message();
+  }
 }
 
 bool frame::print_ex(wex::factory::stc* stc, const std::string& text)

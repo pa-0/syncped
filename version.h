@@ -7,6 +7,6 @@
 
 #pragma once
 
-#include <wex/version.h>
+#include <wex/core/version.h>
 
 const wex::version_info get_version_info();

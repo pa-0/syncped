@@ -51,6 +51,8 @@ private:
     const std::string&    text,
     const wex::data::stc& data = wex::data::stc()) override;
 
+  void open_file_same_page(wxCommandEvent& event) override;
+
   bool print_ex(wex::factory::stc* stc, const std::string& text) override;
 
   wex::stc* restore_page(const std::string& key) override;
@@ -71,7 +73,7 @@ private:
 
   bool m_maximized{false};
 
-  int m_split_id{1};
+  int m_browse_index{0}, m_split_id{1};
 
   std::string m_saved_page;
 
