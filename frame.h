@@ -69,6 +69,9 @@ private:
 
   void on_command(wxCommandEvent& event);
   void on_update_ui(wxUpdateUIEvent& event);
+  void save(wex::stc* stc);
+  bool saveas(wex::file* f, const std::string& name);
+  void saveas(wex::stc* stc, const std::string& name);
   void update_listviews();
 
   bool m_maximized{false};

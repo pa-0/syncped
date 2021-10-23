@@ -7,20 +7,20 @@ Resource	keywords.resource
 
 
 *** Test Cases ***
-EDIT
+edit
 	Input	:e other.txt
 	...	:f
 	Syncped
 	# the :e command is handled by event, so other.txt not yet active
 	Output Contains	${file-startup}
 
-EMPTY
+empty
 	Input	:1000
 	...	:.=
 	Syncped
 	Output Contains	1
 
-INFO
+info
 	Input	:a|line has text
 	...	:f
 	Syncped
@@ -29,40 +29,50 @@ INFO
 	Output Contains	%
 	Output Contains	level
 
-MDI
+mdi
 	Input	:a|line has text
 	...	:e other.txt
 	...	:e more.txt
 	# We cannot test mdi, because of events.
 	Syncped
 
-PROCESS
+process
 	Input	:!pwd
 	Syncped
 	Output Contains	syncped
 
-SET
+saveas
+	${size}=	Get File Size	test-ex.robot
+	Input Many	:e test-ex.robot	1
+	Input Many	:w copy.txt	1
+	Syncped	5
+	File Should Exist	copy.txt
+	${size-copy}=	Get File Size	copy.txt
+	Should Be Equal	${size}	${size-copy}
+	Remove File	copy.txt
+
+set
 	Input	:set all *
 	Syncped
 	Output Contains	ts=
 
-SET-BOOL
+set-bool
 	Input	:set nosws *
 	...	:set sws ? *
 	Syncped
 	Output Contains	nosws
 
-SET-INFO
+set-info
 	Input	:set ts ? *
 	Syncped
 	Output Contains	ts=
 
-SET-VERBOSITY
+set-verbosity
 	Input	:set ve?
 	Syncped
 	Output Contains	ve=${level}
 
-SUBSTITUTE
+substitute
 	Input	:a|line has text
 	...	:a|line has a tiger
 	...	:a|line has simon and simon and garfunkel
@@ -71,7 +81,7 @@ SUBSTITUTE
 	Output Contains	1
 	Output Contains	simon
 
-SUBSTITUTE-GLOBAL
+substitute-global
 	Input	:a|line has text
 	...	:a|line has a tiger
 	...	:a|line has simon and simon and garfunkel

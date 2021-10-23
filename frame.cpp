@@ -284,15 +284,15 @@ frame::frame(app* app)
   wex::bind(this).ui(
     {{[=, this](wxUpdateUIEvent& event)
       {
-        event.Enable(!file_history().empty() && 
-          m_editors->GetPageCount() > 0 &&
+        event.Enable(
+          !file_history().empty() && m_editors->GetPageCount() > 0 &&
           m_browse_index < file_history().size() - 1);
       },
       wxID_FORWARD},
      {[=, this](wxUpdateUIEvent& event)
       {
-        event.Enable(!file_history().empty() && 
-          m_editors->GetPageCount() > 0 &&
+        event.Enable(
+          !file_history().empty() && m_editors->GetPageCount() > 0 &&
           m_browse_index > 0);
       },
       wxID_BACKWARD}});
@@ -516,62 +516,14 @@ void frame::on_command(wxCommandEvent& event)
     case wxID_SAVE:
       if (editor != nullptr)
       {
-        if (!editor->IsModified() || !editor->get_file().file_save())
-          return;
-
-        set_recent_file(editor->path());
-
-        if (editor->path() == wex::lexers::get()->path())
-        {
-          if (wex::lexers::get()->load_document())
-          {
-            m_editors->for_each<wex::stc>(wex::ID_ALL_STC_SET_LEXER);
-            update_listviews();
-
-            // As the lexer might have changed, update status bar field as well.
-            update_statusbar(editor, "PaneLexer");
-          }
-        }
-        else if (editor->path() == wex::menus::path())
-        {
-          wex::vcs::load_document();
-        }
-        else if (editor->path() == wex::ex::get_macros().path())
-        {
-          wex::ex::get_macros().load_document();
-        }
-        else if (editor->path() == wex::config::path())
-        {
-          wex::config::read();
-        }
+        save(editor);
       }
       break;
 
     case wxID_SAVEAS:
       if (editor != nullptr)
       {
-        if (const auto& name(event.GetString()); !name.empty())
-        {
-          if (!editor->get_file().file_save(wex::path(name.ToStdString())))
-          {
-            return;
-          }
-        }
-        else
-        {
-          if (wex::file_dialog dlg(
-                &editor->get_file(),
-                wex::data::window().style(wxFD_SAVE).parent(this).title(
-                  wxGetStockLabel(wxID_SAVEAS, wxSTOCK_NOFLAGS).ToStdString()));
-              dlg.ShowModal() != wxID_OK ||
-              !editor->get_file().file_save(
-                wex::path(dlg.GetPath().ToStdString())))
-          {
-            return;
-          }
-        }
-
-        open_file(editor->path(), wex::data::stc(m_app->data()));
+        saveas(editor, event.GetString());
       }
       break;
 
@@ -1113,6 +1065,84 @@ wex::stc* frame::restore_page(const std::string& key)
   }
 
   return nullptr;
+}
+
+void frame::save(wex::stc* editor)
+{
+  if (!editor->IsModified() || !editor->get_file().file_save())
+    return;
+
+  set_recent_file(editor->path());
+
+  if (editor->path() == wex::lexers::get()->path())
+  {
+    if (wex::lexers::get()->load_document())
+    {
+      m_editors->for_each<wex::stc>(wex::ID_ALL_STC_SET_LEXER);
+      update_listviews();
+
+      // As the lexer might have changed, update status bar field as well.
+      update_statusbar(editor, "PaneLexer");
+    }
+  }
+  else if (editor->path() == wex::menus::path())
+  {
+    wex::vcs::load_document();
+  }
+  else if (editor->path() == wex::ex::get_macros().path())
+  {
+    wex::ex::get_macros().load_document();
+  }
+  else if (editor->path() == wex::config::path())
+  {
+    wex::config::read();
+  }
+}
+
+bool frame::saveas(wex::file* f, const std::string& name)
+{
+  if (!name.empty())
+  {
+    if (!f->file_save(wex::path(name)))
+    {
+      return false;
+    }
+  }
+  else
+  {
+    if (wex::file_dialog dlg(
+          f,
+          wex::data::window().style(wxFD_SAVE).parent(this).title(
+            wxGetStockLabel(wxID_SAVEAS, wxSTOCK_NOFLAGS).ToStdString()));
+        dlg.ShowModal() != wxID_OK ||
+        !f->file_save(wex::path(dlg.GetPath().ToStdString())))
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+void frame::saveas(wex::stc* editor, const std::string& name)
+{
+  if (editor->get_file().is_contents_changed())
+  {
+    if (const auto old(editor->get_file().path());
+        saveas(&editor->get_file(), name))
+    {
+      open_file(editor->get_file().path(), wex::data::stc(m_app->data()));
+      auto* page = (wex::stc*)m_editors->page_by_key(old.string());
+      page->get_file().file_load(old);
+    }
+  }
+  else
+  {
+    if (wex::file f(editor->get_file()); saveas(&f, name))
+    {
+      open_file(f.path(), wex::data::stc(m_app->data()));
+    }
+  }
 }
 
 bool frame::save_current_page(const std::string& key)

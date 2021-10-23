@@ -7,7 +7,7 @@ Resource	keywords.resource
 
 
 *** Test Cases ***
-HELP
+help
 	[Documentation]	Check whether we can startup correctly
 	${result}=	Run Process	${SYNCPED}	-h
 	# required by OpenGroup
@@ -22,7 +22,7 @@ HELP
 	Should Contain	${result.stdout}	-X
 	Should Contain	${result.stdout}	version
 
-LEXERS
+lexers
 	[Documentation]	Check whether we have at least a rfw lexer
 	${result}=	Run Process	${SYNCPED}	-L
 	Should Contain	${result.stdout}	rfw

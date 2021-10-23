@@ -7,7 +7,7 @@ Resource	keywords.resource
 
 
 *** Test Cases ***
-CALCULATE
+calculate
 	Input	=9+9+9+9-2+(3*3)
 	...	=2<4
 	...	=128/2
@@ -18,14 +18,14 @@ CALCULATE
 	Output Contains	64
 	Output Contains	7
 
-DEBUG	[Documentation]	Set a breakpoint, and give time to process it
+debug	[documentation]	set a breakpoint, and give time to process it
 	Input Many	:23	1
 	Input Many	:de b	1
 	Syncped Debug	20
 	Output Contains	lldb
 	Output Contains	Breakpoint
 
-DELETE
+delete
 	Input Many	:a|line	100
 	Input	:1
 	...	59dd
@@ -33,7 +33,7 @@ DELETE
 	Output Contains	59
 	Output Contains	fewer
 
-DELETE-D
+delete-d
 	Input	:a|line has some text
 	...	:1
 	...	ww
@@ -41,7 +41,7 @@ DELETE-D
 	Syncped
 	Contents Does Not Contain	some text
 
-FIND-NOT
+find-not
 	Input	:a|x
 	...	:a|y
 	...	:a|z
@@ -50,7 +50,7 @@ FIND-NOT
 	Syncped
 	Output Contains	4
 
-FIND-OK
+find-ok
 	Input	:a|x
 	...	:a|y
 	...	:a|z
@@ -59,7 +59,7 @@ FIND-OK
 	Syncped
 	Output Contains	3
 
-INFO
+info
 	Input	:a|line has text
 	...	
 	Syncped
@@ -67,7 +67,7 @@ INFO
 	Output Contains	%
 	Output Contains	level
 
-MACRO
+macro
 	Input	@Template-test@
 	Syncped
 	Contents Does Not Contain	@Created@
@@ -77,7 +77,7 @@ MACRO
 	Contents Does Not Contain	@Process@
 	Contents Does Not Contain	@Year@
 
-MACRO-RECORD
+macro-record
 	Input	:a|10 1123
 	...	:1
 	...	qb
@@ -96,7 +96,7 @@ MACRO-RECORD
 	Syncped
 	Contents Contains	1223
 
-MARKER
+marker
 	Input Many	:a|line has text	50
 	Input	:10
 	...	mx
@@ -106,7 +106,7 @@ MARKER
 	Syncped
 	Output Contains	10
 
-MODE-BLOCK
+mode-block
 	Input Many	:a|line has text	50
 	Input	:1
 	...	w
@@ -117,17 +117,17 @@ MODE-BLOCK
 	Syncped
 	Output Does Not Contain	10
 
-MODE-EX
+mode-ex
 	Input No Write	:vi
 	Syncped Ex Mode
 
-MODE-INSERT
+mode-insert
 	Input	:a|one line
 	...	ijjjjjjj
 	Syncped
 	Contents Contains	jjjjjjj
 
-MODE-VISUAL
+mode-visual
 	Input Many	:a|line has text	50
 	Input	:1
 	...	v
@@ -143,7 +143,7 @@ MODE-VISUAL
 	Output Contains	fewer
 	Output Does Not Contain	9
 
-NAVIGATE
+navigate
 	Input Many	:a|line has text	50
 	Input	:1
 	...	jjjjjjj
@@ -151,7 +151,7 @@ NAVIGATE
 	Syncped
 	Output Contains	8
 
-YANK
+yank
 	Input Many	:a|line	100
 	Input	:1
 	...	59yy
@@ -159,7 +159,7 @@ YANK
 	Output Contains	59
 	Output Contains	yanked
 
-YANK-REGISTER
+yank-register
 	Input Many	:a|line	10
 	Input	:1
 	...	"x

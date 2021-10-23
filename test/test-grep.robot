@@ -7,13 +7,13 @@ Resource	keywords.resource
 
 
 *** Test Cases ***
-HELP
+help
 	Input	:grep -h
 	Syncped
 	Output Contains	hidden
 	Output Contains	recursive
 
-TEXT	[Documentation]	Grep (without quit), and quit after some time
+text	[documentation]	grep (without quit), and quit after some time
 	${result}=	Run Process
 	...	./count.sh
 
