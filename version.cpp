@@ -18,8 +18,7 @@ const wex::version_info app::version() const
                    "and saved in the same directory as "
                    "where the executable is.");
 #endif
-  description +=
-    _("\n\nUsing:\n") + wex::get_version_info().external_libraries().str();
+  description += _("\n\nUsing:\n") + wex::external_libraries().str();
 
   return wex::version_info(
     {"syncped",
