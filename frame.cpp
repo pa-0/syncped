@@ -276,8 +276,7 @@ frame::frame(app* app)
       wex::ID_ALL_CLOSE},
      {[=, this](wxCommandEvent& event)
       {
-        m_find_files->set_root();
-        m_find_files->Show();
+        shift_double_click();
       },
       ID_FIND_FILE}});
 
@@ -1143,6 +1142,12 @@ void frame::saveas(wex::stc* editor, const std::string& name)
       open_file(f.path(), wex::data::stc(m_app->data()));
     }
   }
+}
+
+void frame::shift_double_click()
+{
+  m_find_files->set_root();
+  m_find_files->Show();
 }
 
 bool frame::save_current_page(const std::string& key)

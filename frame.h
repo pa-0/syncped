@@ -59,6 +59,8 @@ private:
 
   bool save_current_page(const std::string& key) override;
 
+  void shift_double_click() override;
+
   void statusbar_clicked(const std::string& pane) override;
 
   void sync_all() override;
