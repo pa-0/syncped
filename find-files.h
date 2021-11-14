@@ -17,13 +17,14 @@ public:
   // Constructor.
   explicit find_files(wex::frame* f);
 
+  // Destroys window, saves data.
+  bool Destroy() override;
+
   // Sets root path to search for, using toplevel vcs dir of
   // current page on frame.
   void set_root();
 
 private:
-  bool Destroy() override;
-
   void run();
 
   wex::frame*    m_frame;

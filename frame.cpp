@@ -256,6 +256,8 @@ frame::frame(app* app)
         .set(m_history != nullptr && m_history->IsShown());
       wex::config("show.Projects").set(project_open);
 
+      m_find_files->Destroy();
+
       if (m_app->data().control().command().empty())
       {
         delete m_process;
