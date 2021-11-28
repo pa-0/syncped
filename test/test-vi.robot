@@ -115,7 +115,22 @@ mode-block
 	...	w
 	...	d
 	Syncped
-	Output Does Not Contain	10
+	Output Contains	11
+
+mode-block-ce
+	Input Many	:a|line has text	50
+	Input	:1
+	...	w
+	...	K
+	...	10j
+	...	ce
+	...	other
+	...	
+	...	
+	Syncped
+	# stc does not offer rect insert (needs upgrade)
+	#Contents Contains	line other text\nline other text
+	Contents Contains	line other text
 
 mode-ex
 	Input No Write	:vi

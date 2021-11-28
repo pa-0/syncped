@@ -74,7 +74,9 @@ Input
 Input Many
 	[Arguments]	${line}	${count}
 	[Documentation]	As Input, but extra argument for repeat count,
-	...	and does not end write output and with quit
+	...	and does not end write output and does not end with quit
+	...	Normally, invoke this as often a you like, finish with
+	...	one other Input keyword.
 	FOR	${index}	IN RANGE	${count}
 		Append To File	${file-input}	${line}
 		Append To File	${file-input}	\n

@@ -31,6 +31,14 @@ find_files::find_files(wex::frame* f)
     {
       run();
     });
+
+  m_listview->Bind(
+    wxEVT_LEFT_DCLICK,
+    [=, this](wxMouseEvent& event)
+    {
+      event.Skip();
+      Hide();
+    });
 }
 
 bool find_files::Destroy()
