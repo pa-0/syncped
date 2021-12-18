@@ -174,6 +174,14 @@ yank
 	Output Contains	59
 	Output Contains	yanked
 
+yank-range
+	Input Many	:a|line	100
+	Input	:1
+	...	yG
+	Syncped
+	Output Contains	100
+	Output Contains	yanked
+
 yank-register
 	Input Many	:a|line	10
 	Input	:1

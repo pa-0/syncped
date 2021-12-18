@@ -23,7 +23,7 @@ bool app::OnInit()
 {
   SetAppName("syncped");
 
-  bool        list_lexers = false;
+  bool        list_lexers{false}, show_locale{false};
   std::string ctags_file;
 
   wex::data::cmdline data(argc, argv);
@@ -96,11 +96,7 @@ bool app::OnInit()
           {{"locale,l", "show locale"},
            [&](bool on)
            {
-             if (on)
-             {
-               show_locale();
-               exit = true;
-             }
+             show_locale = on;
            }},
 
           {{"no-config,n", "do not save json config on exit"},
@@ -210,6 +206,15 @@ bool app::OnInit()
     return false;
   }
 
+  if (show_locale)
+  {
+    // code cannot be part of lambda, as OnInit is required
+    std::cout << "Catalog dir: " << get_catalog_dir()
+              << "\nName: " << get_locale().GetName().c_str()
+              << "\nIsSupported: " << get_locale().IsSupported() << "\n";
+    return false;
+  }
+
   if (!ctags_file.empty())
   {
     wex::ctags::open(ctags_file);
@@ -235,25 +240,4 @@ void app::reset()
   m_is_project = false;
   m_split      = -1;
   m_tag.clear();
-}
-
-void app::show_locale()
-{
-  std::cout << "Catalog dir: " << get_catalog_dir()
-            << "\nName: " << get_locale().GetName().c_str()
-            << "\nCanonical name: " << get_locale().GetCanonicalName().c_str()
-            << "\nLanguage: " << get_locale().GetLanguage()
-            << "\nLocale: " << get_locale().GetLocale().c_str()
-            << "\nIsOk: " << get_locale().IsOk();
-
-  if (const auto* info = wxLocale::GetLanguageInfo(get_locale().GetLanguage());
-      info == nullptr)
-  {
-    std::cout << "\nNo info\n";
-  }
-  else
-  {
-    std::cout << "\nIs available: "
-              << get_locale().IsAvailable(get_locale().GetLanguage()) << "\n";
-  }
 }

@@ -33,8 +33,6 @@ private:
 
   bool OnInit() override;
 
-  void show_locale();
-
   std::string m_tag;
 
   std::vector<wex::path> m_files;
