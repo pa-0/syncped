@@ -13,7 +13,7 @@ help
 	Output Contains	hidden
 	Output Contains	recursive
 
-text	[documentation]	grep (without quit), and quit after some time
+text	[Documentation]	grep (without quit), and quit after some time
 	${result}=	Run Process
 	...	./count.sh
 

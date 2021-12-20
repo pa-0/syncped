@@ -131,12 +131,7 @@ decorated_frame::decorated_frame(app* app)
      {"PaneMacro", -1, false},
      {"PaneMode", 100, false}});
 
-  if (wex::vcs vcs; vcs.use() && wex::vcs::size() > 0)
-  {
-    const auto b(vcs.set_entry_from_base() ? vcs.get_branch() : std::string());
-    statustext(!b.empty() ? b : vcs.name(), "PaneVCS");
-  }
-  else
+  if (wex::vcs vcs; !vcs.use() || wex::vcs::size() == 0)
   {
     m_statusbar->pane_show("PaneVCS", false);
   }

@@ -1158,6 +1158,15 @@ bool frame::save_current_page(const std::string& key)
   return true;
 }
 
+void frame::show_vcs()
+{
+  if (wex::vcs vcs; vcs.use() && wex::vcs::size() > 0)
+  {
+    statustext_vcs(dynamic_cast<wex::stc*>(
+      m_editors->GetPage(m_editors->GetPageCount() - 1)));
+  }
+}
+
 void frame::statusbar_clicked(const std::string& pane)
 {
   if (pane == "PaneTheme")

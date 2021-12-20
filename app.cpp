@@ -225,6 +225,7 @@ bool app::OnInit()
   if (!f->is_closing())
   {
     f->Show();
+    f->show_vcs();
   }
 
   return !f->is_closing();

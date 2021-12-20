@@ -17,6 +17,8 @@ class frame : public decorated_frame
 public:
   explicit frame(app* app);
 
+  void show_vcs();
+
 private:
   // All overrides.
 

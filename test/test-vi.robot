@@ -18,7 +18,7 @@ calculate
 	Output Contains	64
 	Output Contains	7
 
-debug	[documentation]	set a breakpoint, and give time to process it
+debug	[Documentation]	set a breakpoint, and give time to process it
 	Input Many	:23	1
 	Input Many	:de b	1
 	Syncped Debug	20
