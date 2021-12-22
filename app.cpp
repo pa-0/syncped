@@ -208,10 +208,14 @@ bool app::OnInit()
 
   if (show_locale)
   {
-    // code cannot be part of lambda, as OnInit is required
-    std::cout << "Catalog dir: " << get_catalog_dir()
-              << "\nName: " << get_locale().GetName().c_str()
-              << "\nIsSupported: " << get_locale().IsSupported() << "\n";
+    if (get_language() != wxLANGUAGE_UNKNOWN)
+    {
+      // code cannot be part of lambda, as OnInit is required
+      std::cout << "Catalog dir: " << get_catalog_dir()
+                << "\nName: " << get_locale().GetName().c_str()
+                << "\nIsSupported: " << get_locale().IsSupported() << "\n";
+    }
+
     return false;
   }
 
