@@ -208,12 +208,22 @@ bool app::OnInit()
 
   if (show_locale)
   {
-    if (get_language() != wxLANGUAGE_UNKNOWN)
+    // code cannot be part of lambda, as OnInit is required
+    switch (get_language())
     {
-      // code cannot be part of lambda, as OnInit is required
-      std::cout << "Catalog dir: " << get_catalog_dir()
-                << "\nName: " << get_locale().GetName().c_str()
-                << "\nIsSupported: " << get_locale().IsSupported() << "\n";
+      case wxLANGUAGE_UNKNOWN:
+        // error already reported
+        break;
+
+      case wxLANGUAGE_DEFAULT:
+        std::cout << "default locale\n";
+        break;
+
+      default:
+        if (!get_catalog_dir().empty())
+        {
+          std::cout << "catalog dir: " << get_catalog_dir() << "\n";
+        }
     }
 
     return false;
