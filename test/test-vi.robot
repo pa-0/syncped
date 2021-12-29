@@ -7,6 +7,13 @@ Resource	keywords.resource
 
 
 *** Test Cases ***
+browse
+	Input	:a|wxWidgets.org has some text
+	...	:1
+	...	ll
+	...	U
+	Syncped
+
 calculate
 	Input	=9+9+9+9-2+(3*3)
 	...	=2<4
