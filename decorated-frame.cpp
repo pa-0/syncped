@@ -2,7 +2,7 @@
 // Name:      decorated-frame.cpp
 // Purpose:   Implementation of decorated_frame class
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021 Anton van Wezenbeek
+// Copyright: (c) 2021-2022 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <wx/generic/textdlgg.h>
@@ -744,7 +744,7 @@ decorated_frame::decorated_frame(app* app)
             {
               wxLaunchDefaultBrowser(
                 "http://antonvw.github.io/syncped/v" +
-                wex::before(m_app->version().get(), '.', false) +
+                wex::find_before(m_app->version().get(), ".", false) +
                 "/syncped.htm");
             })}}),
       wxGetStockLabel(wxID_HELP)}}));
