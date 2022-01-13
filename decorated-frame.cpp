@@ -744,7 +744,7 @@ decorated_frame::decorated_frame(app* app)
             {
               wxLaunchDefaultBrowser(
                 "http://antonvw.github.io/syncped/v" +
-                wex::find_before(m_app->version().get(), ".", false) +
+                wex::rfind_before(m_app->version().get(), ".") +
                 "/syncped.htm");
             })}}),
       wxGetStockLabel(wxID_HELP)}}));
