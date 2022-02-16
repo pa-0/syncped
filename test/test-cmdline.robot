@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation	Testcases for syncped cmdline
 Test Setup	Test Setup
-Suite Setup	Suite Setup
+Suite Setup	Syncped Suite Setup
 Suite Teardown	Suite Teardown
 Resource	keywords.resource
 
@@ -29,4 +29,4 @@ lexers
 
 
 *** Comments ***
-Copyright: (c) 2020-2021 Anton van Wezenbeek
+Copyright: (c) 2020-2022 Anton van Wezenbeek

@@ -2,7 +2,7 @@
 // Name:      frame.cpp
 // Purpose:   Implementation of class frame
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021 Anton van Wezenbeek
+// Copyright: (c) 2021-2022 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <boost/algorithm/string.hpp>
@@ -654,8 +654,7 @@ void frame::on_update_ui(wxUpdateUIEvent& event)
   {
     case wxID_EXECUTE:
       event.Enable(
-        !is_closing() && !m_process->get_exe().empty() &&
-        !m_process->is_running());
+        !is_closing() && !m_process->data().exe().empty() && !m_process->is_running());
       break;
 
     case wxID_STOP:
@@ -801,7 +800,7 @@ wex::stc* frame::open_file(
   if (nd.page() == nullptr)
   {
     nd.page(new wex::stc(
-      vcs.get_stdout(),
+      vcs.std_out(),
       wex::data::stc(data).window(wex::data::window().parent(m_editors).name(
         filename.filename() + " " + unique))));
 

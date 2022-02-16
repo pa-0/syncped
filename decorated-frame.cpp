@@ -521,7 +521,7 @@ decorated_frame::decorated_frame(app* app)
                 pane_show("PROCESS");
                 delete m_process;
                 m_process = new wex::process;
-                m_process->async_system();
+                m_process->async_system(wex::process_data());
               };
             })},
 
@@ -535,7 +535,7 @@ decorated_frame::decorated_frame(app* app)
               pane_show("PROCESS");
               delete m_process;
               m_process = new wex::process;
-              m_process->async_system();
+              m_process->async_system(wex::process_data());
             })},
 
          {wxID_STOP,
