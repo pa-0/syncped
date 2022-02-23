@@ -465,7 +465,7 @@ wex::process* frame::get_process(const std::string& command)
 
   delete m_process;
   m_process = new wex::process;
-  m_process->async_system(command);
+  m_process->async_system(wex::process_data(command));
 
   return m_process;
 }
@@ -654,7 +654,8 @@ void frame::on_update_ui(wxUpdateUIEvent& event)
   {
     case wxID_EXECUTE:
       event.Enable(
-        !is_closing() && !m_process->data().exe().empty() && !m_process->is_running());
+        !is_closing() && !m_process->data().exe().empty() &&
+        !m_process->is_running());
       break;
 
     case wxID_STOP:
