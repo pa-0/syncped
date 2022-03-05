@@ -2,7 +2,7 @@
 // Name:      frame.cpp
 // Purpose:   Implementation of class frame
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021 Anton van Wezenbeek
+// Copyright: (c) 2021-2022 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <boost/algorithm/string.hpp>
@@ -118,6 +118,14 @@ frame::frame(app* app)
       {
         get_debug()->execute("file " + p.string());
         m_files.pop_back();
+      }
+      else
+      {
+        wex::open_files(
+          this,
+          m_app->get_files(),
+          m_app->data(),
+          wex::data::dir::type_t().set(wex::data::dir::FILES));
       }
     }
     else if (m_app->is_project())
@@ -248,6 +256,8 @@ frame::frame(app* app)
         .set(m_history != nullptr && m_history->IsShown());
       wex::config("show.Projects").set(project_open);
 
+      m_find_files->Destroy();
+
       if (m_app->data().control().command().empty())
       {
         delete m_process;
@@ -268,10 +278,25 @@ frame::frame(app* app)
       wex::ID_ALL_CLOSE},
      {[=, this](wxCommandEvent& event)
       {
-        m_find_files->set_root();
-        m_find_files->Show();
+        shift_double_click();
       },
       ID_FIND_FILE}});
+
+  wex::bind(this).ui(
+    {{[=, this](wxUpdateUIEvent& event)
+      {
+        event.Enable(
+          !file_history().empty() && m_editors->GetPageCount() > 0 &&
+          m_browse_index < file_history().size() - 1);
+      },
+      wxID_FORWARD},
+     {[=, this](wxUpdateUIEvent& event)
+      {
+        event.Enable(
+          !file_history().empty() && m_editors->GetPageCount() > 0 &&
+          m_browse_index > 0);
+      },
+      wxID_BACKWARD}});
 
   Bind(
     wxEVT_SIZE,
@@ -440,7 +465,7 @@ wex::process* frame::get_process(const std::string& command)
 
   delete m_process;
   m_process = new wex::process;
-  m_process->async_system(command);
+  m_process->async_system(wex::process_data(command));
 
   return m_process;
 }
@@ -492,62 +517,14 @@ void frame::on_command(wxCommandEvent& event)
     case wxID_SAVE:
       if (editor != nullptr)
       {
-        if (!editor->IsModified() || !editor->get_file().file_save())
-          return;
-
-        set_recent_file(editor->path());
-
-        if (editor->path() == wex::lexers::get()->path())
-        {
-          if (wex::lexers::get()->load_document())
-          {
-            m_editors->for_each<wex::stc>(wex::ID_ALL_STC_SET_LEXER);
-            update_listviews();
-
-            // As the lexer might have changed, update status bar field as well.
-            update_statusbar(editor, "PaneLexer");
-          }
-        }
-        else if (editor->path() == wex::menus::path())
-        {
-          wex::vcs::load_document();
-        }
-        else if (editor->path() == wex::ex::get_macros().path())
-        {
-          wex::ex::get_macros().load_document();
-        }
-        else if (editor->path() == wex::config::path())
-        {
-          wex::config::read();
-        }
+        save(editor);
       }
       break;
 
     case wxID_SAVEAS:
       if (editor != nullptr)
       {
-        if (const auto& name(event.GetString()); !name.empty())
-        {
-          if (!editor->get_file().file_save(wex::path(name.ToStdString())))
-          {
-            return;
-          }
-        }
-        else
-        {
-          if (wex::file_dialog dlg(
-                &editor->get_file(),
-                wex::data::window().style(wxFD_SAVE).parent(this).title(
-                  wxGetStockLabel(wxID_SAVEAS, wxSTOCK_NOFLAGS).ToStdString()));
-              dlg.ShowModal() != wxID_OK ||
-              !editor->get_file().file_save(
-                wex::path(dlg.GetPath().ToStdString())))
-          {
-            return;
-          }
-        }
-
-        open_file(editor->path(), wex::data::stc(m_app->data()));
+        saveas(editor, event.GetString());
       }
       break;
 
@@ -677,7 +654,7 @@ void frame::on_update_ui(wxUpdateUIEvent& event)
   {
     case wxID_EXECUTE:
       event.Enable(
-        !is_closing() && !m_process->get_exe().empty() &&
+        !is_closing() && !m_process->data().exe().empty() &&
         !m_process->is_running());
       break;
 
@@ -824,7 +801,7 @@ wex::stc* frame::open_file(
   if (nd.page() == nullptr)
   {
     nd.page(new wex::stc(
-      vcs.get_stdout(),
+      vcs.std_out(),
       wex::data::stc(data).window(wex::data::window().parent(m_editors).name(
         filename.filename() + " " + unique))));
 
@@ -1010,10 +987,49 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
   return (wex::stc*)page;
 }
 
-bool frame::output(const std::string& text) const
+void frame::open_file_same_page(wxCommandEvent& event)
 {
-  provide_output(text);
-  return true;
+  if (auto* page = (wex::stc*)m_editors->GetPage(m_editors->GetSelection());
+      page != nullptr && file_history().size() > 1)
+  {
+    if (event.GetId() == wxID_FORWARD)
+    {
+      if (m_browse_index < file_history().size() - 1)
+      {
+        m_browse_index++;
+      }
+      else if (m_browse_index > file_history().size() - 1)
+      {
+        m_browse_index = file_history().size() - 1;
+        return;
+      }
+      else
+      {
+        return;
+      }
+    }
+    else
+    {
+      if (m_browse_index > 0)
+      {
+        m_browse_index--;
+      }
+      else
+      {
+        return;
+      }
+    }
+
+    const auto& p(file_history()[m_browse_index]);
+
+    m_editors->set_page_text(
+      m_editors->key_by_page(page),
+      p.string(),
+      p.filename());
+    page->open(p, wex::data::stc().recent(false));
+    page->get_lexer().set(wex::path_lexer(p).lexer().display_lexer(), true);
+    page->properties_message();
+  }
 }
 
 bool frame::print_ex(wex::factory::stc* stc, const std::string& text)
@@ -1041,38 +1057,6 @@ bool frame::print_ex(wex::factory::stc* stc, const std::string& text)
   return true;
 }
 
-void frame::provide_output(const std::string& text) const
-{
-  if (m_app->is_output())
-  {
-    std::cout << text;
-  }
-
-  if (!m_app->get_output().empty())
-  {
-    wex::file(
-      wex::path(m_app->get_output()),
-      std::ios_base::out | std::ios_base::app)
-      .write(text);
-  }
-}
-
-void frame::record(const std::string& command)
-{
-  if (m_app->is_echo())
-  {
-    std::cout << command << "\n";
-  }
-
-  if (!m_app->get_scriptout().empty())
-  {
-    wex::file(
-      wex::path(m_app->get_scriptout()),
-      std::ios_base::out | std::ios_base::app)
-      .write(command + "\n");
-  }
-}
-
 wex::stc* frame::restore_page(const std::string& key)
 {
   if (!m_saved_page.empty() && is_open(wex::path(m_saved_page)))
@@ -1084,10 +1068,104 @@ wex::stc* frame::restore_page(const std::string& key)
   return nullptr;
 }
 
+void frame::save(wex::stc* editor)
+{
+  if (!editor->IsModified() || !editor->get_file().file_save())
+    return;
+
+  set_recent_file(editor->path());
+
+  if (editor->path() == wex::lexers::get()->path())
+  {
+    if (wex::lexers::get()->load_document())
+    {
+      m_editors->for_each<wex::stc>(wex::ID_ALL_STC_SET_LEXER);
+      update_listviews();
+
+      // As the lexer might have changed, update status bar field as well.
+      update_statusbar(editor, "PaneLexer");
+    }
+  }
+  else if (editor->path() == wex::menus::path())
+  {
+    wex::vcs::load_document();
+  }
+  else if (editor->path() == wex::ex::get_macros().path())
+  {
+    wex::ex::get_macros().load_document();
+  }
+  else if (editor->path() == wex::config::path())
+  {
+    wex::config::read();
+  }
+}
+
+bool frame::saveas(wex::file* f, const std::string& name)
+{
+  if (!name.empty())
+  {
+    if (!f->file_save(wex::path(name)))
+    {
+      return false;
+    }
+  }
+  else
+  {
+    if (wex::file_dialog dlg(
+          f,
+          wex::data::window().style(wxFD_SAVE).parent(this).title(
+            wxGetStockLabel(wxID_SAVEAS, wxSTOCK_NOFLAGS).ToStdString()));
+        dlg.ShowModal() != wxID_OK ||
+        !f->file_save(wex::path(dlg.GetPath().ToStdString())))
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+void frame::saveas(wex::stc* editor, const std::string& name)
+{
+  if (editor->get_file().is_contents_changed())
+  {
+    if (const auto old(editor->get_file().path());
+        saveas(&editor->get_file(), name))
+    {
+      open_file(editor->get_file().path(), wex::data::stc(m_app->data()));
+      auto* page = (wex::stc*)m_editors->page_by_key(old.string());
+      page->get_file().file_load(old);
+    }
+  }
+  else
+  {
+    if (wex::file f(editor->get_file()); saveas(&f, name))
+    {
+      open_file(f.path(), wex::data::stc(m_app->data()));
+    }
+  }
+}
+
+void frame::shift_double_click()
+{
+  m_find_files->set_root();
+  m_find_files->Show();
+}
+
 bool frame::save_current_page(const std::string& key)
 {
   m_saved_page = m_editors->current_page_key();
   return true;
+}
+
+void frame::show_vcs()
+{
+  if (wex::vcs vcs;
+      vcs.use() && wex::vcs::size() > 0 && m_editors->GetPageCount() > 0)
+  {
+    statustext_vcs(dynamic_cast<wex::stc*>(
+      m_editors->GetPage(m_editors->GetPageCount() - 1)));
+  }
 }
 
 void frame::statusbar_clicked(const std::string& pane)
@@ -1119,16 +1197,6 @@ void frame::statusbar_clicked(const std::string& pane)
   {
     decorated_frame::statusbar_clicked(pane);
   }
-}
-
-bool frame::statustext(const std::string& text, const std::string& pane) const
-{
-  if (pane.empty())
-  {
-    provide_output(text);
-  }
-
-  return decorated_frame::statustext(text, pane);
 }
 
 void frame::sync_all()

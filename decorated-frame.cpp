@@ -2,7 +2,7 @@
 // Name:      decorated-frame.cpp
 // Purpose:   Implementation of decorated_frame class
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021 Anton van Wezenbeek
+// Copyright: (c) 2021-2022 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <wx/generic/textdlgg.h>
@@ -131,12 +131,7 @@ decorated_frame::decorated_frame(app* app)
      {"PaneMacro", -1, false},
      {"PaneMode", 100, false}});
 
-  if (wex::vcs vcs; vcs.use() && wex::vcs::size() > 0)
-  {
-    const auto b(vcs.set_entry_from_base() ? vcs.get_branch() : std::string());
-    statustext(!b.empty() ? b : vcs.name(), "PaneVCS");
-  }
-  else
+  if (wex::vcs vcs; !vcs.use() || wex::vcs::size() == 0)
   {
     m_statusbar->pane_show("PaneVCS", false);
   }
@@ -149,7 +144,7 @@ decorated_frame::decorated_frame(app* app)
 
   auto* menuFind = new wex::menu();
 
-  if (wex::config(_("stc.vi mode")).get(false))
+  if (wex::config(_("stc.vi mode")).get(true))
   {
     // No accelerators for vi mode, Ctrl F is page down.
     menuFind->append(
@@ -526,7 +521,7 @@ decorated_frame::decorated_frame(app* app)
                 pane_show("PROCESS");
                 delete m_process;
                 m_process = new wex::process;
-                m_process->async_system();
+                m_process->async_system(wex::process_data());
               };
             })},
 
@@ -540,7 +535,7 @@ decorated_frame::decorated_frame(app* app)
               pane_show("PROCESS");
               delete m_process;
               m_process = new wex::process;
-              m_process->async_system();
+              m_process->async_system(wex::process_data());
             })},
 
          {wxID_STOP,
@@ -749,7 +744,7 @@ decorated_frame::decorated_frame(app* app)
             {
               wxLaunchDefaultBrowser(
                 "http://antonvw.github.io/syncped/v" +
-                wex::before(m_app->version().get(), '.', false) +
+                wex::rfind_before(m_app->version().get(), ".") +
                 "/syncped.htm");
             })}}),
       wxGetStockLabel(wxID_HELP)}}));

@@ -17,6 +17,8 @@ class frame : public decorated_frame
 public:
   explicit frame(app* app);
 
+  void show_vcs();
+
 private:
   // All overrides.
 
@@ -51,20 +53,17 @@ private:
     const std::string&    text,
     const wex::data::stc& data = wex::data::stc()) override;
 
-  bool output(const std::string& text) const override;
+  void open_file_same_page(wxCommandEvent& event) override;
 
   bool print_ex(wex::factory::stc* stc, const std::string& text) override;
-
-  void record(const std::string& command) override;
 
   wex::stc* restore_page(const std::string& key) override;
 
   bool save_current_page(const std::string& key) override;
 
-  void statusbar_clicked(const std::string& pane) override;
+  void shift_double_click() override;
 
-  bool
-  statustext(const std::string& text, const std::string& pane) const override;
+  void statusbar_clicked(const std::string& pane) override;
 
   void sync_all() override;
 
@@ -74,12 +73,14 @@ private:
 
   void on_command(wxCommandEvent& event);
   void on_update_ui(wxUpdateUIEvent& event);
-  void provide_output(const std::string& text) const;
+  void save(wex::stc* stc);
+  bool saveas(wex::file* f, const std::string& name);
+  void saveas(wex::stc* stc, const std::string& name);
   void update_listviews();
 
   bool m_maximized{false};
 
-  int m_split_id{1};
+  int m_browse_index{0}, m_split_id{1};
 
   std::string m_saved_page;
 

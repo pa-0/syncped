@@ -23,7 +23,9 @@ bool app::OnInit()
 {
   SetAppName("syncped");
 
-  bool               list_lexers = false;
+  bool        list_lexers{false}, show_locale{false};
+  std::string ctags_file;
+
   wex::data::cmdline data(argc, argv);
 
   if (bool exit = false;
@@ -40,12 +42,6 @@ bool app::OnInit()
            [&](bool on)
            {
              m_is_debug = on;
-           }},
-
-          {{"echo,e", "echo commands"},
-           [&](bool on)
-           {
-             m_is_echo = on;
            }},
 
           {{"ex", "ex mode"},
@@ -80,7 +76,7 @@ bool app::OnInit()
              if (on)
              {
                std::cout << "syncped-" << version().get() << " using\n"
-                         << wex::get_version_info().external_libraries().str();
+                         << wex::external_libraries().str();
                exit = true;
              }
            }},
@@ -100,11 +96,7 @@ bool app::OnInit()
           {{"locale,l", "show locale"},
            [&](bool on)
            {
-             if (on)
-             {
-               show_locale();
-               exit = true;
-             }
+             show_locale = on;
            }},
 
           {{"no-config,n", "do not save json config on exit"},
@@ -143,12 +135,6 @@ bool app::OnInit()
                m_data.flags(
                  wex::data::stc::window_t().set(wex::data::stc::WIN_READ_ONLY),
                  wex::data::control::OR);
-           }},
-
-          {{"echo-output,x", "echo output commands (process, statusbar)"},
-           [&](bool on)
-           {
-             m_is_output = on;
            }}},
 
          {// --- options with arguments ---
@@ -167,28 +153,6 @@ bool app::OnInit()
               wex::config::set_path(wex::path(std::any_cast<std::string>(s)));
             }}},
 
-          {{"quit,q", "quit after specified number of seconds"},
-           {wex::cmdline::INT,
-            [&](const std::any& s)
-            {
-              if (const auto quit(std::any_cast<int>(s)); quit > 0)
-              {
-                const auto id_quit = wxWindowBase::NewControlId();
-
-                auto* timer_start = new wxTimer(this, id_quit);
-
-                timer_start->StartOnce(1000 * quit);
-
-                Bind(
-                  wxEVT_TIMER,
-                  [=, this](wxTimerEvent& event)
-                  {
-                    Exit();
-                  },
-                  id_quit);
-              }
-            }}},
-
           {{"tag,t", "start at tag"},
            {wex::cmdline::STRING,
             [&](const std::any& s)
@@ -200,7 +164,8 @@ bool app::OnInit()
            {wex::cmdline::STRING,
             [&](const std::any& s)
             {
-              wex::ctags::open(std::any_cast<std::string>(s));
+              // do not open here, to ensure app::OnInit is done (logging)
+              ctags_file = std::any_cast<std::string>(s);
             }}},
 
           {{"scriptin,s", "script in (:so <arg> applied on any file opened)"},
@@ -209,20 +174,6 @@ bool app::OnInit()
             {
               m_data.control(wex::data::control().command(
                 ":so " + std::any_cast<std::string>(s)));
-            }}},
-
-          {{"scriptout,w", "script out append (echo to file <arg>)"},
-           {wex::cmdline::STRING,
-            [&](const std::any& s)
-            {
-              m_scriptout = std::any_cast<std::string>(s);
-            }}},
-
-          {{"output,X", "output commands append to file"},
-           {wex::cmdline::STRING,
-            [&](const std::any& s)
-            {
-              m_output = std::any_cast<std::string>(s);
             }}}},
 
          {{"files",
@@ -255,11 +206,40 @@ bool app::OnInit()
     return false;
   }
 
+  if (show_locale)
+  {
+    // code cannot be part of lambda, as OnInit is required
+    switch (get_language())
+    {
+      case wxLANGUAGE_UNKNOWN:
+        // error already reported
+        break;
+
+      case wxLANGUAGE_DEFAULT:
+        std::cout << "default locale\n";
+        break;
+
+      default:
+        if (!get_catalog_dir().empty())
+        {
+          std::cout << "catalog dir: " << get_catalog_dir() << "\n";
+        }
+    }
+
+    return false;
+  }
+
+  if (!ctags_file.empty())
+  {
+    wex::ctags::open(ctags_file);
+  }
+
   auto* f = new frame(this);
 
   if (!f->is_closing())
   {
     f->Show();
+    f->show_vcs();
   }
 
   return !f->is_closing();
@@ -275,25 +255,4 @@ void app::reset()
   m_is_project = false;
   m_split      = -1;
   m_tag.clear();
-}
-
-void app::show_locale()
-{
-  std::cout << "Catalog dir: " << get_catalog_dir()
-            << "\nName: " << get_locale().GetName().c_str()
-            << "\nCanonical name: " << get_locale().GetCanonicalName().c_str()
-            << "\nLanguage: " << get_locale().GetLanguage()
-            << "\nLocale: " << get_locale().GetLocale().c_str()
-            << "\nIsOk: " << get_locale().IsOk();
-
-  if (const auto* info = wxLocale::GetLanguageInfo(get_locale().GetLanguage());
-      info == nullptr)
-  {
-    std::cout << "\nNo info\n";
-  }
-  else
-  {
-    std::cout << "\nIs available: "
-              << get_locale().IsAvailable(get_locale().GetLanguage()) << "\n";
-  }
 }

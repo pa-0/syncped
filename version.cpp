@@ -2,7 +2,7 @@
 // Name:      version.cpp
 // Purpose:   Implementation of version_info
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021 Anton van Wezenbeek
+// Copyright: (c) 2021-2022 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "version.h"
@@ -18,14 +18,13 @@ const wex::version_info app::version() const
                    "and saved in the same directory as "
                    "where the executable is.");
 #endif
-  description +=
-    _("\n\nUsing:\n") + wex::get_version_info().external_libraries().str();
+  description += _("\n\nUsing:\n") + wex::external_libraries().str();
 
   return wex::version_info(
     {"syncped",
-     21,
-     10,
+     22,
+     4,
      0,
      description,
-     "(c) 1998-2021, Anton van Wezenbeek." + _("All rights reserved.")});
+     "(c) 1998-2022, Anton van Wezenbeek." + _("All rights reserved.")});
 }
