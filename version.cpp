@@ -23,7 +23,7 @@ const wex::version_info app::version() const
   return wex::version_info(
     {"syncped",
      22,
-     4,
+     10,
      0,
      description,
      "(c) 1998-2022, Anton van Wezenbeek." + _("All rights reserved.")});

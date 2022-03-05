@@ -2,7 +2,7 @@
 // Name:      frame.h
 // Purpose:   Declaration of class frame
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020-2021 Anton van Wezenbeek
+// Copyright: (c) 2020-2022 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -45,8 +45,13 @@ private:
 
   wex::stc* open_file(
     const wex::path&      filename,
-    const wex::vcs_entry& vcs,
+    wex::vcs_entry&       vcs,
     const wex::data::stc& data = wex::data::stc()) override;
+
+  wex::stc* open_file(
+    const wex::path&       filename,
+    wex::factory::process& p,
+    const wex::data::stc&  data) override;
 
   wex::stc* open_file(
     const wex::path&      filename,

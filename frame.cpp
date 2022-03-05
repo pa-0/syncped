@@ -777,7 +777,7 @@ void frame::on_update_ui(wxUpdateUIEvent& event)
 
 wex::stc* frame::open_file(
   const wex::path&      filename,
-  const wex::vcs_entry& vcs,
+  wex::vcs_entry&       vcs,
   const wex::data::stc& data)
 {
   if (vcs.get_command().is_blame())
@@ -790,8 +790,7 @@ wex::stc* frame::open_file(
     }
   }
 
-  const std::string unique =
-    vcs.get_command().get_command() + " " + vcs.get_flags();
+  const auto unique = vcs.get_command().get_command() + " " + vcs.get_flags();
 
   wex::data::notebook nd;
   nd.select()
@@ -824,6 +823,31 @@ wex::stc* frame::open_file(
   }
 
   return (wex::stc*)nd.page();
+}
+
+wex::stc* frame::open_file(
+  const wex::path&       filename,
+  wex::factory::process& p,
+  const wex::data::stc&  data)
+{
+  auto* page = new wex::stc(
+    std::string(),
+    wex::data::stc(data).window(
+      wex::data::window().parent(m_editors).name(filename.string())));
+
+  page->get_lexer().set(wex::path_lexer(filename).lexer());
+
+  m_editors->add_page(wex::data::notebook()
+                        .page(page)
+                        .key(p.data().exe())
+                        .caption(p.data().exe())
+                        .select());
+
+  page->show_blame(&wex::vcs().entry(), p.std_out());
+  page->EmptyUndoBuffer();
+  page->SetSavePoint();
+
+  return page;
 }
 
 wex::stc* frame::open_file(
