@@ -1,5 +1,5 @@
 # roadmap
-- rename test-vi in ?
+- use-clang is present in this repo as well?
 - use gitlab ide
 
 - are the po files part of package

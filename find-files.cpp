@@ -2,7 +2,7 @@
 // Name:      find-files.cpp
 // Purpose:   Implementation of class find_files
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020-2021 Anton van Wezenbeek
+// Copyright: (c) 2020-2022 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "find-files.h"
@@ -17,7 +17,7 @@ find_files::find_files(wex::frame* f)
        {_("find.Max"), wex::item::TEXTCTRL_INT, std::string("50")},
        {_("find.Matches"),
         wex::data::listview().type(wex::data::listview::FILE)}},
-      wex::data::window().title(_("Find Files")).size({400, 400}).button(0))
+      wex::data::window().title(_("Find Files")).size({400, 400}))
   , m_listview((wex::listview*)find(_("find.Matches")).window())
   , m_combobox((wxComboBox*)find(_("find.File")).window())
   , m_frame(f)

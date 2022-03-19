@@ -846,6 +846,7 @@ wex::stc* frame::open_file(
   page->show_blame(&wex::vcs().entry(), p.std_out());
   page->EmptyUndoBuffer();
   page->SetSavePoint();
+  page->inject(data.control());
 
   return page;
 }
