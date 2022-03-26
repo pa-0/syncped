@@ -9,12 +9,11 @@
 
 find_files::find_files(wex::frame* f)
   : item_dialog(
-      {{_("find.File"),
-        wex::item::COMBOBOX,
-        std::any(),
-        wex::data::item().window(
-          wex::data::window().style(wxTE_PROCESS_ENTER))},
-       {_("find.Max"), wex::item::TEXTCTRL_INT, std::string("50")},
+      {wex::add_combobox_with_max(
+         _("find.File"),
+         _("find.Max"),
+         wex::data::item().window(
+           wex::data::window().style(wxTE_PROCESS_ENTER))),
        {_("find.Matches"),
         wex::data::listview().type(wex::data::listview::FILE)}},
       wex::data::window().title(_("Find Files")).size({400, 400}))

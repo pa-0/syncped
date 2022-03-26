@@ -622,6 +622,9 @@ void frame::on_command_item_dialog(
       }
       break;
 
+    case ID_FIND_FILE_DIALOG:
+      break;
+
     case ID_OPTION_LIST:
       if (event.GetId() != wxID_CANCEL)
       {
@@ -963,7 +966,7 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
       }
 
       wex::data::notebook nd;
-      nd.key(filename.stat().path());
+      nd.key(filename.string());
 
       notebook->add_page(
         nd.page(editor)
