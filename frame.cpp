@@ -783,13 +783,34 @@ wex::stc* frame::open_file(
   wex::vcs_entry&       vcs,
   const wex::data::stc& data)
 {
-  if (vcs.get_command().is_blame())
+  if (vcs.data().args_str().find("blame") != 0 || vcs.get_command().is_blame())
   {
     if (auto* page = (wex::stc*)m_editors->set_selection(filename.string());
         page != nullptr)
     {
-      if (page->show_blame(&vcs))
-        return page;
+      page->show_blame(&vcs);
+      return page;
+    }
+    else
+    {
+      page = new wex::stc(
+        std::string(),
+        wex::data::stc(data).window(
+          wex::data::window().parent(m_editors).name(filename.string())));
+
+      page->get_lexer().set(wex::path_lexer(filename).lexer());
+
+      m_editors->add_page(wex::data::notebook()
+                            .page(page)
+                            .key(vcs.data().exe())
+                            .caption(vcs.get_blame().caption())
+                            .select());
+
+      page->show_blame(&vcs);
+      page->EmptyUndoBuffer();
+      page->SetSavePoint();
+      page->inject(data.control());
+      return page;
     }
   }
 
@@ -826,32 +847,6 @@ wex::stc* frame::open_file(
   }
 
   return (wex::stc*)nd.page();
-}
-
-wex::stc* frame::open_file(
-  const wex::path&       filename,
-  wex::factory::process& p,
-  const wex::data::stc&  data)
-{
-  auto* page = new wex::stc(
-    std::string(),
-    wex::data::stc(data).window(
-      wex::data::window().parent(m_editors).name(filename.string())));
-
-  page->get_lexer().set(wex::path_lexer(filename).lexer());
-
-  m_editors->add_page(wex::data::notebook()
-                        .page(page)
-                        .key(p.data().exe())
-                        .caption(p.data().exe())
-                        .select());
-
-  page->show_blame(&wex::vcs().entry(), p.std_out());
-  page->EmptyUndoBuffer();
-  page->SetSavePoint();
-  page->inject(data.control());
-
-  return page;
 }
 
 wex::stc* frame::open_file(

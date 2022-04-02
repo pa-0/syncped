@@ -49,11 +49,6 @@ private:
     const wex::data::stc& data = wex::data::stc()) override;
 
   wex::stc* open_file(
-    const wex::path&       filename,
-    wex::factory::process& p,
-    const wex::data::stc&  data) override;
-
-  wex::stc* open_file(
     const wex::path&      filename,
     const std::string&    text,
     const wex::data::stc& data = wex::data::stc()) override;
