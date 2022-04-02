@@ -39,16 +39,16 @@ private:
   void on_command_item_dialog(wxWindowID dialogid, const wxCommandEvent& event)
     override;
 
-  wex::stc* open_file(
+  wex::factory::stc* open_file(
     const wex::path&      filename,
     const wex::data::stc& data = wex::data::stc()) override;
 
-  wex::stc* open_file(
+  wex::factory::stc* open_file(
     const wex::path&      filename,
     wex::vcs_entry&       vcs,
     const wex::data::stc& data = wex::data::stc()) override;
 
-  wex::stc* open_file(
+  wex::factory::stc* open_file(
     const wex::path&      filename,
     const std::string&    text,
     const wex::data::stc& data = wex::data::stc()) override;

@@ -778,7 +778,7 @@ void frame::on_update_ui(wxUpdateUIEvent& event)
   }
 }
 
-wex::stc* frame::open_file(
+wex::factory::stc* frame::open_file(
   const wex::path&      filename,
   wex::vcs_entry&       vcs,
   const wex::data::stc& data)
@@ -849,7 +849,7 @@ wex::stc* frame::open_file(
   return (wex::stc*)nd.page();
 }
 
-wex::stc* frame::open_file(
+wex::factory::stc* frame::open_file(
   const wex::path&      filename,
   const std::string&    text,
   const wex::data::stc& data)
@@ -879,7 +879,7 @@ wex::stc* frame::open_file(
   return page;
 }
 
-wex::stc*
+wex::factory::stc*
 frame::open_file(const wex::path& filename, const wex::data::stc& data)
 {
   auto* notebook =
