@@ -6,6 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "find-files.h"
+#include "defs.h"
 
 find_files::find_files(wex::frame* f)
   : item_dialog(
@@ -16,7 +17,10 @@ find_files::find_files(wex::frame* f)
            wex::data::window().style(wxTE_PROCESS_ENTER))),
        {_("find.Matches"),
         wex::data::listview().type(wex::data::listview::FILE)}},
-      wex::data::window().title(_("Find Files")).size({400, 400}))
+      wex::data::window()
+        .title(_("Find Files"))
+        .size({400, 400})
+        .id(ID_FIND_FILE_DIALOG))
   , m_listview((wex::listview*)find(_("find.Matches")).window())
   , m_combobox((wxComboBox*)find(_("find.File")).window())
   , m_frame(f)
