@@ -1,4 +1,6 @@
 # roadmap
+- crash if click find files window before others
+- crash after exit syncped
 - use gitlab ide
 
 - are the po files part of package

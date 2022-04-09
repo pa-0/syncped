@@ -367,6 +367,14 @@ frame::frame(app* app)
 
     v.detach();
   }
+
+  if (m_app->data().flags().test(wex::data::stc::WIN_EX))
+  {
+    if (auto* stc(((wex::stc*)m_editors->GetCurrentPage())); stc != nullptr)
+    {
+      show_ex_bar(SHOW_BAR, stc);
+    }
+  }
 }
 
 wex::del::listview*
@@ -783,35 +791,12 @@ wex::factory::stc* frame::open_file(
   wex::vcs_entry&       vcs,
   const wex::data::stc& data)
 {
-  if (vcs.data().args_str().find("blame") != 0 || vcs.get_command().is_blame())
+  if (
+    vcs.data().exe().find(" blame ") != std::string::npos ||
+    vcs.data().args_str().find("blame") != std::string::npos ||
+    vcs.get_command().is_blame())
   {
-    if (auto* page = (wex::stc*)m_editors->set_selection(filename.string());
-        page != nullptr)
-    {
-      page->show_blame(&vcs);
-      return page;
-    }
-    else
-    {
-      page = new wex::stc(
-        std::string(),
-        wex::data::stc(data).window(
-          wex::data::window().parent(m_editors).name(filename.string())));
-
-      page->get_lexer().set(wex::path_lexer(filename).lexer());
-
-      m_editors->add_page(wex::data::notebook()
-                            .page(page)
-                            .key(vcs.data().exe())
-                            .caption(vcs.get_blame().caption())
-                            .select());
-
-      page->show_blame(&vcs);
-      page->EmptyUndoBuffer();
-      page->SetSavePoint();
-      page->inject(data.control());
-      return page;
-    }
+    return open_file_blame(filename, vcs, data);
   }
 
   const auto unique = vcs.get_command().get_command() + " " + vcs.get_flags();
@@ -1008,6 +993,40 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
   }
 
   return (wex::stc*)page;
+}
+
+wex::factory::stc* frame::open_file_blame(
+  const wex::path&      filename,
+  wex::vcs_entry&       vcs,
+  const wex::data::stc& data)
+{
+  if (auto* page = (wex::stc*)m_editors->set_selection(filename.string());
+      page != nullptr)
+  {
+    page->show_blame(&vcs);
+    return page;
+  }
+  else
+  {
+    page = new wex::stc(
+      std::string(),
+      wex::data::stc(data).window(
+        wex::data::window().parent(m_editors).name(filename.string())));
+
+    page->get_lexer().set(wex::path_lexer(filename).lexer());
+
+    m_editors->add_page(wex::data::notebook()
+                          .page(page)
+                          .key(vcs.data().exe())
+                          .caption(vcs.get_blame().caption())
+                          .select());
+
+    page->show_blame(&vcs);
+    page->EmptyUndoBuffer();
+    page->SetSavePoint();
+    page->inject(data.control());
+    return page;
+  }
 }
 
 void frame::open_file_same_page(wxCommandEvent& event)

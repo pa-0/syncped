@@ -73,6 +73,10 @@ private:
 
   void on_command(wxCommandEvent& event);
   void on_update_ui(wxUpdateUIEvent& event);
+  wex::factory::stc* open_file_blame(
+    const wex::path&      filename,
+    wex::vcs_entry&       vcs,
+    const wex::data::stc& data = wex::data::stc());
   void save(wex::stc* stc);
   bool saveas(wex::file* f, const std::string& name);
   void saveas(wex::stc* stc, const std::string& name);
