@@ -91,6 +91,11 @@ void find_files::set_root()
   {
     m_root = wex::vcs({editor->path()}).toplevel();
 
+    if (!m_root.dir_exists())
+    {
+      m_root = wex::path(editor->path().parent_path());
+    }
+
     wex::log::trace("find files root") << m_root.string();
   }
 }
