@@ -71,8 +71,11 @@ private:
 
   // All others.
 
+  void app_handle();
+  void bind();
   void on_command(wxCommandEvent& event);
   void on_update_ui(wxUpdateUIEvent& event);
+
   wex::factory::stc* open_file_blame(
     const wex::path&      filename,
     wex::vcs_entry&       vcs,
@@ -80,6 +83,8 @@ private:
   void save(wex::stc* stc);
   bool saveas(wex::file* f, const std::string& name);
   void saveas(wex::stc* stc, const std::string& name);
+  void setup_stdin();
+  void toolbar_handle();
   void update_listviews();
 
   bool m_maximized{false};

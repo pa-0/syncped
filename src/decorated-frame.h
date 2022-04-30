@@ -2,7 +2,7 @@
 // Name:      decorated-frame.h
 // Purpose:   Declaration of decorated_frame class
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021 Anton van Wezenbeek
+// Copyright: (c) 2021-2022 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -35,6 +35,9 @@ private:
   void on_notebook(wxWindowID id, wxWindow* page) override;
 
   const std::string allow_move_ext() const;
+
+  void build_ascii_table();
+  void menu();
 
   const std::string m_project_wildcard{_("Project Files") + " (*.prj)|*.prj"};
 
