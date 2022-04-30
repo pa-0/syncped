@@ -12,7 +12,7 @@ build:
 
   artifacts:
     paths:
-    - build/syncped.app/Contents/MacOS/syncped
+    - build/src/syncped.app/Contents/MacOS/syncped
 
 test:
   stage: test
