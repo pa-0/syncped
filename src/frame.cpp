@@ -400,7 +400,7 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
       {
         if (wex::vcs vcs{{filename}}; vcs.execute("blame " + filename.string()))
         {
-          editor->show_blame(&vcs.entry());
+          editor->blame_show(&vcs.entry());
         }
       }
     }
@@ -428,7 +428,7 @@ wex::factory::stc* frame::open_file_blame(
   if (auto* page = (wex::stc*)m_editors->set_selection(filename.string());
       page != nullptr)
   {
-    page->show_blame(&vcs);
+    page->blame_show(&vcs);
     return page;
   }
   else
@@ -446,7 +446,7 @@ wex::factory::stc* frame::open_file_blame(
                           .caption(vcs.get_blame().caption())
                           .select());
 
-    page->show_blame(&vcs);
+    page->blame_show(&vcs);
     page->EmptyUndoBuffer();
     page->SetSavePoint();
     page->inject(data.control());
