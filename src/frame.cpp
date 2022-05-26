@@ -627,8 +627,11 @@ bool frame::save_current_page(const std::string& key)
 
 void frame::show_vcs()
 {
-  if (wex::vcs vcs;
-      vcs.use() && wex::vcs::size() > 0 && m_editors->GetPageCount() > 0)
+  if (wex::vcs vcs; vcs.use() && wex::vcs::size() > 0 &&
+                    m_editors->GetPageCount() > 0 &&
+                    // stdin mode (-E) and get_branch do no work together,
+                    // boost system locks until enter is given
+                    !m_app->is_stdin())
   {
     statustext_vcs(dynamic_cast<wex::stc*>(
       m_editors->GetPage(m_editors->GetPageCount() - 1)));
