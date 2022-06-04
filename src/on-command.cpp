@@ -34,6 +34,11 @@ void frame::on_command(wxCommandEvent& event)
       {
         wxPostEvent(get_listview(), event);
       }
+      else if (auto* fs = dynamic_cast<wex::factory::stc*>(get_stc());
+               fs != nullptr)
+      {
+        wxPostEvent(fs, event);
+      }
       break;
 
     case wxID_SAVE:
