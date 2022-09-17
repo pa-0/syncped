@@ -55,7 +55,7 @@ private:
 
   void open_file_same_page(wxCommandEvent& event) override;
 
-  bool print_ex(wex::factory::stc* stc, const std::string& text) override;
+  bool print_ex(wex::syntax::stc* stc, const std::string& text) override;
 
   wex::stc* restore_page(const std::string& key) override;
 

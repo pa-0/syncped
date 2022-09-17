@@ -499,7 +499,7 @@ void frame::open_file_same_page(wxCommandEvent& event)
   }
 }
 
-bool frame::print_ex(wex::factory::stc* stc, const std::string& text)
+bool frame::print_ex(wex::syntax::stc* stc, const std::string& text)
 {
   auto* page = (wex::stc*)m_editors->set_selection("Print");
 
