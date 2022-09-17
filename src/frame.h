@@ -2,7 +2,7 @@
 // Name:      frame.h
 // Purpose:   Declaration of class frame
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020-2021 Anton van Wezenbeek
+// Copyright: (c) 2020-2022 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -39,16 +39,16 @@ private:
   void on_command_item_dialog(wxWindowID dialogid, const wxCommandEvent& event)
     override;
 
-  wex::stc* open_file(
+  wex::factory::stc* open_file(
     const wex::path&      filename,
     const wex::data::stc& data = wex::data::stc()) override;
 
-  wex::stc* open_file(
+  wex::factory::stc* open_file(
     const wex::path&      filename,
-    const wex::vcs_entry& vcs,
+    wex::vcs_entry&       vcs,
     const wex::data::stc& data = wex::data::stc()) override;
 
-  wex::stc* open_file(
+  wex::factory::stc* open_file(
     const wex::path&      filename,
     const std::string&    text,
     const wex::data::stc& data = wex::data::stc()) override;
@@ -71,11 +71,20 @@ private:
 
   // All others.
 
+  void app_handle();
+  void bind();
   void on_command(wxCommandEvent& event);
   void on_update_ui(wxUpdateUIEvent& event);
+
+  wex::factory::stc* open_file_blame(
+    const wex::path&      filename,
+    wex::vcs_entry&       vcs,
+    const wex::data::stc& data = wex::data::stc());
   void save(wex::stc* stc);
   bool saveas(wex::file* f, const std::string& name);
   void saveas(wex::stc* stc, const std::string& name);
+  void setup_stdin();
+  void toolbar_handle();
   void update_listviews();
 
   bool m_maximized{false};

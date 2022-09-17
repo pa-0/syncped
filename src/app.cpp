@@ -2,12 +2,11 @@
 // Name:      app.cpp
 // Purpose:   Implementation of class app
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021 Anton van Wezenbeek
+// Copyright: (c) 2021-2022 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "app.h"
 #include "frame.h"
-#include "version.h"
 
 wxIMPLEMENT_APP(app);
 

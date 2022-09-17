@@ -1,8 +1,8 @@
 [Desktop Entry]
 Name=syncped
 GenericName=syncped text editor
-Version=1.0
-Exec=syncped %F
+Version=22.10
+Exec=env LD_LIBRARY_PATH=/usr/local/lib syncped %F
 Icon=/usr/share/icons/hicolor/scalable/syncped.svg
 Terminal=false
 Type=Application
