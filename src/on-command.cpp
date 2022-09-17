@@ -93,7 +93,7 @@ void frame::on_command(wxCommandEvent& event)
         if (editor->path().file_exists())
         {
           nd.bitmap(wxTheFileIconsTable->GetSmallImageList()->GetBitmap(
-            wex::get_iconid(editor->path())));
+            wxFileIconsTable::file));
         }
         else if (!editor->get_lexer().scintilla_lexer().empty())
         {

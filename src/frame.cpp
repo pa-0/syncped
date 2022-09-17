@@ -319,7 +319,7 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
           .caption(filename.name())
           .select()
           .bitmap(wxTheFileIconsTable->GetSmallImageList()->GetBitmap(
-            wex::get_iconid(filename))));
+            wxFileIconsTable::file)));
     }
   }
   else
@@ -378,7 +378,7 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
           .caption(filename.filename())
           .select()
           .bitmap(wxTheFileIconsTable->GetSmallImageList()->GetBitmap(
-            wex::get_iconid(filename))));
+            wxFileIconsTable::file)));
 
       if (notebook->GetPageCount() >= 2 && m_app->get_split() != -1)
       {
