@@ -211,7 +211,7 @@ bool frame::is_open(const wex::path& filename)
   return m_editors->page_index_by_key(filename.string()) != wxNOT_FOUND;
 }
 
-wex::factory::stc* frame::open_file(
+wex::factory::stc* frame::open_file_vcs(
   const wex::path&      filename,
   wex::vcs_entry&       vcs,
   const wex::data::stc& data)
@@ -398,10 +398,7 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
 
       if (wex::config(_("stc.Auto blame")).get(false))
       {
-        if (wex::vcs vcs{{filename}}; vcs.execute("blame " + filename.string()))
-        {
-          vcs_blame_show(&vcs.entry(), editor);
-        }
+        vcs_blame(editor);
       }
     }
     else
@@ -438,7 +435,7 @@ wex::factory::stc* frame::open_file_blame(
       wex::data::stc(data).window(
         wex::data::window().parent(m_editors).name(filename.string())));
 
-    page->get_lexer().set(wex::path_lexer(filename).lexer());
+    page->get_lexer().set(wex::path_lexer(filename).lexer(), true);
 
     m_editors->add_page(wex::data::notebook()
                           .page(page)
@@ -450,6 +447,7 @@ wex::factory::stc* frame::open_file_blame(
     page->EmptyUndoBuffer();
     page->SetSavePoint();
     page->inject(data.control());
+    page->config_get();
     return page;
   }
 }

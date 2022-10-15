@@ -45,12 +45,12 @@ private:
 
   wex::factory::stc* open_file(
     const wex::path&      filename,
-    wex::vcs_entry&       vcs,
+    const std::string&    text,
     const wex::data::stc& data = wex::data::stc()) override;
 
-  wex::factory::stc* open_file(
+  wex::factory::stc* open_file_vcs(
     const wex::path&      filename,
-    const std::string&    text,
+    wex::vcs_entry&       vcs,
     const wex::data::stc& data = wex::data::stc()) override;
 
   void open_file_same_page(wxCommandEvent& event) override;

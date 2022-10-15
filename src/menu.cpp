@@ -181,6 +181,7 @@ void decorated_frame::menu()
                 m_editors->add_page(
                   wex::data::notebook().page(page).key(name).select());
                 pane_show("FILES");
+                page->config_get();
               };
             })},
 
