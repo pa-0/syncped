@@ -173,10 +173,9 @@ void decorated_frame::menu()
               if (!name.empty())
               {
                 auto* page = new wex::stc(
-                  std::string(),
+                  wex::path(name),
                   wex::data::stc(m_app->data())
                     .window(wex::data::window().parent(m_editors)));
-                page->get_file().file_new(wex::path(name));
                 // This file does yet exist, so do not give it a bitmap.
                 m_editors->add_page(
                   wex::data::notebook().page(page).key(name).select());
