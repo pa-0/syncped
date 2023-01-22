@@ -2,14 +2,14 @@
 // Name:      app.h
 // Purpose:   Declaration of class 'app'
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020-2021 Anton van Wezenbeek
+// Copyright: (c) 2020-2023 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
 #include <wex/wex.h>
 
-class app : public wex::app
+class app : public wex::del::app
 {
 public:
   auto& data() { return m_data; }
@@ -28,10 +28,10 @@ public:
 
 private:
 #ifdef __WXOSX__
-  void MacOpenFiles(const wxArrayString& fileNames) override;
+  void MacOpenFiles(const wxArrayString& fileNames) final;
 #endif
 
-  bool OnInit() override;
+  bool OnInit() final;
 
   std::string m_tag;
 
