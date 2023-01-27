@@ -5,14 +5,13 @@
 // Copyright: (c) 2021-2023 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "version.h"
 #include "app.h"
 
 const wex::version_info app::version() const
 {
-  wxString description(_("This program offers a portable text or "
-                         "binary editor\n"
-                         "with automatic syncing."));
+  std::string description(_("This program offers a portable text or "
+                            "binary editor\n"
+                            "with automatic syncing."));
 #ifdef __WXMSW__
   description += _(" All its config files are read\n"
                    "and saved in the same directory as "
