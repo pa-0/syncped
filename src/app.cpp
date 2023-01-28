@@ -74,7 +74,7 @@ bool app::OnInit()
            {
              if (on)
              {
-               std::cout << "syncped-" << version().get() << " using\n"
+               std::cout << version().get() << " using\n"
                          << wex::external_libraries().str();
                exit = true;
              }

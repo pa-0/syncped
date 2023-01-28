@@ -2,7 +2,7 @@
 // Name:      menu.cpp
 // Purpose:   Implementation of decorated_frame class
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2022 Anton van Wezenbeek
+// Copyright: (c) 2022-2023 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <wx/generic/textdlgg.h>
@@ -617,8 +617,7 @@ void decorated_frame::menu()
             {
               wxLaunchDefaultBrowser(
                 "http://antonvw.github.io/syncped/v" +
-                wex::rfind_before(m_app->version().get(), ".") +
-                "/syncped.htm");
+                m_app->version().get(false) + "/syncped.htm");
             })}}),
       wxGetStockLabel(wxID_HELP)}}));
 }
