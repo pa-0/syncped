@@ -606,7 +606,7 @@ void decorated_frame::menu()
               wex::version_info_dialog(
                 m_app->version(),
                 wex::about_info().website(
-                  "http://sourceforge.net/projects/syncped/"))
+                  "https://sourceforge.net/projects/syncped/"))
                 .show();
             })},
 
@@ -616,7 +616,7 @@ void decorated_frame::menu()
             [=, this](wxCommandEvent& event)
             {
               wxLaunchDefaultBrowser(
-                "http://antonvw.github.io/syncped/v" +
+                "https://antonvw.github.io/syncped/v" +
                 m_app->version().get(false) + "/syncped.htm");
             })}}),
       wxGetStockLabel(wxID_HELP)}}));
