@@ -184,9 +184,7 @@ bool app::OnInit()
           {
             for (const auto& f : v)
               m_files.emplace_back(f);
-          }},
-         true,
-         "commandline")
+          }})
          .parse(data) ||
       exit || !wex::del::app::OnInit())
   {
