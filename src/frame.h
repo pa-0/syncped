@@ -2,7 +2,7 @@
 // Name:      frame.h
 // Purpose:   Declaration of class frame
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020-2022 Anton van Wezenbeek
+// Copyright: (c) 2020-2023 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -53,7 +53,7 @@ private:
     wex::vcs_entry&       vcs,
     const wex::data::stc& data = wex::data::stc()) override;
 
-  void open_file_same_page(wxCommandEvent& event) override;
+  void open_file_same_page(const wex::path& p) override;
 
   bool print_ex(wex::syntax::stc* stc, const std::string& text) override;
 
@@ -89,7 +89,7 @@ private:
 
   bool m_maximized{false};
 
-  int m_browse_index{0}, m_split_id{1};
+  int m_split_id{1};
 
   std::string m_saved_page;
 
