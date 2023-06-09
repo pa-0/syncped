@@ -403,7 +403,7 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
     }
     else
     {
-      wex::data::stc(editor, data).inject();
+      wex::data::stc(data).set_stc(editor).inject();
     }
 
     if (editor->is_visual())
