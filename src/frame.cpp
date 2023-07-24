@@ -211,6 +211,25 @@ bool frame::is_open(const wex::path& filename)
   return m_editors->page_index_by_key(filename.string()) != wxNOT_FOUND;
 }
 
+bool frame::next_page()
+{
+  if (m_editors->GetPageCount() < 2)
+  {
+    return false;
+  }
+
+  if (m_editors->GetSelection() == m_editors->GetPageCount() - 1)
+  {
+    m_editors->SetSelection(0);
+  }
+  else
+  {
+    m_editors->AdvanceSelection();
+  }
+
+  return true;
+}
+
 wex::factory::stc* frame::open_file_vcs(
   const wex::path&      filename,
   wex::vcs_entry&       vcs,

@@ -36,6 +36,8 @@ private:
 
   bool is_open(const wex::path& filename) override;
 
+  bool next_page() override;
+
   void on_command_item_dialog(wxWindowID dialogid, const wxCommandEvent& event)
     override;
 
