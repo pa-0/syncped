@@ -168,9 +168,9 @@ bool frame::exec_ex_command(wex::ex_command& command)
 
       if (handled && wex::ex::get_macros().mode().is_playback())
       {
-        command.set(((wex::stc*)m_editors->GetPage(m_editors->GetSelection()))
-                      ->get_vi()
-                      .get_command());
+        command = (((wex::stc*)m_editors->GetPage(m_editors->GetSelection()))
+                     ->get_vi()
+                     .get_command());
       }
     }
   }
