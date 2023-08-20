@@ -208,7 +208,8 @@ void decorated_frame::menu()
             .action(
               [=, this](wxCommandEvent& event)
               {
-                if (auto* stc = get_stc(); stc != nullptr)
+                if (auto* stc = (wex::stc*)m_editors->GetCurrentPage();
+                    stc != nullptr)
                 {
                   if (!allow_close(m_editors->GetId(), stc))
                     return;
