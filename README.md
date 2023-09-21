@@ -13,8 +13,14 @@ syncped offers a full featured source code text editor.
 ```bash
 git clone git@gitlab.kitware.com:antonvw/syncped.git
 mkdir build && cd build
-cmake .. && make
 ```
+
+and for Linux, osx do
+  `cmake -G Ninja .. && ninja && ninja install` or
+  `cmake .. && make && make install`,
+for Visual Studio do
+  `devenv wex.sln /build Release`,
+and for mingw add `-G "MinGW Makefiles"` and do `mingw32-make`.
 
 When wex is build as a shared lib, add
 `-DwexBUILD_SHARED=ON`
