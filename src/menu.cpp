@@ -2,7 +2,7 @@
 // Name:      menu.cpp
 // Purpose:   Implementation of decorated_frame class
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2022 Anton van Wezenbeek
+// Copyright: (c) 2022-2023 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <wx/generic/textdlgg.h>
@@ -173,14 +173,14 @@ void decorated_frame::menu()
               if (!name.empty())
               {
                 auto* page = new wex::stc(
-                  std::string(),
+                  wex::path(name),
                   wex::data::stc(m_app->data())
                     .window(wex::data::window().parent(m_editors)));
-                page->get_file().file_new(wex::path(name));
                 // This file does yet exist, so do not give it a bitmap.
                 m_editors->add_page(
                   wex::data::notebook().page(page).key(name).select());
                 pane_show("FILES");
+                page->config_get();
               };
             })},
 
@@ -208,7 +208,8 @@ void decorated_frame::menu()
             .action(
               [=, this](wxCommandEvent& event)
               {
-                if (auto* stc = get_stc(); stc != nullptr)
+                if (auto* stc = (wex::stc*)m_editors->GetCurrentPage();
+                    stc != nullptr)
                 {
                   if (!allow_close(m_editors->GetId(), stc))
                     return;
@@ -606,7 +607,7 @@ void decorated_frame::menu()
               wex::version_info_dialog(
                 m_app->version(),
                 wex::about_info().website(
-                  "http://sourceforge.net/projects/syncped/"))
+                  "https://sourceforge.net/projects/syncped/"))
                 .show();
             })},
 
@@ -616,9 +617,8 @@ void decorated_frame::menu()
             [=, this](wxCommandEvent& event)
             {
               wxLaunchDefaultBrowser(
-                "http://antonvw.github.io/syncped/v" +
-                wex::rfind_before(m_app->version().get(), ".") +
-                "/syncped.htm");
+                "https://antonvw.github.io/syncped/v" +
+                m_app->version().get(false) + "/syncped.htm");
             })}}),
       wxGetStockLabel(wxID_HELP)}}));
 }

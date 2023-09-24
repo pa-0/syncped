@@ -2,7 +2,7 @@
 // Name:      app.cpp
 // Purpose:   Implementation of class app
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021-2022 Anton van Wezenbeek
+// Copyright: (c) 2021-2023 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "app.h"
@@ -74,7 +74,7 @@ bool app::OnInit()
            {
              if (on)
              {
-               std::cout << "syncped-" << version().get() << " using\n"
+               std::cout << version().get() << " using\n"
                          << wex::external_libraries().str();
                exit = true;
              }
@@ -184,11 +184,9 @@ bool app::OnInit()
           {
             for (const auto& f : v)
               m_files.emplace_back(f);
-          }},
-         true,
-         "commandline")
+          }})
          .parse(data) ||
-      exit || !wex::app::OnInit())
+      exit || !wex::del::app::OnInit())
   {
     return false;
   }

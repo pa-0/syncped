@@ -2,7 +2,7 @@
 // Name:      find-files.cpp
 // Purpose:   Implementation of class find_files
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020-2022 Anton van Wezenbeek
+// Copyright: (c) 2020-2023 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "find-files.h"
@@ -67,6 +67,11 @@ bool find_files::Destroy()
 void find_files::run()
 {
   set_root();
+
+  if (wex::interruptible::end())
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  }
 
   reload(true);
 

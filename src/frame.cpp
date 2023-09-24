@@ -2,7 +2,7 @@
 // Name:      frame.cpp
 // Purpose:   Implementation of class frame
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021-2022 Anton van Wezenbeek
+// Copyright: (c) 2021-2023 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <boost/algorithm/string.hpp>
@@ -168,9 +168,9 @@ bool frame::exec_ex_command(wex::ex_command& command)
 
       if (handled && wex::ex::get_macros().mode().is_playback())
       {
-        command.set(((wex::stc*)m_editors->GetPage(m_editors->GetSelection()))
-                      ->get_vi()
-                      .get_command());
+        command = (((wex::stc*)m_editors->GetPage(m_editors->GetSelection()))
+                     ->get_vi()
+                     .get_command());
       }
     }
   }
@@ -211,7 +211,26 @@ bool frame::is_open(const wex::path& filename)
   return m_editors->page_index_by_key(filename.string()) != wxNOT_FOUND;
 }
 
-wex::factory::stc* frame::open_file(
+bool frame::next_page()
+{
+  if (m_editors->GetPageCount() < 2)
+  {
+    return false;
+  }
+
+  if (m_editors->GetSelection() == m_editors->GetPageCount() - 1)
+  {
+    m_editors->SetSelection(0);
+  }
+  else
+  {
+    m_editors->AdvanceSelection();
+  }
+
+  return true;
+}
+
+wex::factory::stc* frame::open_file_vcs(
   const wex::path&      filename,
   wex::vcs_entry&       vcs,
   const wex::data::stc& data)
@@ -398,15 +417,12 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
 
       if (wex::config(_("stc.Auto blame")).get(false))
       {
-        if (wex::vcs vcs{{filename}}; vcs.execute("blame " + filename.string()))
-        {
-          vcs_blame_show(&vcs.entry(), editor);
-        }
+        vcs_blame(editor);
       }
     }
     else
     {
-      wex::data::stc(editor, data).inject();
+      wex::data::stc(data).set_stc(editor).inject();
     }
 
     if (editor->is_visual())
@@ -438,7 +454,7 @@ wex::factory::stc* frame::open_file_blame(
       wex::data::stc(data).window(
         wex::data::window().parent(m_editors).name(filename.string())));
 
-    page->get_lexer().set(wex::path_lexer(filename).lexer());
+    page->get_lexer().set(wex::path_lexer(filename).lexer(), true);
 
     m_editors->add_page(wex::data::notebook()
                           .page(page)
@@ -450,45 +466,16 @@ wex::factory::stc* frame::open_file_blame(
     page->EmptyUndoBuffer();
     page->SetSavePoint();
     page->inject(data.control());
+    page->config_get();
     return page;
   }
 }
 
-void frame::open_file_same_page(wxCommandEvent& event)
+void frame::open_file_same_page(const wex::path& p)
 {
   if (auto* page = (wex::stc*)m_editors->GetPage(m_editors->GetSelection());
-      page != nullptr && file_history().size() > 1)
+      page != nullptr)
   {
-    if (event.GetId() == wxID_FORWARD)
-    {
-      if (m_browse_index < file_history().size() - 1)
-      {
-        m_browse_index++;
-      }
-      else if (m_browse_index > file_history().size() - 1)
-      {
-        m_browse_index = file_history().size() - 1;
-        return;
-      }
-      else
-      {
-        return;
-      }
-    }
-    else
-    {
-      if (m_browse_index > 0)
-      {
-        m_browse_index--;
-      }
-      else
-      {
-        return;
-      }
-    }
-
-    const auto& p(file_history()[m_browse_index]);
-
     m_editors->set_page_text(
       m_editors->key_by_page(page),
       p.string(),
@@ -499,7 +486,7 @@ void frame::open_file_same_page(wxCommandEvent& event)
   }
 }
 
-bool frame::print_ex(wex::factory::stc* stc, const std::string& text)
+bool frame::print_ex(wex::syntax::stc* stc, const std::string& text)
 {
   auto* page = (wex::stc*)m_editors->set_selection("Print");
 

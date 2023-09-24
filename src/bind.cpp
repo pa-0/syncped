@@ -97,16 +97,12 @@ void frame::bind()
   wex::bind(this).ui(
     {{[=, this](wxUpdateUIEvent& event)
       {
-        event.Enable(
-          !file_history().empty() && m_editors->GetPageCount() > 0 &&
-          m_browse_index < file_history().size() - 1);
+        event.Enable(m_editors->GetPageCount() > 0 && allow_browse_forward());
       },
       wxID_FORWARD},
      {[=, this](wxUpdateUIEvent& event)
       {
-        event.Enable(
-          !file_history().empty() && m_editors->GetPageCount() > 0 &&
-          m_browse_index > 0);
+        event.Enable(m_editors->GetPageCount() > 0 && allow_browse_backward());
       },
       wxID_BACKWARD}});
 

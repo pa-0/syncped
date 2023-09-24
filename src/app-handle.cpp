@@ -43,14 +43,12 @@ void frame::app_handle()
       {
         pane_maximize("PROJECTS");
       }
-      else
+      else if (!m_app->data().flags().test(wex::data::stc::WIN_EX))
       {
         auto* page = new wex::stc(
-          std::string(),
+          wex::path("no name"),
           wex::data::stc(m_app->data())
             .window(wex::data::window().parent(m_editors)));
-
-        page->get_file().file_new(wex::path("no name"));
 
         m_editors->add_page(
           wex::data::notebook().page(page).key("no name").select());

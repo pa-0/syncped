@@ -2,7 +2,7 @@
 // Name:      frame.h
 // Purpose:   Declaration of class frame
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020-2022 Anton van Wezenbeek
+// Copyright: (c) 2020-2023 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -36,6 +36,8 @@ private:
 
   bool is_open(const wex::path& filename) override;
 
+  bool next_page() override;
+
   void on_command_item_dialog(wxWindowID dialogid, const wxCommandEvent& event)
     override;
 
@@ -45,17 +47,17 @@ private:
 
   wex::factory::stc* open_file(
     const wex::path&      filename,
-    wex::vcs_entry&       vcs,
-    const wex::data::stc& data = wex::data::stc()) override;
-
-  wex::factory::stc* open_file(
-    const wex::path&      filename,
     const std::string&    text,
     const wex::data::stc& data = wex::data::stc()) override;
 
-  void open_file_same_page(wxCommandEvent& event) override;
+  wex::factory::stc* open_file_vcs(
+    const wex::path&      filename,
+    wex::vcs_entry&       vcs,
+    const wex::data::stc& data = wex::data::stc()) override;
 
-  bool print_ex(wex::factory::stc* stc, const std::string& text) override;
+  void open_file_same_page(const wex::path& p) override;
+
+  bool print_ex(wex::syntax::stc* stc, const std::string& text) override;
 
   wex::stc* restore_page(const std::string& key) override;
 
@@ -89,7 +91,7 @@ private:
 
   bool m_maximized{false};
 
-  int m_browse_index{0}, m_split_id{1};
+  int m_split_id{1};
 
   std::string m_saved_page;
 
