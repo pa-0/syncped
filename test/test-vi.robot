@@ -1,3 +1,6 @@
+*** Comments ***
+Copyright: (c) 2020-2023 Anton van Wezenbeek
+
 *** Settings ***
 Documentation	Testcases for syncped vi
 Test Setup	Test Setup
@@ -17,7 +20,3 @@ debug	[Documentation]	set a breakpoint, and give time to process it
 mode-ex
 	Input No Write	:vi
 	Syncped Ex Mode
-
-
-*** Comments ***
-Copyright: (c) 2020-2022 Anton van Wezenbeek

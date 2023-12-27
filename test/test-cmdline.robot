@@ -1,3 +1,6 @@
+*** Comments ***
+Copyright: (c) 2020-2023 Anton van Wezenbeek
+
 *** Settings ***
 Documentation	Testcases for syncped cmdline
 Test Setup	Test Setup
@@ -26,7 +29,3 @@ lexers
 	[Documentation]	Check whether we have at least a rfw lexer
 	${result}=	Run Process	${SYNCPED}	-L
 	Should Contain	${result.stdout}	rfw
-
-
-*** Comments ***
-Copyright: (c) 2020-2022 Anton van Wezenbeek

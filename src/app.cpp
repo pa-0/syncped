@@ -25,7 +25,7 @@ bool app::OnInit()
   bool        list_lexers{false}, show_locale{false};
   std::string ctags_file;
 
-  wex::data::cmdline data(argc, argv);
+  wex::data::cmdline cmdl(argc, argv);
 
   if (bool exit = false;
       !wex::cmdline(
@@ -182,10 +182,16 @@ bool app::OnInit()
            "extension"},
           [&](const std::vector<std::string>& v)
           {
-            for (const auto& f : v)
-              m_files.emplace_back(f);
+            std::transform(
+              v.begin(),
+              v.end(),
+              std::back_inserter(m_files),
+              [](const auto& i)
+              {
+                return wex::path(i);
+              });
           }})
-         .parse(data) ||
+         .parse(cmdl) ||
       exit || !wex::del::app::OnInit())
   {
     return false;
