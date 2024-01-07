@@ -2,7 +2,7 @@
 // Name:      version.cpp
 // Purpose:   Implementation of version_info
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021-2023 Anton van Wezenbeek
+// Copyright: (c) 2021-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "app.h"
@@ -25,5 +25,5 @@ const wex::version_info app::version() const
      04,
      0,
      description,
-     "(c) 1998-2023, Anton van Wezenbeek. " + _("All rights reserved.")});
+     "(c) 1998-2024, Anton van Wezenbeek. " + _("All rights reserved.")});
 }
