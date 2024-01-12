@@ -11,10 +11,15 @@ Resource	keywords.resource
 
 *** Test Cases ***
 debug	[Documentation]	set a breakpoint, and give time to process it
+	${platform}=	Evaluate	sys.platform	sys
 	Input Many	:23	1
 	Input Many	:de b	1
 	Syncped Debug	20000
-	Output Contains	lldb
+	IF	'${platform} == "darwin"'
+		Output Contains	lldb
+	ELSE
+		Output Contains	gdb
+	END
 	Output Contains	Breakpoint
 
 mode-ex

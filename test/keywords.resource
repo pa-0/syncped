@@ -50,7 +50,7 @@ Syncped Debug
 	...	-s	${file-input}
 	...	-V	${level}
 	...	-X	${file-output}
-	...	../app.cpp
+	...	app.cpp
 	...	${SYNCPED}
 	...	stdout=${file-stdout}
 
