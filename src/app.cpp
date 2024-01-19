@@ -2,7 +2,7 @@
 // Name:      app.cpp
 // Purpose:   Implementation of class app
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021-2023 Anton van Wezenbeek
+// Copyright: (c) 2021-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "app.h"
@@ -171,8 +171,12 @@ bool app::OnInit()
            {wex::cmdline::STRING,
             [&](const std::any& s)
             {
-              m_data.control(wex::data::control().command(
-                ":so " + std::any_cast<std::string>(s)));
+              // make script file absolute
+              const auto& script(std::any_cast<std::string>(s));
+              wex::path   p(script);
+              p.make_absolute();
+
+              m_data.control(wex::data::control().command(":so " + p.string()));
             }}}},
 
          {{"files",

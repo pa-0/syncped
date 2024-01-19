@@ -15,7 +15,7 @@ debug	[Documentation]	set a breakpoint, and give time to process it
 	Input Many	:23	1
 	Input Many	:de b	1
 	Syncped Debug	20000
-	IF	'${platform} == "darwin"'
+	IF	"${platform}"=="darwin"
 		Output Contains	lldb
 	ELSE
 		Output Contains	gdb
