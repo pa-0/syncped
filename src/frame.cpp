@@ -2,7 +2,7 @@
 // Name:      frame.cpp
 // Purpose:   Implementation of class frame
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021-2023 Anton van Wezenbeek
+// Copyright: (c) 2021-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <boost/algorithm/string.hpp>
@@ -168,9 +168,8 @@ bool frame::exec_ex_command(wex::ex_command& command)
 
       if (handled && wex::ex::get_macros().mode().is_playback())
       {
-        command = (((wex::stc*)m_editors->GetPage(m_editors->GetSelection()))
-                     ->get_vi()
-                     .get_command());
+        command.set_stc(
+          ((wex::stc*)m_editors->GetPage(m_editors->GetSelection())));
       }
     }
   }
