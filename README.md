@@ -14,11 +14,18 @@ syncped offers a full featured source code text editor.
 git clone git@gitlab.kitware.com:antonvw/syncped.git
 ```
 
-and for Linux, osx do
-  `wex-build-gen.sh`
-for Visual Studio do
-  `mkdir build && cd build`
-  `devenv wex.sln /build Release`,
+### for Linux or osx
+
+`wex-build-gen.sh`
+
+### for Visual Studio
+
+```bash
+mkdir build && cd build
+cmake ..
+devenv wex.sln /build Release
+```
+
 and for mingw add `-G "MinGW Makefiles"` and do `mingw32-make`.
 
 For Visual Studio 2019 you should possibly add
