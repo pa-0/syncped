@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - CHANGELOG according to keepachangelog
 - changes following wex 24.04
+- updated .clang-format
 
 ## 23.10 - 2022-03-06
 
