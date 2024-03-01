@@ -8,6 +8,10 @@ set(APPL_COPYRIGHT ${APPL_COPYRIGHT})
 
 file(GLOB SRCS "*.cpp")
 
+if (wexBUILD_TIDY)
+  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+endif ()
+
 if (NOT WIN32)
   add_custom_target(codespell
     COMMAND codespell ${INCLUDES} ${SRCS}
