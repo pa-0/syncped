@@ -4,11 +4,7 @@ build:
   stage: build
 
   script:
-  - mkdir build
-  - cd build
-  - . ../ci/use-clang.sh
-  - cmake -DwexBUILD_SHARED=ON ..
-  - make
+  - wex-build-gen.sh
 
   artifacts:
     paths:
