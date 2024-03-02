@@ -4,6 +4,7 @@ build:
   stage: build
 
   script:
+  - export PATH=/usr/local/Cellar/homebrew/bin
   - wex-build-gen.sh
 
   artifacts:
