@@ -9,11 +9,11 @@
 
 const wex::version_info app::version() const
 {
-  std::string description(_("This program offers a portable text or "
+  std::string description(_("This program offers a portable text or"
                             "binary editor\n"
                             "with automatic syncing."));
 #ifdef __WXMSW__
-  description += _(" All its config files are read\n"
+  description += _("All its config files are read\n"
                    "and saved in the same directory as "
                    "where the executable is.");
 #endif
