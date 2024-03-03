@@ -4,6 +4,8 @@ build:
   stage: build
 
   script:
+  - export PATH=/usr/local/Cellar/homebrew/opt/bison/bin:/usr/local/Cellar/homebrew/bin:/usr/local/bin:$PATH
+  - zsh
   - wex-build-gen.sh
 
   artifacts:
@@ -12,6 +14,8 @@ build:
 
 test:
   stage: test
+
   script:
+  - export PATH=/usr/local/Cellar/homebrew/opt/bison/bin:/usr/local/Cellar/homebrew/bin:/usr/local/bin:$PATH
   - cd test
   - robot *.robot
