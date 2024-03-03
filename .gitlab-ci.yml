@@ -5,7 +5,8 @@ build:
 
   script:
   - export PATH=/usr/local/Cellar/homebrew/opt/bison/bin:/usr/local/Cellar/homebrew/bin:/usr/local/bin:$PATH
-  - zsh -c wex-build-gen.sh
+  - zsh
+  - wex-build-gen.sh
 
   artifacts:
     paths:
