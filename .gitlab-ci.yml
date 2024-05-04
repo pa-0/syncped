@@ -4,11 +4,9 @@ build:
   stage: build
 
   script:
-  - mkdir build
-  - cd build
-  - . ../ci/use-clang.sh
-  - cmake -DwexBUILD_SHARED=ON ..
-  - make
+  - export PATH=/usr/local/Cellar/homebrew/opt/bison/bin:/usr/local/Cellar/homebrew/bin:/usr/local/bin:$PATH
+  - zsh
+  - wex-build-gen.sh
 
   artifacts:
     paths:
@@ -16,6 +14,8 @@ build:
 
 test:
   stage: test
+
   script:
+  - export PATH=/usr/local/Cellar/homebrew/opt/bison/bin:/usr/local/Cellar/homebrew/bin:/usr/local/bin:$PATH
   - cd test
   - robot *.robot

@@ -8,6 +8,44 @@ set(APPL_COPYRIGHT ${APPL_COPYRIGHT})
 
 file(GLOB SRCS "*.cpp")
 
+if (wexBUILD_TIDY)
+  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+endif ()
+
+if (NOT WIN32)
+  add_custom_target(codespell
+    COMMAND codespell ${INCLUDES} ${SRCS}
+      -L nd,te,INOUT,inout,defint,iif,hel -S "*.po,*.png,*.ico,*.icns,*.bin"
+    COMMENT "codespell" VERBATIM)
+
+  add_custom_target(cppcheck
+    COMMAND cppcheck 
+      --std=c++${WEX_CXX_STANDARD}
+      --quiet --enable=all
+      --check-level=exhaustive
+      --suppress=cppcheckError 
+      --suppress=missingIncludeSystem
+      --suppress=internalAstError 
+      --suppress=invalidFunctionArg
+      --suppress=noExplicitConstructor 
+      --suppress=noOperatorEq 
+      --suppress=unknownMacro 
+      --suppress=unmatchedSuppression 
+      --suppress=unusedScopedObject 
+      --suppress=unusedFunction 
+      --suppress=shadowArgument 
+      --suppress=shadowVariable 
+      ${SRCS}
+    COMMENT "cppcheck" VERBATIM)
+
+  add_custom_target(robocop
+    COMMAND robocop
+      -e 0201 -e 0202 -e 0308 -e 0309 -e 0413 -e 0505 -e 0704
+      -e 1003 -e 1004 -e 1005 -e 1006
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/test/
+    COMMENT "robocop" VERBATIM)      
+endif()
+
 if (WIN32)
   set(SRCS ${SRCS} app.rc)
 endif()

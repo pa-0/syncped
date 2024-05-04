@@ -21,8 +21,8 @@ find_files::find_files(wex::frame* f)
         .title(_("Find Files"))
         .size({400, 400})
         .id(ID_FIND_FILE_DIALOG))
-  , m_listview((wex::listview*)find(_("find.Matches")).window())
-  , m_combobox((wxComboBox*)find(_("find.File")).window())
+  , m_listview(dynamic_cast<wex::listview*>(find(_("find.Matches")).window()))
+  , m_combobox(dynamic_cast<wxComboBox*>(find(_("find.File")).window()))
   , m_frame(f)
 {
   assert(m_combobox != nullptr && m_listview != nullptr);

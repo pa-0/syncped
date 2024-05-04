@@ -2,7 +2,7 @@
 // Name:      menu.cpp
 // Purpose:   Implementation of decorated_frame class
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2022-2023 Anton van Wezenbeek
+// Copyright: (c) 2022-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <wx/generic/textdlgg.h>
@@ -145,7 +145,9 @@ void decorated_frame::menu()
             {
               // In hex mode we cannot edit the file.
               if (wex::config("is_hexmode").get(false))
+              {
                 return;
+              }
 
               static std::string name;
 
@@ -161,7 +163,9 @@ void decorated_frame::menu()
                 dlg.SetTextValidator(validator);
 
                 if (dlg.ShowModal() == wxID_CANCEL)
+                {
                   return;
+                }
 
                 name = dlg.GetValue();
               }
@@ -212,7 +216,9 @@ void decorated_frame::menu()
                     stc != nullptr)
                 {
                   if (!allow_close(m_editors->GetId(), stc))
+                  {
                     return;
+                  }
                   sync(false);
                   stc->sync(false);
                   m_editors->delete_page(m_editors->key_by_page(stc));
@@ -377,11 +383,25 @@ void decorated_frame::menu()
 
          {NewControlId(),
           _("&Ascii Table"),
-          wex::data::menu().action(
-            [=, this](wxCommandEvent& event)
-            {
-              build_ascii_table();
-            })}}),
+          wex::menu_item::CHECK,
+          wex::data::menu()
+            .action(
+              [=, this](wxCommandEvent& event)
+              {
+                if (m_editors->page_by_key("Ascii table") == nullptr)
+                {
+                  build_ascii_table();
+                }
+                else
+                {
+                  m_editors->delete_page("Ascii table");
+                }
+              })
+            .ui(
+              [=, this](wxUpdateUIEvent& event)
+              {
+                event.Check(m_editors->page_by_key("Ascii table") != nullptr);
+              })}}),
       _("&View")},
 
      {new wex::menu(

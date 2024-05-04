@@ -2,7 +2,7 @@
 // Name:      app.cpp
 // Purpose:   Implementation of class app
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021-2023 Anton van Wezenbeek
+// Copyright: (c) 2021-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "app.h"
@@ -25,7 +25,7 @@ bool app::OnInit()
   bool        list_lexers{false}, show_locale{false};
   std::string ctags_file;
 
-  wex::data::cmdline data(argc, argv);
+  wex::data::cmdline cmdl(argc, argv);
 
   if (bool exit = false;
       !wex::cmdline(
@@ -171,8 +171,12 @@ bool app::OnInit()
            {wex::cmdline::STRING,
             [&](const std::any& s)
             {
-              m_data.control(wex::data::control().command(
-                ":so " + std::any_cast<std::string>(s)));
+              // make script file absolute
+              const auto& script(std::any_cast<std::string>(s));
+              wex::path   p(script);
+              p.make_absolute();
+
+              m_data.control(wex::data::control().command(":so " + p.string()));
             }}}},
 
          {{"files",
@@ -182,10 +186,16 @@ bool app::OnInit()
            "extension"},
           [&](const std::vector<std::string>& v)
           {
-            for (const auto& f : v)
-              m_files.emplace_back(f);
+            std::transform(
+              v.begin(),
+              v.end(),
+              std::back_inserter(m_files),
+              [](const auto& i)
+              {
+                return wex::path(i);
+              });
           }})
-         .parse(data) ||
+         .parse(cmdl) ||
       exit || !wex::del::app::OnInit())
   {
     return false;

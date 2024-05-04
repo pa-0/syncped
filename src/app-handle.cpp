@@ -2,7 +2,7 @@
 // Name:      app-handle.cpp
 // Purpose:   Implementation of class frame
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2022 Anton van Wezenbeek
+// Copyright: (c) 2022-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "app.h"
@@ -61,22 +61,28 @@ void frame::app_handle()
   {
     if (m_app->is_debug())
     {
+      // if debug file is specified execute it after opening the
+      // the other files
       m_files = m_app->get_files();
-      const auto& p(m_files.back());
+      bool       is_debug{false};
+      const auto p(m_files.back());
 
       if (const auto l(wex::lexers::get()->find_by_filename(p.filename()));
           !l.is_ok())
       {
-        get_debug()->execute("file " + p.string());
         m_files.pop_back();
+        is_debug = true;
       }
-      else
+
+      wex::open_files(
+        this,
+        m_files,
+        m_app->data(),
+        wex::data::dir::type_t().set(wex::data::dir::FILES));
+
+      if (is_debug)
       {
-        wex::open_files(
-          this,
-          m_app->get_files(),
-          m_app->data(),
-          wex::data::dir::type_t().set(wex::data::dir::FILES));
+        get_debug()->execute("file " + p.string());
       }
     }
     else if (m_app->is_project())

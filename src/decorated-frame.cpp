@@ -2,12 +2,14 @@
 // Name:      decorated-frame.cpp
 // Purpose:   Implementation of decorated_frame class
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021-2022 Anton van Wezenbeek
+// Copyright: (c) 2021-2023 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WXMSW__
 #include "app.xpm"
 #endif
+
+#include <wxMaterialDesignArtProvider.hpp>
 
 #include "app.h"
 #include "decorated-frame.h"
@@ -102,6 +104,8 @@ decorated_frame::decorated_frame(app* app)
     m_statusbar->pane_show("PaneLexer", false);
     m_statusbar->pane_show("PaneTheme", false);
   }
+
+  wex::art::insert({{ID_EDIT_MACRO_PLAYBACK, wxART_PLAY_CIRCLE}});
 
   menu();
 }

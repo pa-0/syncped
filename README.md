@@ -12,18 +12,21 @@ syncped offers a full featured source code text editor.
 
 ```bash
 git clone git@gitlab.kitware.com:antonvw/syncped.git
-mkdir build && cd build
 ```
 
-and for Linux, osx do
-  `cmake -G Ninja .. && ninja && ninja install` or
-  `cmake .. && make && make install`,
-for Visual Studio do
-  `devenv wex.sln /build Release`,
-and for mingw add `-G "MinGW Makefiles"` and do `mingw32-make`.
+### for Linux or osx
 
-When wex is build as a shared lib, add
-`-DwexBUILD_SHARED=ON`
+`wex-build-gen.sh`
+
+### for Visual Studio
+
+```bash
+mkdir build && cd build
+cmake ..
+devenv wex.sln /build Release
+```
+
+and for mingw add `-G "MinGW Makefiles"` and do `mingw32-make`.
 
 For Visual Studio 2019 you should possibly add
 `-DCMAKE_INSTALL_PREFIX=c:\program files (x86)\wex`

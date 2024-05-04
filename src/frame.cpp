@@ -2,7 +2,7 @@
 // Name:      frame.cpp
 // Purpose:   Implementation of class frame
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021-2023 Anton van Wezenbeek
+// Copyright: (c) 2021-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <boost/algorithm/string.hpp>
@@ -141,7 +141,9 @@ void frame::debug_exe(const wex::path& p)
 bool frame::exec_ex_command(wex::ex_command& command)
 {
   if (command.command() == ":")
+  {
     return false;
+  }
 
   bool handled = false;
 
@@ -152,7 +154,9 @@ bool frame::exec_ex_command(wex::ex_command& command)
       if (boost::algorithm::trim_copy(command.command()) == ":n")
       {
         if (m_editors->GetSelection() == m_editors->GetPageCount() - 1)
+        {
           return false;
+        }
 
         m_editors->AdvanceSelection();
         handled = true;
@@ -160,7 +164,9 @@ bool frame::exec_ex_command(wex::ex_command& command)
       else if (boost::algorithm::trim_copy(command.command()) == ":prev")
       {
         if (m_editors->GetSelection() == 0)
+        {
           return false;
+        }
 
         m_editors->AdvanceSelection(false);
         handled = true;
@@ -168,9 +174,8 @@ bool frame::exec_ex_command(wex::ex_command& command)
 
       if (handled && wex::ex::get_macros().mode().is_playback())
       {
-        command = (((wex::stc*)m_editors->GetPage(m_editors->GetSelection()))
-                     ->get_vi()
-                     .get_command());
+        command.set_stc(
+          ((wex::stc*)m_editors->GetPage(m_editors->GetSelection())));
       }
     }
   }
@@ -185,7 +190,9 @@ bool frame::exec_ex_command(wex::ex_command& command)
 wex::process* frame::get_process(const std::string& command)
 {
   if (!m_app->is_debug())
+  {
     return nullptr;
+  }
 
   delete m_process;
   m_process = new wex::process;
@@ -372,9 +379,13 @@ frame::open_file(const wex::path& filename, const wex::data::stc& data)
       }
 
       if (wex::config("is_hexmode").get(false))
+      {
         wf.set(wex::data::stc::WIN_HEX);
+      }
       if (m_app->is_debug())
+      {
         mf.set(wex::data::stc::MENU_DEBUG);
+      }
 
       editor = new wex::stc(
         filename,
@@ -525,7 +536,9 @@ wex::stc* frame::restore_page(const std::string& key)
 void frame::save(wex::stc* editor)
 {
   if (!editor->IsModified() || !editor->get_file().file_save())
+  {
     return;
+  }
 
   set_recent_file(editor->path());
 
@@ -666,16 +679,19 @@ void frame::sync_close_all(wxWindowID id)
   decorated_frame::sync_close_all(id);
 
   if (is_closing())
+  {
     return;
+  }
 
   switch (id)
   {
     case ID_NOTEBOOK_EDITORS:
       SetTitle(wxTheApp->GetAppDisplayName());
-      statustext(std::string(), std::string());
-      statustext(std::string(), "PaneFileType");
-      statustext(std::string(), "PaneInfo");
-      statustext(std::string(), "PaneLexer");
+
+      for (int i = 0; i < get_statusbar()->GetFieldsCount(); i++)
+      {
+        get_statusbar()->SetStatusText(std::string(), i);
+      }
 
       if (pane_is_shown("PROJECTS"))
       {

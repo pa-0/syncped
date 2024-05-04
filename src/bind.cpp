@@ -70,10 +70,6 @@ void frame::bind()
 
       m_find_files->Destroy();
 
-      if (m_app->data().control().command().empty())
-      {
-        delete m_process;
-      }
       event.Skip();
     });
 

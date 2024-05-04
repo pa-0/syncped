@@ -1,3 +1,6 @@
+*** Comments ***
+Copyright: (c) 2020-2023 Anton van Wezenbeek
+
 *** Settings ***
 Documentation	Keywords for syncped
 Library	OperatingSystem
@@ -6,7 +9,7 @@ Resource	/usr/local/lib/wex-keywords.resource
 
 
 *** Variables ***
-${SYNCPED}
+${SYNCPED}	${EMPTY}
 
 ${file-config}	test.json
 
@@ -47,7 +50,7 @@ Syncped Debug
 	...	-s	${file-input}
 	...	-V	${level}
 	...	-X	${file-output}
-	...	../app.cpp
+	...	app.cpp
 	...	${SYNCPED}
 	...	stdout=${file-stdout}
 
@@ -62,7 +65,3 @@ Syncped Ex Mode
 	...	-V	${level}
 	...	${file-startup}
 	...	stdout=${file-stdout}
-
-
-*** Comments ***
-Copyright: (c) 2020-2022 Anton van Wezenbeek
