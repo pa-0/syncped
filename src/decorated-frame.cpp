@@ -2,7 +2,7 @@
 // Name:      decorated-frame.cpp
 // Purpose:   Implementation of decorated_frame class
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021-2023 Anton van Wezenbeek
+// Copyright: (c) 2021-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WXMSW__
@@ -35,8 +35,15 @@ decorated_frame::decorated_frame(app* app)
   , m_process(new wex::process())
   , m_projects(new wex::notebook(
       wex::data::window().id(ID_NOTEBOOK_PROJECTS).style(pane_flag)))
+  , m_dlg(new wex::stc_entry_dialog(
+      std::string(),
+      _("File Name") + ":",
+      wex::data::window(),
+      wex::data::stc().flags(
+        wex::data::stc::window_t().set(wex::data::stc::WIN_SINGLE_LINE))))
 {
   SetIcon(wxICON(app));
+  m_dlg->set_validator("^[a-zA-Z0-9:.]+$");
 
   wex::process::prepare_output(this);
 

@@ -5,7 +5,6 @@
 // Copyright: (c) 2022-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <wx/generic/textdlgg.h>
 #include <wx/stockitem.h> // for wxGetStockLabel
 #include <wx/valtext.h>
 
@@ -149,25 +148,17 @@ void decorated_frame::menu()
                 return;
               }
 
-              static std::string name;
+              std::string name;
 
               if (event.GetString().empty())
               {
-                wxTextEntryDialog dlg(
-                  this,
-                  _("Input") + ":",
-                  _("File Name"),
-                  name);
-                wxTextValidator validator(wxFILTER_EXCLUDE_CHAR_LIST);
-                validator.SetCharExcludes("/\\?%*:|\"<>");
-                dlg.SetTextValidator(validator);
-
-                if (dlg.ShowModal() == wxID_CANCEL)
+                m_dlg->get_stc()->SetFocus();
+                if (m_dlg->ShowModal() == wxID_CANCEL)
                 {
                   return;
                 }
 
-                name = dlg.GetValue();
+                name = m_dlg->get_stc()->get_text();
               }
               else
               {

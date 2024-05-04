@@ -2,7 +2,7 @@
 // Name:      on-ui.cpp
 // Purpose:   Implementation of class frame
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2022 Anton van Wezenbeek
+// Copyright: (c) 2022-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "defs.h"
@@ -11,6 +11,11 @@
 
 void frame::on_update_ui(wxUpdateUIEvent& event)
 {
+  if (IsBeingDeleted())
+  {
+    return;
+  }
+
   switch (event.GetId())
   {
     case wxID_EXECUTE:
