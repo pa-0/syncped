@@ -581,9 +581,8 @@ bool frame::saveas(wex::file* f, const std::string& name)
     if (wex::file_dialog dlg(
           f,
           wex::data::window().style(wxFD_SAVE).parent(this).title(
-            wxGetStockLabel(wxID_SAVEAS, wxSTOCK_NOFLAGS).ToStdString()));
-        dlg.ShowModal() != wxID_OK ||
-        !f->file_save(wex::path(dlg.GetPath().ToStdString())))
+            wxGetStockLabel(wxID_SAVEAS, wxSTOCK_NOFLAGS)));
+        dlg.ShowModal() != wxID_OK || !f->file_save(wex::path(dlg.GetPath())))
     {
       return false;
     }
