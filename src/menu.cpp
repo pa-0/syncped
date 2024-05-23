@@ -440,8 +440,7 @@ void decorated_frame::menu()
             [=, this](wxCommandEvent& event)
             {
               const std::string text =
-                wxString::Format("%s%d", _("project"), m_project_id++)
-                  .ToStdString();
+                wxString::Format("%s%d", _("project"), m_project_id++);
               const wex::path fn(
                 (!get_project_history()[0].empty() ?
                    wex::path(get_project_history()[0].parent_path()) :
@@ -486,7 +485,7 @@ void decorated_frame::menu()
                   return;
                 const std::vector<wex::path> v(
 #ifdef __WXOSX__
-                  {wex::path(dlg.GetPath().ToStdString())});
+                  {wex::path(dlg.GetPath())});
 #else
                   wex::to_vector_path(dlg).get());
 #endif
@@ -567,11 +566,11 @@ void decorated_frame::menu()
                     wex::data::window()
                       .style(wxFD_SAVE)
                       .parent(this)
-                      .title(_("Project Save As").ToStdString())
+                      .title(_("Project Save As"))
                       .wildcard(m_project_wildcard));
                   if (dlg.ShowModal() == wxID_OK)
                   {
-                    project->file_save(wex::path(dlg.GetPath().ToStdString()));
+                    project->file_save(wex::path(dlg.GetPath()));
                     m_projects->set_page_text(
                       m_projects->key_by_page(project),
                       project->path().string(),
