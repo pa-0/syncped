@@ -184,7 +184,7 @@ void decorated_frame::menu()
           wex::data::menu().action(
             [=, this](wxCommandEvent& event)
             {
-              open_from_event(event, allow_move_ext());
+              open_from_action(event.GetString(), allow_move_ext());
             })},
 
          {},
