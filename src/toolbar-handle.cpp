@@ -2,7 +2,7 @@
 // Name:      toolbar-handle.cpp
 // Purpose:   Implementation of class frame
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2022 Anton van Wezenbeek
+// Copyright: (c) 2022-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "defs.h"
@@ -31,6 +31,7 @@ void frame::toolbar_handle()
           }
         }
       }},
+
      {ID_VIEW_HISTORY,
       _("History"),
       "",
@@ -47,8 +48,14 @@ void frame::toolbar_handle()
         {
           pane_toggle("HISTORY");
         }
+
         cb->SetValue(pane_is_shown("HISTORY"));
         get_toolbar()->Realize();
         update_statusbar(m_history);
+
+        if (pane_is_shown("HISTORY"))
+        {
+          m_history->SetFocus();
+        }
       }}}); // realize
 }

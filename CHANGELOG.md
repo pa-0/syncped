@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- added focus to history if it is shown
+
 ## 24.04 - 2024-03-29
 
 ### Added
