@@ -2,7 +2,7 @@
 // Name:      find-files.cpp
 // Purpose:   Implementation of class find_files
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020-2023 Anton van Wezenbeek
+// Copyright: (c) 2020-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "find-files.h"
@@ -28,11 +28,19 @@ find_files::find_files(wex::frame* f)
   assert(m_combobox != nullptr && m_listview != nullptr);
 
   m_combobox->SetFocus();
+
+  m_combobox->Bind(
+    wxEVT_TEXT,
+    [=, this](wxCommandEvent& event)
+    {
+      run(false);
+    });
+
   m_combobox->Bind(
     wxEVT_TEXT_ENTER,
     [=, this](wxCommandEvent& event)
     {
-      run();
+      run(true);
     });
 
   m_listview->Bind(
@@ -64,8 +72,15 @@ bool find_files::Destroy()
   return wex::item_dialog::Destroy();
 }
 
-void find_files::run()
+void find_files::run(bool is_enter_key)
 {
+  const auto text(m_combobox->GetValue());
+
+  if (text.empty() || (!is_enter_key && text.size() < 2))
+  {
+    return;
+  }
+
   set_root();
 
   if (wex::interruptible::end())
@@ -81,7 +96,7 @@ void find_files::run()
   wex::dir(
     m_root,
     wex::data::dir()
-      .file_spec("*" + m_combobox->GetValue() + "*")
+      .file_spec("*" + text + "*")
       .max_matches(wex::config(_("find.Max")).get(50))
       .type(wex::data::dir::type_t()
               .set(wex::data::dir::FILES)

@@ -2,7 +2,7 @@
 // Name:      find-files.h
 // Purpose:   Declaration of class find_files
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020-2021 Anton van Wezenbeek
+// Copyright: (c) 2020-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -25,7 +25,7 @@ public:
   void set_root();
 
 private:
-  void run();
+  void run(bool is_enter_key);
 
   wex::frame*    m_frame;
   wex::listview* m_listview;
