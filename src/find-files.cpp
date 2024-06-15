@@ -8,7 +8,7 @@
 #include "find-files.h"
 #include "defs.h"
 
-find_files::find_files(wex::frame* f)
+find_files::find_files(wex::del::frame* f)
   : item_dialog(
       {wex::add_combobox_with_max(
          _("find.File"),
@@ -100,7 +100,8 @@ void find_files::run(bool is_enter_key)
       .max_matches(wex::config(_("find.Max")).get(50))
       .type(wex::data::dir::type_t()
               .set(wex::data::dir::FILES)
-              .set(wex::data::dir::RECURSIVE)),
+              .set(wex::data::dir::RECURSIVE))
+      .vcs(m_frame->vcs()),
     m_listview)
     .find_files();
 }

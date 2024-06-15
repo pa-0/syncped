@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Option VCS 'Find includes submodules' to in or exclude git submodules
+
 ### Changed
 
 - Find Files now runs on text changed as well as on enter pressed
