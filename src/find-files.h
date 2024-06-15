@@ -15,7 +15,7 @@ class find_files : public wex::item_dialog
 {
 public:
   // Constructor.
-  explicit find_files(wex::frame* f);
+  explicit find_files(wex::del::frame* f);
 
   // Destroys window, saves data.
   bool Destroy() override;
@@ -27,9 +27,9 @@ public:
 private:
   void run(bool is_enter_key);
 
-  wex::frame*    m_frame;
-  wex::listview* m_listview;
-  wex::path      m_root;
+  wex::del::frame* m_frame;
+  wex::listview*   m_listview;
+  wex::path        m_root;
 
   wxComboBox* m_combobox;
 };
