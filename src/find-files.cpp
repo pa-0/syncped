@@ -33,7 +33,11 @@ find_files::find_files(wex::del::frame* f)
     wxEVT_TEXT,
     [=, this](wxCommandEvent& event)
     {
-      run(false);
+      // logic necessary to prevent action on wxID_CANCEL
+      if (m_value != m_combobox->GetValue())
+      {
+        run(false);
+      }
     });
 
   m_combobox->Bind(
@@ -81,6 +85,8 @@ void find_files::run(bool is_enter_key)
     return;
   }
 
+  m_value = text;
+
   set_root();
 
   if (wex::interruptible::end())
@@ -96,7 +102,7 @@ void find_files::run(bool is_enter_key)
   wex::dir(
     m_root,
     wex::data::dir()
-      .file_spec("*" + text + "*")
+      .file_spec("*" + m_value + "*")
       .max_matches(wex::config(_("find.Max")).get(50))
       .type(wex::data::dir::type_t()
               .set(wex::data::dir::FILES)
