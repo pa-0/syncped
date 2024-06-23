@@ -32,4 +32,6 @@ private:
   wex::path        m_root;
 
   wxComboBox* m_combobox;
+
+  std::string m_value;
 };
