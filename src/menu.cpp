@@ -119,7 +119,7 @@ void decorated_frame::menu()
     {ID_OPTION_LIST,
      wex::ellipsed(_("Set &List Options")),
      wex::data::menu().action(
-       [=](wxCommandEvent& event)
+       [=](const wxCommandEvent& event)
        {
          wex::listview::config_dialog(wex::data::window()
                                         .button(wxOK | wxCANCEL | wxAPPLY)
@@ -128,7 +128,7 @@ void decorated_frame::menu()
     {ID_OPTION_TAB,
      wex::ellipsed(_("Set &Tab Options")),
      wex::data::menu().action(
-       [=](wxCommandEvent& event)
+       [=](const wxCommandEvent& event)
        {
          wex::notebook::config_dialog(wex::data::window()
                                         .button(wxOK | wxCANCEL | wxAPPLY)
@@ -140,7 +140,7 @@ void decorated_frame::menu()
         {{wxID_NEW,
           wex::ellipsed(wxGetStockLabel(wxID_NEW, wxSTOCK_NOFLAGS), "\tCtrl+N"),
           wex::data::menu().action(
-            [=, this](wxCommandEvent& event)
+            [=, this](const wxCommandEvent& event)
             {
               // In hex mode we cannot edit the file.
               if (wex::config("is_hexmode").get(false))
@@ -182,7 +182,7 @@ void decorated_frame::menu()
          {wxID_OPEN,
           std::string(),
           wex::data::menu().action(
-            [=, this](wxCommandEvent& event)
+            [=, this](const wxCommandEvent& event)
             {
               open_from_action(event.GetString(), allow_move_ext());
             })},
@@ -201,9 +201,10 @@ void decorated_frame::menu()
           wxGetStockLabel(wxID_CLOSE, wxSTOCK_NOFLAGS) + "\tCtrl+W",
           wex::data::menu()
             .action(
-              [=, this](wxCommandEvent& event)
+              [=, this](const wxCommandEvent& event)
               {
-                if (auto* stc = (wex::stc*)m_editors->GetCurrentPage();
+                if (auto* stc =
+                      dynamic_cast<wex::stc*>(m_editors->GetCurrentPage());
                     stc != nullptr)
                 {
                   if (!allow_close(m_editors->GetId(), stc))
@@ -270,7 +271,7 @@ void decorated_frame::menu()
          {wex::ID_EDIT_CONTROL_CHAR,
           wex::ellipsed(_("&Control Char"), "Ctrl+K"),
           wex::data::menu().action(
-            [=, this](wxCommandEvent& event)
+            [=, this](const wxCommandEvent& event)
             {
               if (get_stc() != nullptr)
               {
@@ -289,7 +290,7 @@ void decorated_frame::menu()
           wex::menu_item::CHECK,
           wex::data::menu()
             .action(
-              [=, this](wxCommandEvent& event)
+              [=, this](const wxCommandEvent& event)
               {
                 pane_toggle("FILES");
                 if (!pane_is_shown("FILES") && pane_is_shown("PROJECTS"))
@@ -308,7 +309,7 @@ void decorated_frame::menu()
           wex::menu_item::CHECK,
           wex::data::menu()
             .action(
-              [=, this](wxCommandEvent& event)
+              [=, this](const wxCommandEvent& event)
               {
                 pane_toggle("PROJECTS");
               })
@@ -323,7 +324,7 @@ void decorated_frame::menu()
           wex::menu_item::CHECK,
           wex::data::menu()
             .action(
-              [=, this](wxCommandEvent& event)
+              [=, this](const wxCommandEvent& event)
               {
                 pane_toggle("DIRCTRL");
               })
@@ -338,7 +339,7 @@ void decorated_frame::menu()
           wex::menu_item::CHECK,
           wex::data::menu()
             .action(
-              [=, this](wxCommandEvent& event)
+              [=, this](const wxCommandEvent& event)
               {
                 if (m_history == nullptr)
                 {
@@ -360,7 +361,7 @@ void decorated_frame::menu()
           wex::menu_item::CHECK,
           wex::data::menu()
             .action(
-              [=, this](wxCommandEvent& event)
+              [=, this](const wxCommandEvent& event)
               {
                 pane_toggle("OUTPUT");
               })
@@ -377,7 +378,7 @@ void decorated_frame::menu()
           wex::menu_item::CHECK,
           wex::data::menu()
             .action(
-              [=, this](wxCommandEvent& event)
+              [=, this](const wxCommandEvent& event)
               {
                 if (m_editors->page_by_key("Ascii table") == nullptr)
                 {
@@ -399,7 +400,7 @@ void decorated_frame::menu()
         {{NewControlId(),
           wex::ellipsed(_("&Select")),
           wex::data::menu().action(
-            [=, this](wxCommandEvent& event)
+            [=, this](const wxCommandEvent& event)
             {
               if (wex::process::config_dialog() == wxID_OK)
               {
@@ -415,7 +416,7 @@ void decorated_frame::menu()
          {wxID_EXECUTE,
           "",
           wex::data::menu().action(
-            [=, this](wxCommandEvent& event)
+            [=, this](const wxCommandEvent& event)
             {
               pane_show("PROCESS");
               delete m_process;
@@ -426,7 +427,7 @@ void decorated_frame::menu()
          {wxID_STOP,
           "",
           wex::data::menu().action(
-            [=, this](wxCommandEvent& event)
+            [=, this](const wxCommandEvent& event)
             {
               m_process->stop();
               pane_show("PROCESS", false);
@@ -448,7 +449,7 @@ void decorated_frame::menu()
                 text + ".prj");
               wxWindow* page =
                 new wex::del::file(fn, wex::data::window().parent(m_projects));
-              ((wex::del::file*)page)->file_new(fn);
+              dynamic_cast<wex::del::file*>(page)->file_new(fn);
               // This file does yet exist, so do not give it a bitmap.
               m_projects->add_page(wex::data::notebook()
                                      .page(page)
@@ -500,7 +501,7 @@ void decorated_frame::menu()
           _("&Open as Text"),
           wex::data::menu()
             .action(
-              [=, this](wxCommandEvent& event)
+              [=, this](const wxCommandEvent& event)
               {
                 if (auto* project = get_project(); project != nullptr)
                 {
@@ -534,7 +535,7 @@ void decorated_frame::menu()
           wex::data::menu()
             .art(wxART_CLOSE)
             .action(
-              [=, this](wxCommandEvent& event)
+              [=, this](const wxCommandEvent& event)
               {
                 if (auto* project = get_project(); project != nullptr)
                 {
@@ -557,7 +558,7 @@ void decorated_frame::menu()
           wex::data::menu()
             .art(wxART_FILE_SAVE_AS)
             .action(
-              [=, this](wxCommandEvent& event)
+              [=, this](const wxCommandEvent& event)
               {
                 if (auto* project = get_project(); project != nullptr)
                 {
@@ -592,7 +593,7 @@ void decorated_frame::menu()
           wex::menu_item::CHECK,
           wex::data::menu()
             .action(
-              [=, this](wxCommandEvent& event)
+              [=, this](const wxCommandEvent& event)
               {
                 wex::config("list.SortSync")
                   .set(!wex::config("list.SortSync").get(true));
@@ -612,7 +613,7 @@ void decorated_frame::menu()
         {{wxID_ABOUT,
           "",
           wex::data::menu().action(
-            [=, this](wxCommandEvent& event)
+            [=, this](const wxCommandEvent& event)
             {
               wex::version_info_dialog(
                 m_app->version(),
@@ -624,7 +625,7 @@ void decorated_frame::menu()
          {wxID_HELP,
           "",
           wex::data::menu().action(
-            [=, this](wxCommandEvent& event)
+            [=, this](const wxCommandEvent& event)
             {
               wxLaunchDefaultBrowser(
                 "https://antonvw.github.io/syncped/v" +
