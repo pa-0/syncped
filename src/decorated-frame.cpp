@@ -139,7 +139,7 @@ bool decorated_frame::allow_close(wxWindowID id, wxWindow* page)
   switch (id)
   {
     case ID_NOTEBOOK_EDITORS:
-      if (auto* stc = (wex::stc*)page;
+      if (auto* stc = dynamic_cast<wex::stc*>(page);
           wex::file_dialog(&stc->get_file()).show_modal_if_changed() ==
           wxID_CANCEL)
       {
@@ -154,8 +154,8 @@ bool decorated_frame::allow_close(wxWindowID id, wxWindow* page)
 
     case ID_NOTEBOOK_PROJECTS:
       if (
-        wex::file_dialog((wex::del::file*)page).show_modal_if_changed() ==
-        wxID_CANCEL)
+        wex::file_dialog(dynamic_cast<wex::del::file*>(page))
+          .show_modal_if_changed() == wxID_CANCEL)
       {
         return false;
       }
@@ -178,7 +178,7 @@ const std::string decorated_frame::allow_move_ext() const
 
   for (size_t i = 0; i < m_editors->GetPageCount(); ++i)
   {
-    auto* stc  = (wex::stc*)m_editors->GetPage(i);
+    auto* stc  = dynamic_cast<wex::stc*>(m_editors->GetPage(i));
     auto& path = stc->path();
 
     if (path.extension() == same_ext)
@@ -207,15 +207,15 @@ void decorated_frame::on_notebook(wxWindowID id, wxWindow* page)
   switch (id)
   {
     case ID_NOTEBOOK_EDITORS:
-      ((wex::stc*)page)->properties_message();
+      dynamic_cast<wex::stc*>(page)->properties_message();
       break;
 
     case ID_NOTEBOOK_LISTS:
       break;
 
     case ID_NOTEBOOK_PROJECTS:
-      wex::log::status() << ((wex::del::file*)page)->path();
-      update_statusbar((wex::del::file*)page);
+      wex::log::status() << dynamic_cast<wex::del::file*>(page)->path();
+      update_statusbar(dynamic_cast<wex::del::file*>(page));
       break;
 
     default:

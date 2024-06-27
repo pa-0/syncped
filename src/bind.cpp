@@ -2,7 +2,7 @@
 // Name:      bind.cpp
 // Purpose:   Implementation of class frame
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2022 Anton van Wezenbeek
+// Copyright: (c) 2022-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "app.h"
@@ -15,7 +15,7 @@ void frame::bind()
 {
   Bind(
     wxEVT_AUINOTEBOOK_BG_DCLICK,
-    [=, this](wxAuiNotebookEvent& event)
+    [=, this](const wxAuiNotebookEvent& event)
     {
       file_history().popup_menu(this, wex::ID_CLEAR_FILES);
     },
@@ -23,7 +23,7 @@ void frame::bind()
 
   Bind(
     wxEVT_AUINOTEBOOK_BG_DCLICK,
-    [=, this](wxAuiNotebookEvent& event)
+    [=, this](const wxAuiNotebookEvent& event)
     {
       get_project_history().popup_menu(this, wex::ID_CLEAR_PROJECTS);
     },
@@ -84,7 +84,7 @@ void frame::bind()
         m_editors->for_each<wex::stc>(event.GetId());
       },
       wex::ID_ALL_CLOSE},
-     {[=, this](wxCommandEvent& event)
+     {[=, this](const wxCommandEvent& event)
       {
         shift_double_click();
       },

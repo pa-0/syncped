@@ -31,7 +31,7 @@ find_files::find_files(wex::del::frame* f)
 
   m_combobox->Bind(
     wxEVT_TEXT,
-    [=, this](wxCommandEvent& event)
+    [=, this](const wxCommandEvent& event)
     {
       // logic necessary to prevent action on wxID_CANCEL
       if (m_value != m_combobox->GetValue())
@@ -42,7 +42,7 @@ find_files::find_files(wex::del::frame* f)
 
   m_combobox->Bind(
     wxEVT_TEXT_ENTER,
-    [=, this](wxCommandEvent& event)
+    [=, this](const wxCommandEvent& event)
     {
       run(true);
     });
