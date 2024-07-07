@@ -138,55 +138,6 @@ void frame::debug_exe(const wex::path& p)
   }
 }
 
-bool frame::exec_ex_command(wex::ex_command& command)
-{
-  if (command.command() == ":")
-  {
-    return false;
-  }
-
-  bool handled = false;
-
-  try
-  {
-    if (m_editors->GetPageCount() > 0)
-    {
-      if (boost::algorithm::trim_copy(command.command()) == ":n")
-      {
-        if (m_editors->GetSelection() == m_editors->GetPageCount() - 1)
-        {
-          return false;
-        }
-
-        m_editors->AdvanceSelection();
-        handled = true;
-      }
-      else if (boost::algorithm::trim_copy(command.command()) == ":prev")
-      {
-        if (m_editors->GetSelection() == 0)
-        {
-          return false;
-        }
-
-        m_editors->AdvanceSelection(false);
-        handled = true;
-      }
-
-      if (handled && wex::ex::get_macros().mode().is_playback())
-      {
-        command.set_stc(
-          ((wex::stc*)m_editors->GetPage(m_editors->GetSelection())));
-      }
-    }
-  }
-  catch (std::exception& e)
-  {
-    wex::log(e) << command.command();
-  }
-
-  return handled;
-}
-
 wex::process* frame::get_process(const std::string& command)
 {
   if (!m_app->is_debug())
@@ -730,4 +681,53 @@ void frame::update_listviews()
       lv->config_get();
     }
   }
+}
+
+bool frame::vi_exec_command(wex::ex_command& command)
+{
+  if (command.command() == ":")
+  {
+    return false;
+  }
+
+  bool handled = false;
+
+  try
+  {
+    if (m_editors->GetPageCount() > 0)
+    {
+      if (boost::algorithm::trim_copy(command.command()) == ":n")
+      {
+        if (m_editors->GetSelection() == m_editors->GetPageCount() - 1)
+        {
+          return false;
+        }
+
+        m_editors->AdvanceSelection();
+        handled = true;
+      }
+      else if (boost::algorithm::trim_copy(command.command()) == ":prev")
+      {
+        if (m_editors->GetSelection() == 0)
+        {
+          return false;
+        }
+
+        m_editors->AdvanceSelection(false);
+        handled = true;
+      }
+
+      if (handled && wex::ex::get_macros().mode().is_playback())
+      {
+        command.set_stc(
+          ((wex::stc*)m_editors->GetPage(m_editors->GetSelection())));
+      }
+    }
+  }
+  catch (std::exception& e)
+  {
+    wex::log(e) << command.command();
+  }
+
+  return handled;
 }
