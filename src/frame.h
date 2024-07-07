@@ -2,7 +2,7 @@
 // Name:      frame.h
 // Purpose:   Declaration of class frame
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020-2023 Anton van Wezenbeek
+// Copyright: (c) 2020-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -27,8 +27,6 @@ private:
     const wex::lexer*           lexer = nullptr) override;
 
   void debug_exe(const wex::path& p) override;
-
-  bool exec_ex_command(wex::ex_command& command) override;
 
   wex::process* get_process(const std::string& command) override;
 
@@ -70,6 +68,8 @@ private:
   void sync_all() override;
 
   void sync_close_all(wxWindowID id) override;
+
+  bool vi_exec_command(wex::ex_command& command) override;
 
   // All others.
 
