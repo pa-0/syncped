@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Find Files now runs on text changed as well as on enter pressed
+  and interpretes entered text as a regex
 - use stc_entry_dialog instead of wxTextEntryDialog
 - added wex version to be used to find_package
 

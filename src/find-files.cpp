@@ -102,7 +102,7 @@ void find_files::run(bool is_enter_key)
   wex::dir(
     m_root,
     wex::data::dir()
-      .file_spec("*" + m_value + "*")
+      .file_spec(m_value, true)
       .max_matches(wex::config(_("find.Max")).get(50))
       .type(wex::data::dir::type_t()
               .set(wex::data::dir::FILES)
