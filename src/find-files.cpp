@@ -96,7 +96,11 @@ void find_files::run(bool is_enter_key)
 
   reload(true);
 
-  m_combobox->SetInsertionPointEnd();
+  if (is_enter_key)
+  {
+    m_combobox->SetInsertionPointEnd();
+  }
+
   m_listview->clear();
 
   wex::dir(
