@@ -112,6 +112,7 @@ decorated_frame::decorated_frame(app* app)
     m_statusbar->pane_show("PaneTheme", false);
   }
 
+  wex::art::insert({{ID_EDIT_MACRO, wxART_EDIT}});
   wex::art::insert({{ID_EDIT_MACRO_PLAYBACK, wxART_PLAY_CIRCLE}});
 
   menu();
@@ -145,7 +146,8 @@ bool decorated_frame::allow_close(wxWindowID id, wxWindow* page)
       {
         return false;
       }
-      else if (wex::beautify b; b.is_active() && stc->get_file().is_written())
+      else if (wex::beautify b(stc->path());
+               b.is_active() && stc->get_file().is_written())
       {
         stc->get_file().close();
         b.file(stc->path());
