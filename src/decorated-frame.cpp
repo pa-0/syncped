@@ -101,12 +101,12 @@ decorated_frame::decorated_frame(app* app)
      {"PaneMacro", -1, false},
      {"PaneMode", 100, false}});
 
-  if (wex::vcs vcs; !vcs.use() || wex::vcs::size() == 0)
+  if (wex::vcs vcs; !vcs.use() || wex::vcs::size() <= 1)
   {
     m_statusbar->pane_show("PaneVCS", false);
   }
 
-  if (wex::lexers::get()->get_lexers().empty())
+  if (wex::lexers::get()->get_lexers().size() <= 1)
   {
     m_statusbar->pane_show("PaneLexer", false);
     m_statusbar->pane_show("PaneTheme", false);

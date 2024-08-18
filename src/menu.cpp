@@ -91,7 +91,7 @@ void decorated_frame::menu()
 
   auto* menuOptions = new wex::menu();
 
-  if (wex::vcs::size() > 0)
+  if (wex::vcs::size() > 1)
   {
     menuOptions->append(
       {{NewControlId(),
