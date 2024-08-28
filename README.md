@@ -20,13 +20,4 @@ git clone git@gitlab.kitware.com:antonvw/syncped.git
 
 ### for Visual Studio
 
-```bash
-mkdir build && cd build
-cmake ..
-devenv wex.sln /build Release
-```
-
-and for mingw add `-G "MinGW Makefiles"` and do `mingw32-make`.
-
-For Visual Studio 2019 you should possibly add
-`-DCMAKE_INSTALL_PREFIX=c:\program files (x86)\wex`
+`wex-build-gen.ps1`
