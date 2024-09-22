@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Name:      on-ui.cpp
-// Purpose:   Implementation of class frame
+// Purpose:   Implementation of class frame::on_update_ui
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2022 Anton van Wezenbeek
+// Copyright: (c) 2022-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "defs.h"
@@ -11,6 +11,11 @@
 
 void frame::on_update_ui(wxUpdateUIEvent& event)
 {
+  if (IsBeingDeleted())
+  {
+    return;
+  }
+
   switch (event.GetId())
   {
     case wxID_EXECUTE:
@@ -112,7 +117,7 @@ void frame::on_update_ui(wxUpdateUIEvent& event)
             assert(0);
         }
       }
-      else if (auto* list = (wex::del::file*)get_listview();
+      else if (auto* list = dynamic_cast<wex::del::file*>(get_listview());
                list != nullptr && list->IsShown())
       {
         event.Enable(false);

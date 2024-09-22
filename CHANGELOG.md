@@ -4,9 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## 24.04 - 2024-04-01 [Unreleased]
+## 24.10 - 2024-10-01 [Unreleased]
 
-## Added
+### Added
+
+- Option VCS 'Find includes submodules' to in or exclude git submodules
+
+### Changed
+
+- Find Files now runs on text changed as well as on enter pressed
+  and interpretes entered text as a regex
+- use stc_entry_dialog instead of wxTextEntryDialog
+- added wex version to be used to find_package
+
+### Fixed
+
+- added focus to history if it is shown
+- improve if no xml files are present
+
+## 24.04 - 2024-03-29
+
+### Added
 
 - added .clang-tidy
 
@@ -48,7 +66,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## 21.10 - 2021-10-01
 
-## Added
+### Added
 
 - added option wexBUILD_SHARED to use dynamic libs
 

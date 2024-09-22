@@ -2,13 +2,13 @@
 // Name:      find-files.cpp
 // Purpose:   Implementation of class find_files
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2020-2023 Anton van Wezenbeek
+// Copyright: (c) 2020-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "find-files.h"
 #include "defs.h"
 
-find_files::find_files(wex::frame* f)
+find_files::find_files(wex::del::frame* f)
   : item_dialog(
       {wex::add_combobox_with_max(
          _("find.File"),
@@ -28,11 +28,23 @@ find_files::find_files(wex::frame* f)
   assert(m_combobox != nullptr && m_listview != nullptr);
 
   m_combobox->SetFocus();
+
+  m_combobox->Bind(
+    wxEVT_TEXT,
+    [=, this](const wxCommandEvent& event)
+    {
+      // logic necessary to prevent action on wxID_CANCEL
+      if (m_value != m_combobox->GetValue())
+      {
+        run(false);
+      }
+    });
+
   m_combobox->Bind(
     wxEVT_TEXT_ENTER,
-    [=, this](wxCommandEvent& event)
+    [=, this](const wxCommandEvent& event)
     {
-      run();
+      run(true);
     });
 
   m_listview->Bind(
@@ -64,8 +76,17 @@ bool find_files::Destroy()
   return wex::item_dialog::Destroy();
 }
 
-void find_files::run()
+void find_files::run(bool is_enter_key)
 {
+  const auto text(m_combobox->GetValue());
+
+  if (text.empty() || (!is_enter_key && text.size() < 2))
+  {
+    return;
+  }
+
+  m_value = text;
+
   set_root();
 
   if (wex::interruptible::end())
@@ -75,17 +96,22 @@ void find_files::run()
 
   reload(true);
 
-  m_combobox->SetInsertionPointEnd();
+  if (is_enter_key)
+  {
+    m_combobox->SetInsertionPointEnd();
+  }
+
   m_listview->clear();
 
   wex::dir(
     m_root,
     wex::data::dir()
-      .file_spec("*" + m_combobox->GetValue() + "*")
+      .file_spec(m_value, true)
       .max_matches(wex::config(_("find.Max")).get(50))
       .type(wex::data::dir::type_t()
               .set(wex::data::dir::FILES)
-              .set(wex::data::dir::RECURSIVE)),
+              .set(wex::data::dir::RECURSIVE))
+      .vcs(m_frame->vcs()),
     m_listview)
     .find_files();
 }

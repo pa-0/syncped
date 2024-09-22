@@ -2,7 +2,7 @@
 // Name:      decorated-frame.cpp
 // Purpose:   Implementation of decorated_frame class
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021-2023 Anton van Wezenbeek
+// Copyright: (c) 2021-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifndef __WXMSW__
@@ -35,8 +35,15 @@ decorated_frame::decorated_frame(app* app)
   , m_process(new wex::process())
   , m_projects(new wex::notebook(
       wex::data::window().id(ID_NOTEBOOK_PROJECTS).style(pane_flag)))
+  , m_dlg(new wex::stc_entry_dialog(
+      std::string(),
+      _("File Name") + ":",
+      wex::data::window(),
+      wex::data::stc().flags(
+        wex::data::stc::window_t().set(wex::data::stc::WIN_SINGLE_LINE))))
 {
   SetIcon(wxICON(app));
+  m_dlg->set_validator("^[a-zA-Z0-9:.]+$");
 
   wex::process::prepare_output(this);
 
@@ -94,17 +101,18 @@ decorated_frame::decorated_frame(app* app)
      {"PaneMacro", -1, false},
      {"PaneMode", 100, false}});
 
-  if (wex::vcs vcs; !vcs.use() || wex::vcs::size() == 0)
+  if (wex::vcs vcs; !vcs.use() || wex::vcs::size() <= 1)
   {
     m_statusbar->pane_show("PaneVCS", false);
   }
 
-  if (wex::lexers::get()->get_lexers().empty())
+  if (wex::lexers::get()->get_lexers().size() <= 1)
   {
     m_statusbar->pane_show("PaneLexer", false);
     m_statusbar->pane_show("PaneTheme", false);
   }
 
+  wex::art::insert({{ID_EDIT_MACRO, wxART_EDIT}});
   wex::art::insert({{ID_EDIT_MACRO_PLAYBACK, wxART_PLAY_CIRCLE}});
 
   menu();
@@ -132,13 +140,14 @@ bool decorated_frame::allow_close(wxWindowID id, wxWindow* page)
   switch (id)
   {
     case ID_NOTEBOOK_EDITORS:
-      if (auto* stc = (wex::stc*)page;
+      if (auto* stc = dynamic_cast<wex::stc*>(page);
           wex::file_dialog(&stc->get_file()).show_modal_if_changed() ==
           wxID_CANCEL)
       {
         return false;
       }
-      else if (wex::beautify b; b.is_active() && stc->get_file().is_written())
+      else if (wex::beautify b(stc->path());
+               b.is_active() && stc->get_file().is_written())
       {
         stc->get_file().close();
         b.file(stc->path());
@@ -147,8 +156,8 @@ bool decorated_frame::allow_close(wxWindowID id, wxWindow* page)
 
     case ID_NOTEBOOK_PROJECTS:
       if (
-        wex::file_dialog((wex::del::file*)page).show_modal_if_changed() ==
-        wxID_CANCEL)
+        wex::file_dialog(dynamic_cast<wex::del::file*>(page))
+          .show_modal_if_changed() == wxID_CANCEL)
       {
         return false;
       }
@@ -171,7 +180,7 @@ const std::string decorated_frame::allow_move_ext() const
 
   for (size_t i = 0; i < m_editors->GetPageCount(); ++i)
   {
-    auto* stc  = (wex::stc*)m_editors->GetPage(i);
+    auto* stc  = dynamic_cast<wex::stc*>(m_editors->GetPage(i));
     auto& path = stc->path();
 
     if (path.extension() == same_ext)
@@ -200,15 +209,15 @@ void decorated_frame::on_notebook(wxWindowID id, wxWindow* page)
   switch (id)
   {
     case ID_NOTEBOOK_EDITORS:
-      ((wex::stc*)page)->properties_message();
+      dynamic_cast<wex::stc*>(page)->properties_message();
       break;
 
     case ID_NOTEBOOK_LISTS:
       break;
 
     case ID_NOTEBOOK_PROJECTS:
-      wex::log::status() << ((wex::del::file*)page)->path();
-      update_statusbar((wex::del::file*)page);
+      wex::log::status() << dynamic_cast<wex::del::file*>(page)->path();
+      update_statusbar(dynamic_cast<wex::del::file*>(page));
       break;
 
     default:

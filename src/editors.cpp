@@ -2,7 +2,7 @@
 // Name:      editors.cpp
 // Purpose:   Implementation of editors class
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021 Anton van Wezenbeek
+// Copyright: (c) 2021-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "editors.h"
@@ -13,7 +13,7 @@ editors::editors(wex::del::frame* frame, const wex::data::window& data)
 {
   Bind(
     wxEVT_MENU,
-    [=, this](wxCommandEvent& event)
+    [=, this](const wxCommandEvent& event)
     {
       wxPostEvent(wxAuiNotebook::GetCurrentPage(), event);
     },
@@ -30,7 +30,7 @@ editors::editors(wex::del::frame* frame, const wex::data::window& data)
 
   Bind(
     wxEVT_AUINOTEBOOK_TAB_RIGHT_UP,
-    [=, this](wxAuiNotebookEvent& event)
+    [=, this](const wxAuiNotebookEvent& event)
     {
       wex::menu menu(wex::menu::menu_t().set(wex::menu::IS_POPUP));
 

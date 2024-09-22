@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 
 project(syncped)
 
-find_package(WEX REQUIRED)
+find_package(wex 24.10 QUIET)
 
 if (wexENABLE_GETTEXT)
   include(FindGettext)

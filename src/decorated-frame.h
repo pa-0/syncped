@@ -2,7 +2,7 @@
 // Name:      decorated-frame.h
 // Purpose:   Declaration of decorated_frame class
 // Author:    Anton van Wezenbeek
-// Copyright: (c) 2021-2022 Anton van Wezenbeek
+// Copyright: (c) 2021-2024 Anton van Wezenbeek
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -42,4 +42,6 @@ private:
   const std::string m_project_wildcard{_("Project Files") + " (*.prj)|*.prj"};
 
   int m_project_id{1};
+
+  wex::stc_entry_dialog* m_dlg;
 };
