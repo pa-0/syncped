@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - uses wex 25.4
+- git log caption show filename only instead of fullpath
 
 ## 24.10 - 2024-09-22
 
