@@ -4,7 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## 24.10 - 2024-10-01 [Unreleased]
+## 24.10 - 2025-04 [Unreleased]
+
+### Added
+
+- Added .gersemirc file
+
+### Changed
+
+- uses wex 25.4
+
+## 24.10 - 2024-09-22
 
 ### Added
 
