@@ -218,7 +218,8 @@ wex::factory::stc* frame::open_file_vcs(
 
     wex::vcs_command_stc(
       vcs.get_command(),
-      wex::path_lexer(filename).lexer(),
+      vcs.get_command().is_history() ? wex::lexer("yaml") :
+                                       wex::path_lexer(filename).lexer(),
       (wex::stc*)nd.page());
 
     if (const int index = m_editors->page_index_by_key(filename.string());
