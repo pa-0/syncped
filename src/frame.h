@@ -83,8 +83,8 @@ private:
     wex::vcs_entry&       vcs,
     const wex::data::stc& data = wex::data::stc());
   void save(wex::stc* stc);
-  bool saveas(wex::file* f, const std::string& name);
-  void saveas(wex::stc* stc, const std::string& name);
+  bool save_as(wex::file* f, const std::string& name);
+  void save_as(wex::stc* stc, const std::string& name);
   void setup_stdin();
   void toolbar_handle();
   void update_listviews();
