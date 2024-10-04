@@ -51,25 +51,29 @@ void frame::on_command(wxCommandEvent& event)
     case wxID_SAVEAS:
       if (editor != nullptr)
       {
-        saveas(editor, event.GetString());
+        save_as(editor, event.GetString());
       }
       break;
 
     case ID_EDIT_MACRO_PLAYBACK:
       if (editor != nullptr)
+      {
         editor->get_vi().get_macros().mode().transition(
           "@",
           &editor->get_vi(),
           true);
+      }
       break;
 
     case ID_EDIT_MACRO_START_RECORD:
     case ID_EDIT_MACRO_STOP_RECORD:
       if (editor != nullptr)
+      {
         editor->get_vi().get_macros().mode().transition(
           "q",
           &editor->get_vi(),
           true);
+      }
       break;
 
     case ID_SPLIT:

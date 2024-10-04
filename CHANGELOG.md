@@ -16,6 +16,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - git log caption show filename only instead of fullpath
 - use yaml for git log lexer
 
+### Fixed
+
+- on File Save As on not yet existing file removes the old page
+
 ## 24.10 - 2024-09-22
 
 ### Added

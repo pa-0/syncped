@@ -520,7 +520,7 @@ void frame::save(wex::stc* editor)
   }
 }
 
-bool frame::saveas(wex::file* f, const std::string& name)
+bool frame::save_as(wex::file* f, const std::string& name)
 {
   if (!name.empty())
   {
@@ -544,21 +544,29 @@ bool frame::saveas(wex::file* f, const std::string& name)
   return true;
 }
 
-void frame::saveas(wex::stc* editor, const std::string& name)
+void frame::save_as(wex::stc* editor, const std::string& name)
 {
   if (editor->get_file().is_contents_changed())
   {
     if (const auto old(editor->get_file().path());
-        saveas(&editor->get_file(), name))
+        save_as(&editor->get_file(), name))
     {
       open_file(editor->get_file().path(), wex::data::stc(m_app->data()));
-      auto* page = (wex::stc*)m_editors->page_by_key(old.string());
-      page->get_file().file_load(old);
+
+      if (!old.file_exists())
+      {
+        m_editors->delete_page(old.string());
+      }
+      else
+      {
+        auto* page = (wex::stc*)m_editors->page_by_key(old.string());
+        page->get_file().file_load(old);
+      }
     }
   }
   else
   {
-    if (wex::file f(editor->get_file()); saveas(&f, name))
+    if (wex::file f(editor->get_file()); save_as(&f, name))
     {
       open_file(f.path(), wex::data::stc(m_app->data()));
     }
